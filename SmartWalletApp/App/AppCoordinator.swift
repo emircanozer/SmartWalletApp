@@ -1,9 +1,10 @@
 import UIKit
 
 class AppCoordinator: Coordinator {
+    var children: [Coordinator] = []
+
     private let window: UIWindow
     private let navigationController = UINavigationController()
-    private var loginCoordinator: LoginCoordinator?
 
     init(window: UIWindow) {
         self.window = window
@@ -17,7 +18,7 @@ class AppCoordinator: Coordinator {
         window.makeKeyAndVisible()
 
         let loginCoordinator = LoginCoordinator(navigationController: navigationController)
-        self.loginCoordinator = loginCoordinator
+        children.append(loginCoordinator)
         loginCoordinator.start()
     }
 }

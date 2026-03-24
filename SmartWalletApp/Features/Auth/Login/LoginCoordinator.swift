@@ -1,6 +1,8 @@
 import UIKit
 
 class LoginCoordinator: Coordinator {
+    var children: [Coordinator] = []
+
     private let navigationController: UINavigationController
 
     init(navigationController: UINavigationController) {
