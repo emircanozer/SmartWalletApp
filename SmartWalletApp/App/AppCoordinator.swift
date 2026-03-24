@@ -17,8 +17,8 @@ class AppCoordinator: Coordinator {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
 
-        let loginCoordinator = LoginCoordinator(navigationController: navigationController)
-        children.append(loginCoordinator)
-        loginCoordinator.start()
+        let welcomeCoordinator = WelcomeCoordinator(navigationController: navigationController)
+        children.append(welcomeCoordinator)
+        welcomeCoordinator.start()
     }
 }

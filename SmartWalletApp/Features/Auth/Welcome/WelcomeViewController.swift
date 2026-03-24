@@ -1,7 +1,7 @@
 import UIKit
 
-class LoginViewController: UIViewController {
-    private let viewModel: LoginViewModel
+class WelcomeViewController: UIViewController {
+    private let viewModel: WelcomeViewModel
 
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -28,7 +28,7 @@ class LoginViewController: UIViewController {
     private let bottomBar = UIView()
     private let tabStack = UIStackView()
 
-    init(viewModel: LoginViewModel) {
+    init(viewModel: WelcomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -45,6 +45,8 @@ class LoginViewController: UIViewController {
         applyContent()
     }
 
+    //Bu fonksiyon view’ların gerçek boyutu belli olduktan sonra çağrılır.
+    // ger.ek boyutları belli olsun sonra radius verelim 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -56,7 +58,10 @@ class LoginViewController: UIViewController {
         avatarGlowView.layer.cornerRadius = avatarGlowView.bounds.width / 2
         avatarCircleView.layer.cornerRadius = avatarCircleView.bounds.width / 2
     }
+}
 
+private extension WelcomeViewController {
+    // görünüm tamamen bu fonksiyonda style (renklendirme yapay zeka)
     private func configureView() {
         view.backgroundColor = .white
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -64,6 +69,7 @@ class LoginViewController: UIViewController {
 
         scrollView.backgroundColor = .white
         scrollView.showsVerticalScrollIndicator = false
+        // içerik az olsa bile aşağı çekebilmek için
         scrollView.alwaysBounceVertical = true
 
         contentView.backgroundColor = .white
@@ -79,12 +85,16 @@ class LoginViewController: UIViewController {
 
         logoWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
         logoImageView.image = UIImage(systemName: "wallet.pass.fill")
+        // ikon rengi
         logoImageView.tintColor = .black
+        // taşma yok oran korunuyor
         logoImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 21, weight: .bold)
         titleLabel.textColor = UIColor(red: 0.11, green: 0.12, blue: 0.2, alpha: 1.0)
+        // STCR low olarak ayarlı yani sıkışınca küçülebilir
         titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        // sığmazsa ....
         titleLabel.lineBreakMode = .byTruncatingTail
 
         headerActionsStack.axis = .horizontal
@@ -124,6 +134,7 @@ class LoginViewController: UIViewController {
         subtitleLabel.font = .systemFont(ofSize: 17, weight: .regular)
         subtitleLabel.numberOfLines = 0
 
+        // eşit genişlikte
         shortcutsStack.axis = .horizontal
         shortcutsStack.alignment = .top
         shortcutsStack.distribution = .fillEqually
@@ -157,6 +168,7 @@ class LoginViewController: UIViewController {
         tabStack.distribution = .fillEqually
     }
 
+    //viewları birbirine add yapıyoruz içten dışa doğru
     private func buildHierarchy() {
         view.addSubview(scrollView)
         view.addSubview(bottomBar)
@@ -191,7 +203,10 @@ class LoginViewController: UIViewController {
 
         bottomBar.addSubview(tabStack)
     }
+}
 
+private extension WelcomeViewController {
+    // constraint tarafı
     private func setupLayout() {
         [
             scrollView,
@@ -214,19 +229,23 @@ class LoginViewController: UIViewController {
             bottomBar,
             tabStack
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        // hepsi için kısa yoldan false yaptık
 
+        //yine içten dışa doğru belirledik
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomBar.topAnchor, constant: -10),
 
+            // scroll edilen alan = contentlayoutguide
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
             contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
+            //greaterthanOrEqual = minumum ekran kadar olsun
 
             headerStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 14),
             headerStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
@@ -310,7 +329,9 @@ class LoginViewController: UIViewController {
             tabStack.bottomAnchor.constraint(equalTo: bottomBar.bottomAnchor, constant: -10)
         ])
     }
+}
 
+private extension WelcomeViewController {
     private func applyContent() {
         titleLabel.text = "SmartWallet AI"
         languageButton.setTitle(viewModel.languageTitle, for: .normal)
@@ -320,16 +341,19 @@ class LoginViewController: UIViewController {
         secondaryButton.setTitle(viewModel.secondaryButtonTitle, for: .normal)
         tertiaryButton.setTitle(viewModel.tertiaryButtonTitle, for: .normal)
 
+        // her item için view dinamik şekilde oluşturuluyor
         viewModel.shortcuts.forEach { shortcut in
             shortcutsStack.addArrangedSubview(ShortcutItemView(title: shortcut.title, iconName: shortcut.iconName))
         }
 
+        // aynı şekilde her tab item için dinamik
         viewModel.tabItems.forEach { item in
             tabStack.addArrangedSubview(FooterTabItemView(title: item.title, iconName: item.iconName, isHighlighted: item.isHighlighted))
         }
     }
 }
 
+// custom shortcut itemlerim için
 private class ShortcutItemView: UIView {
     private let iconContainer = UIView()
     private let iconView = UIImageView()
@@ -385,6 +409,7 @@ private class ShortcutItemView: UIView {
     }
 }
 
+//custom tab itemlerim için  yukaruda dinamik oluşturmuştuk
 private class FooterTabItemView: UIView {
     init(title: String, iconName: String, isHighlighted: Bool) {
         super.init(frame: .zero)

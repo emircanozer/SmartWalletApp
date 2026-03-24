@@ -19,3 +19,5 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         coordinator.start()
     }
 }
+
+// MARK: sayfa ilk açıldığında scenedelegate cordinatörü başlatır kordinatör de Hoşgeldin sayfasını açtırır
