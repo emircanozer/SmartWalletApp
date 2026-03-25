@@ -1,6 +1,9 @@
 import UIKit
 
 class WelcomeViewController: UIViewController {
+    var onLoginTap: (() -> Void)?
+    var onRegisterTap: (() -> Void)?
+
     private let viewModel: WelcomeViewModel
 
     private let scrollView = UIScrollView()
@@ -15,10 +18,8 @@ class WelcomeViewController: UIViewController {
     private let notificationButton = UIButton(type: .system)
     private let heroContainer = UIView()
     private let avatarOrbitView = UIView()
-    private let avatarGlowView = UIView()
     private let avatarCircleView = UIView()
     private let avatarIconView = UIImageView()
-    private let onlineIndicator = UIView()
     private let welcomeLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let shortcutsStack = UIStackView()
@@ -43,6 +44,7 @@ class WelcomeViewController: UIViewController {
         buildHierarchy()
         setupLayout()
         applyContent()
+        bindActions()
     }
 
     //Bu fonksiyon view’ların gerçek boyutu belli olduktan sonra çağrılır.
@@ -55,7 +57,6 @@ class WelcomeViewController: UIViewController {
         bottomBar.layer.cornerRadius = 30
         logoWrapper.layer.cornerRadius = 11
         avatarOrbitView.layer.cornerRadius = avatarOrbitView.bounds.width / 2
-        avatarGlowView.layer.cornerRadius = avatarGlowView.bounds.width / 2
         avatarCircleView.layer.cornerRadius = avatarCircleView.bounds.width / 2
     }
 }
@@ -111,7 +112,6 @@ private extension WelcomeViewController {
         avatarOrbitView.layer.borderWidth = 1
         avatarOrbitView.layer.borderColor = UIColor(red: 0.99, green: 0.89, blue: 0.62, alpha: 1.0).cgColor
 
-        avatarGlowView.backgroundColor = UIColor(red: 1.0, green: 0.97, blue: 0.9, alpha: 1.0)
         avatarCircleView.backgroundColor = .white
         avatarCircleView.layer.borderWidth = 5
         avatarCircleView.layer.borderColor = UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0).cgColor
@@ -119,11 +119,6 @@ private extension WelcomeViewController {
         avatarIconView.image = UIImage(systemName: "person.crop.circle.fill")
         avatarIconView.tintColor = UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0)
         avatarIconView.contentMode = .scaleAspectFit
-
-        onlineIndicator.backgroundColor = UIColor(red: 0.19, green: 0.8, blue: 0.41, alpha: 1.0)
-        onlineIndicator.layer.cornerRadius = 8
-        onlineIndicator.layer.borderWidth = 3
-        onlineIndicator.layer.borderColor = UIColor.white.cgColor
 
         welcomeLabel.textAlignment = .center
         welcomeLabel.textColor = UIColor(red: 0.11, green: 0.12, blue: 0.2, alpha: 1.0)
@@ -196,9 +191,7 @@ private extension WelcomeViewController {
         headerActionsStack.addArrangedSubview(notificationButton)
 
         heroContainer.addSubview(avatarOrbitView)
-        avatarOrbitView.addSubview(avatarGlowView)
         avatarOrbitView.addSubview(avatarCircleView)
-        avatarOrbitView.addSubview(onlineIndicator)
         avatarCircleView.addSubview(avatarIconView)
 
         bottomBar.addSubview(tabStack)
@@ -216,10 +209,8 @@ private extension WelcomeViewController {
             logoImageView,
             heroContainer,
             avatarOrbitView,
-            avatarGlowView,
             avatarCircleView,
             avatarIconView,
-            onlineIndicator,
             welcomeLabel,
             subtitleLabel,
             shortcutsStack,
@@ -272,11 +263,6 @@ private extension WelcomeViewController {
             avatarOrbitView.widthAnchor.constraint(equalToConstant: 138),
             avatarOrbitView.heightAnchor.constraint(equalToConstant: 138),
 
-            avatarGlowView.centerXAnchor.constraint(equalTo: avatarOrbitView.centerXAnchor),
-            avatarGlowView.centerYAnchor.constraint(equalTo: avatarOrbitView.centerYAnchor),
-            avatarGlowView.widthAnchor.constraint(equalToConstant: 108),
-            avatarGlowView.heightAnchor.constraint(equalToConstant: 108),
-
             avatarCircleView.centerXAnchor.constraint(equalTo: avatarOrbitView.centerXAnchor),
             avatarCircleView.centerYAnchor.constraint(equalTo: avatarOrbitView.centerYAnchor),
             avatarCircleView.widthAnchor.constraint(equalToConstant: 74),
@@ -286,11 +272,6 @@ private extension WelcomeViewController {
             avatarIconView.centerYAnchor.constraint(equalTo: avatarCircleView.centerYAnchor),
             avatarIconView.widthAnchor.constraint(equalToConstant: 34),
             avatarIconView.heightAnchor.constraint(equalToConstant: 34),
-
-            onlineIndicator.widthAnchor.constraint(equalToConstant: 16),
-            onlineIndicator.heightAnchor.constraint(equalToConstant: 16),
-            onlineIndicator.trailingAnchor.constraint(equalTo: avatarOrbitView.trailingAnchor, constant: 6),
-            onlineIndicator.bottomAnchor.constraint(equalTo: avatarOrbitView.bottomAnchor, constant: -22),
 
             welcomeLabel.topAnchor.constraint(equalTo: heroContainer.bottomAnchor, constant: 18),
             welcomeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
@@ -350,6 +331,19 @@ private extension WelcomeViewController {
         viewModel.tabItems.forEach { item in
             tabStack.addArrangedSubview(FooterTabItemView(title: item.title, iconName: item.iconName, isHighlighted: item.isHighlighted))
         }
+    }
+
+    private func bindActions() {
+        primaryButton.addTarget(self, action: #selector(handleLoginTap), for: .touchUpInside)
+        secondaryButton.addTarget(self, action: #selector(handleRegisterTap), for: .touchUpInside)
+    }
+
+    @objc private func handleLoginTap() {
+        onLoginTap?()
+    }
+
+    @objc private func handleRegisterTap() {
+        onRegisterTap?()
     }
 }
 
