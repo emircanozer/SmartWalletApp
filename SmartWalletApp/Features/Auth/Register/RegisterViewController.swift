@@ -2,6 +2,7 @@ import UIKit
 
 class RegisterViewController: UIViewController {
     var onLogin: (() -> Void)?
+    var onVerify: (() -> Void)?
 
     private let viewModel: RegisterViewModel
 
@@ -22,6 +23,7 @@ class RegisterViewController: UIViewController {
     private let footerStack = UIStackView()
     private let footerLabel = UILabel()
     private let loginButton = UIButton(type: .system)
+    private let backgroundTapGesture = UITapGestureRecognizer()
 
     private var isTermsAccepted = false
 
@@ -128,6 +130,10 @@ private extension RegisterViewController {
 
         loginButton.setTitleColor(UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0), for: .normal)
         loginButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
+
+        backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
+        backgroundTapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(backgroundTapGesture)
     }
 
     func buildHierarchy() {
@@ -274,7 +280,12 @@ private extension RegisterViewController {
     func bindActions() {
         checkboxButton.addTarget(self, action: #selector(handleCheckboxTap), for: .touchUpInside)
         loginButton.addTarget(self, action: #selector(handleLoginTap), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(handleRegisterTap), for: .touchUpInside)
         passwordField.setTrailingTarget(self, action: #selector(handlePasswordVisibilityTap))
+    }
+
+    @objc func handleBackgroundTap() {
+        view.endEditing(true)
     }
 
     func updateCheckboxAppearance() {
@@ -289,6 +300,10 @@ private extension RegisterViewController {
 
     @objc func handleLoginTap() {
         onLogin?()
+    }
+
+    @objc func handleRegisterTap() {
+        onVerify?()
     }
 
     @objc func handlePasswordVisibilityTap() {

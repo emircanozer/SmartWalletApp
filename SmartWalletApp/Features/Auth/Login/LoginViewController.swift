@@ -3,6 +3,7 @@ import UIKit
 class LoginViewController: UIViewController {
     var onBack: (() -> Void)? // bu propun içi dışarıda doldurulur genelde kordinatör. welcome kordinatörün içinde kullanıdık yani içini orada doldurduk sonra bu sayfada handle tap ile kullandık
     var onRegister: (() -> Void)?
+    var onForgotPassword: (() -> Void)?
 
     private let viewModel: LoginViewModel
 
@@ -24,6 +25,7 @@ class LoginViewController: UIViewController {
     private let footerStack = UIStackView()
     private let footerLabel = UILabel()
     private let registerButton = UIButton(type: .system)
+    private let backgroundTapGesture = UITapGestureRecognizer()
 
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
@@ -131,6 +133,10 @@ private extension LoginViewController {
 
         registerButton.setTitleColor(UIColor(red: 0.98, green: 0.78, blue: 0.0, alpha: 1.0), for: .normal)
         registerButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
+
+        backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
+        backgroundTapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(backgroundTapGesture)
 
     }
 
@@ -265,6 +271,11 @@ private extension LoginViewController {
         backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(handleRegisterTap), for: .touchUpInside)
         passwordField.setTrailingTarget(self, action: #selector(handlePasswordVisibilityTap))
+        passwordField.setTopActionTarget(self, action: #selector(handleForgotPasswordTap))
+    }
+
+    @objc func handleBackgroundTap() {
+        view.endEditing(true)
     }
 
     @objc func handleBackTap() {
@@ -277,5 +288,9 @@ private extension LoginViewController {
 
     @objc func handlePasswordVisibilityTap() {
         passwordField.toggleSecureEntry()
+    }
+
+    @objc func handleForgotPasswordTap() {
+        onForgotPassword?()
     }
 }

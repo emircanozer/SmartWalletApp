@@ -1,5 +1,7 @@
 import UIKit
 
+//custom view yapmak için ortak kullanım için burada tanımladık
+
 class AuthInputFieldView: UIView {
     private let titleRow = UIStackView()
     private let titleLabel = UILabel()
@@ -10,6 +12,7 @@ class AuthInputFieldView: UIView {
     private let textField = UITextField()
     private let trailingButton = UIButton(type: .system)
     private let helperLabel = UILabel()
+    private let placeholderText: String
 
     init(
         title: String,
@@ -20,6 +23,7 @@ class AuthInputFieldView: UIView {
         helperText: String? = nil,
         isSecure: Bool = false
     ) {
+        self.placeholderText = placeholder
         super.init(frame: .zero)
 
         titleLabel.text = title
@@ -72,12 +76,18 @@ class AuthInputFieldView: UIView {
         leadingImageView.contentMode = .scaleAspectFit
 
         textField.borderStyle = .none
-        textField.placeholder = placeholder
         textField.font = .systemFont(ofSize: 16, weight: .medium)
         textField.textColor = UIColor(red: 0.28, green: 0.31, blue: 0.38, alpha: 1.0)
         textField.isSecureTextEntry = isSecure
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
+        textField.attributedPlaceholder = NSAttributedString(
+            string: placeholderText,
+            attributes: [
+                .foregroundColor: UIColor(red: 0.65, green: 0.69, blue: 0.76, alpha: 1.0),
+                .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+            ]
+        )
 
         trailingButton.tintColor = UIColor(red: 0.72, green: 0.75, blue: 0.8, alpha: 1.0)
         trailingButton.setImage(trailingIconName == nil ? nil : UIImage(systemName: trailingIconName!), for: .normal)

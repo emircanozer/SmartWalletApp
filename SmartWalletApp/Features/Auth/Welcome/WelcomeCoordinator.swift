@@ -34,6 +34,9 @@ class WelcomeCoordinator: Coordinator {
         viewController.onRegister = { [weak self] in
             self?.showRegister()
         }
+        viewController.onForgotPassword = { [weak self] in
+            self?.showResetPassword()
+        }
         navigationController.pushViewController(viewController, animated: true)
     }
 
@@ -42,6 +45,9 @@ class WelcomeCoordinator: Coordinator {
         let viewController = RegisterViewController(viewModel: viewModel)
         viewController.onLogin = { [weak self] in
             self?.routeToLoginFromRegister()
+        }
+        viewController.onVerify = { [weak self] in
+            self?.showVerificationCode()
         }
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -54,5 +60,53 @@ class WelcomeCoordinator: Coordinator {
 
         navigationController.popViewController(animated: false)
         showLogin()
+    }
+
+    private func showResetPassword() {
+        let viewModel = ResetPasswordViewModel()
+        let viewController = ResetPasswordViewController(viewModel: viewModel)
+        viewController.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showVerificationCode() {
+        let viewModel = VerificationCodeViewModel()
+        let viewController = VerificationCodeViewController(viewModel: viewModel)
+        viewController.onBackToLogin = { [weak self] in
+            self?.routeToLoginFromVerification()
+        }
+        viewController.onVerify = { [weak self] in
+            self?.showAccountCreated()
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func routeToLoginFromVerification() {
+        if let loginViewController = navigationController.viewControllers.first(where: { $0 is LoginViewController }) {
+            navigationController.popToViewController(loginViewController, animated: true)
+            return
+        }
+
+        navigationController.popToRootViewController(animated: false)
+        showLogin()
+    }
+
+    private func showAccountCreated() {
+        let viewModel = AccountCreatedViewModel()
+        let viewController = AccountCreatedViewController(viewModel: viewModel)
+        viewController.onContinue = { [weak viewController] in
+            viewController?.dismiss(animated: true)
+        }
+        viewController.modalPresentationStyle = .pageSheet
+
+        if let sheet = viewController.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 28
+        }
+
+        navigationController.present(viewController, animated: true)
     }
 }
