@@ -1,9 +1,7 @@
 import UIKit
 
-class AccountCreatedViewController: UIViewController {
+class IbanCreatedViewController: UIViewController {
     var onContinue: (() -> Void)?
-
-    private let viewModel: AccountCreatedViewModel
 
     private let contentView = UIView()
     private let cardView = UIView()
@@ -18,9 +16,14 @@ class AccountCreatedViewController: UIViewController {
     private let copyButton = UIButton(type: .system)
     private let ibanDescriptionLabel = UILabel()
     private let continueButton = UIButton(type: .system)
+    private let titleText = "Hesabınız Oluşturuldu"
+    private let subtitleText = "Size özel IBAN başarıyla oluşturuldu"
+    private let ibanTitleText = "YENİ IBAN ADRESİNİZ"
+    private let ibanValueText = "TR123456789012345678912345"
+    private let ibanDescriptionText = "Bu IBAN ile para transferi yapabilirsiniz"
+    private let buttonTitleText = "Devam Et  →"
 
-    init(viewModel: AccountCreatedViewModel) {
-        self.viewModel = viewModel
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -46,7 +49,7 @@ class AccountCreatedViewController: UIViewController {
     }
 }
 
-private extension AccountCreatedViewController {
+extension IbanCreatedViewController {
     func configureView() {
         view.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1.0)
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -58,13 +61,12 @@ private extension AccountCreatedViewController {
         cardView.layer.shadowOpacity = 0.06
         cardView.layer.shadowRadius = 24
         cardView.layer.shadowOffset = CGSize(width: 0, height: 12)
-        // gölge biraz aşağı doğru düşsün
 
         iconWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
 
         iconView.image = UIImage(systemName: "square.fill")
-        iconView.tintColor = .white // ikon rengi
-        iconView.contentMode = .scaleAspectFit // oranı bozmadan sığdırır
+        iconView.tintColor = .white
+        iconView.contentMode = .scaleAspectFit
 
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
@@ -87,7 +89,6 @@ private extension AccountCreatedViewController {
         ibanValueLabel.font = .systemFont(ofSize: 15, weight: .bold)
         ibanValueLabel.textColor = UIColor(red: 0.33, green: 0.35, blue: 0.41, alpha: 1.0)
         ibanValueLabel.lineBreakMode = .byTruncatingMiddle
-        // .. tarzı uzun noktalar sonda değil ortada gösterir
 
         copyButton.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
         copyButton.tintColor = UIColor(red: 0.45, green: 0.47, blue: 0.54, alpha: 1.0)
@@ -103,8 +104,6 @@ private extension AccountCreatedViewController {
         continueButton.layer.shadowOpacity = 0.2
         continueButton.layer.shadowRadius = 18
         continueButton.layer.shadowOffset = CGSize(width: 0, height: 10)
-
-       
     }
 
     func buildHierarchy() {
@@ -125,7 +124,7 @@ private extension AccountCreatedViewController {
     }
 }
 
-private extension AccountCreatedViewController {
+extension IbanCreatedViewController {
     func setupLayout() {
         [
             contentView,
@@ -145,7 +144,6 @@ private extension AccountCreatedViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -163,7 +161,6 @@ private extension AccountCreatedViewController {
 
             iconView.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor),
             iconView.centerYAnchor.constraint(equalTo: iconWrapper.centerYAnchor),
-            // buralarda direk 28e 28 boyut verilmiş 28x28
             iconView.widthAnchor.constraint(equalToConstant: 28),
             iconView.heightAnchor.constraint(equalToConstant: 28),
 
@@ -207,21 +204,18 @@ private extension AccountCreatedViewController {
             continueButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -24),
             continueButton.heightAnchor.constraint(equalToConstant: 54),
             continueButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -28),
-            
-
-            
         ])
     }
 }
 
-private extension AccountCreatedViewController {
+extension IbanCreatedViewController {
     func applyContent() {
-        titleLabel.text = viewModel.title
-        subtitleLabel.text = viewModel.subtitle
-        ibanTitleLabel.text = viewModel.ibanTitle
-        ibanValueLabel.text = viewModel.ibanValue
-        ibanDescriptionLabel.text = viewModel.ibanDescription
-        continueButton.setTitle(viewModel.buttonTitle, for: .normal)
+        titleLabel.text = titleText
+        subtitleLabel.text = subtitleText
+        ibanTitleLabel.text = ibanTitleText
+        ibanValueLabel.text = ibanValueText
+        ibanDescriptionLabel.text = ibanDescriptionText
+        continueButton.setTitle(buttonTitleText, for: .normal)
     }
 
     func bindActions() {
@@ -230,7 +224,7 @@ private extension AccountCreatedViewController {
     }
 
     @objc func handleCopyTap() {
-        UIPasteboard.general.string = viewModel.ibanValue
+        UIPasteboard.general.string = ibanValueText
     }
 
     @objc func handleContinueTap() {

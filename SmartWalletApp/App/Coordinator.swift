@@ -3,8 +3,7 @@ protocol Coordinator {
     var children: [Coordinator] { get set }
     func start()
 }
-/* Bu protokolü benimseyen herkes şu özelliklere ve fonksiyonlara sahip olmalı.”
- 
+/* Bu protokolü benimseyen herkes şu özelliklere ve fonksiyonlara sahip olmalı.
  AppCoordinator ana coordinator
  LoginCoordinator onun child’ı olabilir
  HomeCoordinator başka bir child olabilir

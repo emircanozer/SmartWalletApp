@@ -3,8 +3,6 @@ import UIKit
 class ResetPasswordViewController: UIViewController {
     var onBack: (() -> Void)?
 
-    private let viewModel: ResetPasswordViewModel
-
     private let contentView = UIView()
     private let headerStack = UIStackView()
     private let backButton = UIButton(type: .system)
@@ -18,12 +16,15 @@ class ResetPasswordViewController: UIViewController {
     private let emailField: AuthInputFieldView
     private let sendButton = UIButton(type: .system)
     private let backgroundTapGesture = UITapGestureRecognizer()
+    private let titleText = "Şifreni Sıfırla"
+    private let emailTitleText = "E-posta"
+    private let emailPlaceholderText = "e-posta@adresiniz.com"
+    private let buttonTitleText = "Sıfırlama Linki Gönder  >"
 
-    init(viewModel: ResetPasswordViewModel) {
-        self.viewModel = viewModel
+    init() {
         self.emailField = AuthInputFieldView(
-            title: viewModel.emailTitle,
-            placeholder: viewModel.emailPlaceholder,
+            title: emailTitleText,
+            placeholder: emailPlaceholderText,
             iconName: "envelope"
         )
         super.init(nibName: nil, bundle: nil)
@@ -50,7 +51,7 @@ class ResetPasswordViewController: UIViewController {
     }
 }
 
-private extension ResetPasswordViewController {
+extension ResetPasswordViewController {
     func configureView() {
         view.backgroundColor = .white
         navigationController?.setNavigationBarHidden(true, animated: false)
@@ -116,7 +117,7 @@ private extension ResetPasswordViewController {
     }
 }
 
-private extension ResetPasswordViewController {
+extension ResetPasswordViewController {
     func setupLayout() {
         [
             contentView,
@@ -181,11 +182,11 @@ private extension ResetPasswordViewController {
     }
 }
 
-private extension ResetPasswordViewController {
+extension ResetPasswordViewController {
     func applyContent() {
         brandLabel.text = "SmartWallet AI"
-        titleLabel.text = viewModel.title
-        sendButton.setTitle(viewModel.buttonTitle, for: .normal)
+        titleLabel.text = titleText
+        sendButton.setTitle(buttonTitleText, for: .normal)
     }
 
     func bindActions() {

@@ -11,8 +11,7 @@ class WelcomeCoordinator: Coordinator {
     
 
     func start() {
-        let viewModel = WelcomeViewModel()
-        let viewController = WelcomeViewController(viewModel: viewModel)
+        let viewController = WelcomeViewController()
         viewController.onLoginTap = { [weak self] in
             self?.showLogin()
         }
@@ -25,8 +24,7 @@ class WelcomeCoordinator: Coordinator {
     }
 
     private func showLogin() {
-        let viewModel = LoginViewModel()
-        let viewController = LoginViewController(viewModel: viewModel)
+        let viewController = LoginViewController()
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
             // on back propunun içini pop yani geri dön ile doldurduk diğer sayfanın içinde ise handle tap fonkunda kullandık 
@@ -41,8 +39,7 @@ class WelcomeCoordinator: Coordinator {
     }
 
     private func showRegister() {
-        let viewModel = RegisterViewModel()
-        let viewController = RegisterViewController(viewModel: viewModel)
+        let viewController = RegisterViewController()
         viewController.onLogin = { [weak self] in
             self?.routeToLoginFromRegister()
         }
@@ -63,8 +60,7 @@ class WelcomeCoordinator: Coordinator {
     }
 
     private func showResetPassword() {
-        let viewModel = ResetPasswordViewModel()
-        let viewController = ResetPasswordViewController(viewModel: viewModel)
+        let viewController = ResetPasswordViewController()
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
         }
@@ -72,13 +68,12 @@ class WelcomeCoordinator: Coordinator {
     }
 
     private func showVerificationCode() {
-        let viewModel = VerificationCodeViewModel()
-        let viewController = VerificationCodeViewController(viewModel: viewModel)
+        let viewController = VerificationCodeViewController()
         viewController.onBackToLogin = { [weak self] in
             self?.routeToLoginFromVerification()
         }
         viewController.onVerify = { [weak self] in
-            self?.showAccountCreated()
+            self?.showIbanCreated()
         }
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -93,9 +88,8 @@ class WelcomeCoordinator: Coordinator {
         showLogin()
     }
 
-    private func showAccountCreated() {
-        let viewModel = AccountCreatedViewModel()
-        let viewController = AccountCreatedViewController(viewModel: viewModel)
+    private func showIbanCreated() {
+        let viewController = IbanCreatedViewController()
         viewController.onContinue = { [weak viewController] in
             viewController?.dismiss(animated: true)
         }
