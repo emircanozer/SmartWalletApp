@@ -16,7 +16,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         appCoordinator = coordinator
 
-        coordinator.start()
+        coordinator.start() // first screen 
     }
 }
 

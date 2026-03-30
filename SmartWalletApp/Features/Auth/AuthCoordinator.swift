@@ -1,33 +1,31 @@
 import UIKit
 
-class WelcomeCoordinator: Coordinator {
+class AuthCoordinator: Coordinator {
     var children: [Coordinator] = []
+    var onAuthCompleted: (() -> Void)?
 
     private let navigationController: UINavigationController
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-    
-
+ 
     func start() {
         let viewController = WelcomeViewController()
-        viewController.onLoginTap = { [weak self] in
+        viewController.onLoginTap = { [weak self] in  // clousure prop bu şekilde kulalnılır burada propun içi dolduruldu yani işlem verildi sonra da herhangi bir butonun içinide tanımlandı kullanıldı login sayfasına gitti butona basılınca 
             self?.showLogin()
         }
         viewController.onRegisterTap = { [weak self] in
             self?.showRegister()
         }
         navigationController.setViewControllers([viewController], animated: false)
-        // push yerine set kullanmamızın sebebi stack yığınını sıfırlamak istiyoruz yani kullanıcıya geri dönüş butonu çıkmasın geri dönemesin set kullanılan ekranlar genelde ilk açılan ekranlar olur
-
+        // push yerine set kullanmamızın sebebi stack yığınını sıfırlamak istiyoruz yani kullanıcıya geri dönüş butonu çıkmasın geri dönemesin set kullanılan ekranlar genelde ilk açılan ekranlar olur stacke yerleştirmek gibi düşün
     }
 
     private func showLogin() {
         let viewController = LoginViewController()
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
-            // on back propunun içini pop yani geri dön ile doldurduk diğer sayfanın içinde ise handle tap fonkunda kullandık 
         }
         viewController.onRegister = { [weak self] in
             self?.showRegister()
@@ -53,6 +51,7 @@ class WelcomeCoordinator: Coordinator {
         if let loginViewController = navigationController.viewControllers.first(where: { $0 is LoginViewController }) {
             navigationController.popToViewController(loginViewController, animated: true)
             return
+            
         }
 
         navigationController.popViewController(animated: false)
@@ -63,6 +62,8 @@ class WelcomeCoordinator: Coordinator {
         let viewController = ResetPasswordViewController()
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
+            // on back propunun içini pop yani geri dön ile doldurduk diğer sayfanın içinde ise handle tap fonkunda kullandık
+
         }
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -90,8 +91,10 @@ class WelcomeCoordinator: Coordinator {
 
     private func showIbanCreated() {
         let viewController = IbanCreatedViewController()
-        viewController.onContinue = { [weak viewController] in
-            viewController?.dismiss(animated: true)
+        viewController.onContinue = { [weak self, weak viewController] in
+            viewController?.dismiss(animated: true) {
+                self?.onAuthCompleted?() //kordinatör olarak auth ile işimiz bitti home 'a geçiyiriyoruz 
+            }
         }
         viewController.modalPresentationStyle = .pageSheet
 

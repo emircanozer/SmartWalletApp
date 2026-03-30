@@ -1,24 +1,46 @@
 import UIKit
 
+
 class AppCoordinator: Coordinator {
     var children: [Coordinator] = []
 
     private let window: UIWindow
-    private let navigationController = UINavigationController()
+    private let authNavigationController = UINavigationController()
+    // auth ekranları push/pop ile ilerliyor. Bunun için bir UINavigationController gerekiyor
 
     init(window: UIWindow) {
         self.window = window
     }
 
+    //app açılınca 
     func start() {
-        navigationController.setNavigationBarHidden(true, animated: false)
-        navigationController.view.backgroundColor = .white
+        showAuthFlow()
+    }
+
+    private func showAuthFlow() {
+        authNavigationController.setNavigationBarHidden(true, animated: false)
+        authNavigationController.view.backgroundColor = .white
         window.backgroundColor = .white
-        window.rootViewController = navigationController
+        window.rootViewController = authNavigationController
         window.makeKeyAndVisible()
 
-        let welcomeCoordinator = WelcomeCoordinator(navigationController: navigationController)
-        children.append(welcomeCoordinator)
-        welcomeCoordinator.start()
+        let authCoordinator = AuthCoordinator(navigationController: authNavigationController)
+        authCoordinator.onAuthCompleted = { [weak self] in
+            self?.showHomeFlow()
+        }
+        children = [authCoordinator]
+        authCoordinator.start()
+    }
+
+    // auth flowu bitince home ' a geçiriyor auth navigation stack’i bırakılıyor, yerine home geliyor
+    private func showHomeFlow() {
+        let homeCoordinator = HomeCoordinator()
+        children = [homeCoordinator]
+        homeCoordinator.start()
+        window.rootViewController = homeCoordinator.rootViewController
     }
 }
+
+
+/* auth'dan home geçişi push ile değil
+ window.rootViewController değişerek oluyor*/

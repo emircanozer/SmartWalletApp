@@ -1,7 +1,7 @@
 import UIKit
 
 class WelcomeViewController: UIViewController {
-    var onLoginTap: (() -> Void)?
+    var onLoginTap: (() -> Void)? // Benim login’e basılınca çalışacak bir işim olabilir
     var onRegisterTap: (() -> Void)?
 
     private let contentView = WelcomeContentView()
@@ -30,7 +30,7 @@ extension WelcomeViewController {
     }
 
     @objc func handleLoginTap() {
-        onLoginTap?()
+        onLoginTap?() // Eğer bana dışarıdan bir işlem verilmişse, çalıştır kordinatörde veriliyor işlem genelde
     }
 
     @objc func handleRegisterTap() {
