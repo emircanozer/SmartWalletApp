@@ -5,25 +5,29 @@ class AuthCoordinator: Coordinator {
     var onAuthCompleted: (() -> Void)?
 
     private let navigationController: UINavigationController
+    private let authService: AuthService
+    private let tokenStore: TokenStore
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, authService: AuthService, tokenStore: TokenStore) {
         self.navigationController = navigationController
+        self.authService = authService
+        self.tokenStore = tokenStore
     }
  
     func start() {
         let viewController = WelcomeViewController()
-        viewController.onLoginTap = { [weak self] in  // clousure prop bu şekilde kulalnılır burada propun içi dolduruldu yani işlem verildi sonra da herhangi bir butonun içinide tanımlandı kullanıldı login sayfasına gitti butona basılınca 
+        viewController.onLoginTap = { [weak self] in
             self?.showLogin()
         }
         viewController.onRegisterTap = { [weak self] in
             self?.showRegister()
         }
         navigationController.setViewControllers([viewController], animated: false)
-        // push yerine set kullanmamızın sebebi stack yığınını sıfırlamak istiyoruz yani kullanıcıya geri dönüş butonu çıkmasın geri dönemesin set kullanılan ekranlar genelde ilk açılan ekranlar olur stacke yerleştirmek gibi düşün
     }
 
     private func showLogin() {
-        let viewController = LoginViewController()
+        let viewModel = LoginViewModel(authService: authService, tokenStore: tokenStore)
+        let viewController = LoginViewController(viewModel: viewModel)
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
         }
@@ -33,16 +37,21 @@ class AuthCoordinator: Coordinator {
         viewController.onForgotPassword = { [weak self] in
             self?.showResetPassword()
         }
+        viewController.onAuthenticated = { [weak self] in
+            self?.onAuthCompleted?()
+        }
         navigationController.pushViewController(viewController, animated: true)
     }
 
     private func showRegister() {
-        let viewController = RegisterViewController()
+        let viewModel = RegisterViewModel(authService: authService)
+        let viewController = RegisterViewController(viewModel: viewModel)
         viewController.onLogin = { [weak self] in
             self?.routeToLoginFromRegister()
         }
-        viewController.onVerify = { [weak self] in
-            self?.showVerificationCode()
+        //viewcontrollerdan(registerdan) içi doldurulan gelen veriyi(context) kordinatöra veriyorum
+        viewController.onVerify = { [weak self] context in
+            self?.showVerificationCode(context: context)
         }
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -59,22 +68,23 @@ class AuthCoordinator: Coordinator {
     }
 
     private func showResetPassword() {
-        let viewController = ResetPasswordViewController()
+        let viewModel = ResetPasswordViewModel(authService: authService)
+        let viewController = ResetPasswordViewController(viewModel: viewModel)
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
-            // on back propunun içini pop yani geri dön ile doldurduk diğer sayfanın içinde ise handle tap fonkunda kullandık
-
         }
         navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showVerificationCode() {
-        let viewController = VerificationCodeViewController()
+    //registerin verdiği veriyi alıyor parametre olarak diğer ekrana(viewmodele) taşıyor
+    private func showVerificationCode(context: PendingRegistrationContext) {
+        let viewModel = VerificationCodeViewModel(context: context, authService: authService, tokenStore: tokenStore)
+        let viewController = VerificationCodeViewController(viewModel: viewModel)
         viewController.onBackToLogin = { [weak self] in
             self?.routeToLoginFromVerification()
         }
-        viewController.onVerify = { [weak self] in
-            self?.showIbanCreated()
+        viewController.onVerify = { [weak self] verifiedContext in
+            self?.showIbanCreated(context: verifiedContext)
         }
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -89,11 +99,12 @@ class AuthCoordinator: Coordinator {
         showLogin()
     }
 
-    private func showIbanCreated() {
-        let viewController = IbanCreatedViewController()
+    private func showIbanCreated(context: PendingRegistrationContext) { 
+        let viewController = IbanCreatedViewController(ibanValueText: context.registration.iban)
         viewController.onContinue = { [weak self, weak viewController] in
             viewController?.dismiss(animated: true) {
-                self?.onAuthCompleted?() //kordinatör olarak auth ile işimiz bitti home 'a geçiyiriyoruz 
+                print("DEBUG Auth: auth akisi tamamlandi, home flow'a geciliyor.")
+                self?.onAuthCompleted?()
             }
         }
         viewController.modalPresentationStyle = .pageSheet

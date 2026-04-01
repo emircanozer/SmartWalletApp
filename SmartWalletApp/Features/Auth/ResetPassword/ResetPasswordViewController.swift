@@ -3,6 +3,7 @@ import UIKit
 class ResetPasswordViewController: UIViewController {
     var onBack: (() -> Void)?
 
+    private let viewModel: ResetPasswordViewModel
     private let contentView = UIView()
     private let headerStack = UIStackView()
     private let backButton = UIButton(type: .system)
@@ -21,7 +22,8 @@ class ResetPasswordViewController: UIViewController {
     private let emailPlaceholderText = "e-posta@adresiniz.com"
     private let buttonTitleText = "Sıfırlama Linki Gönder  >"
 
-    init() {
+    init(viewModel: ResetPasswordViewModel) {
+        self.viewModel = viewModel
         self.emailField = AuthInputFieldView(
             title: emailTitleText,
             placeholder: emailPlaceholderText,
@@ -41,6 +43,7 @@ class ResetPasswordViewController: UIViewController {
         setupLayout()
         applyContent()
         bindActions()
+        bindViewModel()
     }
 
     override func viewDidLayoutSubviews() {
@@ -95,6 +98,10 @@ extension ResetPasswordViewController {
         backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
         backgroundTapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(backgroundTapGesture)
+
+        emailField.setKeyboardType(.emailAddress)
+        emailField.setTextContentType(.emailAddress)
+        emailField.setAutocapitalizationType(.none)
     }
 
     func buildHierarchy() {
@@ -191,6 +198,36 @@ extension ResetPasswordViewController {
 
     func bindActions() {
         backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(handleSendTap), for: .touchUpInside)
+    }
+
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] state in
+            guard let self else { return }
+            switch state {
+            case .idle:
+                self.setLoading(false)
+            case .loading:
+                self.setLoading(true)
+            case .success(let message):
+                self.setLoading(false)
+                self.showAlert(message: message)
+            case .failure(let message):
+                self.setLoading(false)
+                self.showAlert(message: message)
+            }
+        }
+    }
+
+    func setLoading(_ isLoading: Bool) {
+        sendButton.isEnabled = !isLoading
+        sendButton.alpha = isLoading ? 0.7 : 1
+    }
+
+    func showAlert(message: String) {
+        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+        present(alert, animated: true)
     }
 
     @objc func handleBackgroundTap() {
@@ -199,5 +236,11 @@ extension ResetPasswordViewController {
 
     @objc func handleBackTap() {
         onBack?()
+    }
+
+    @objc func handleSendTap() {
+        Task {
+            await viewModel.sendResetLink(email: emailField.trimmedText)
+        }
     }
 }

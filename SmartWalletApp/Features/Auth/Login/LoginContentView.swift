@@ -2,7 +2,9 @@ import UIKit
 
 class LoginContentView: UIView {
     let backButton = UIButton(type: .system)
+    let emailField: AuthInputFieldView
     let passwordField: AuthInputFieldView
+    let loginButton = UIButton(type: .system)
     let registerButton = UIButton(type: .system)
 
     private let contentContainer = UIView()
@@ -16,8 +18,6 @@ class LoginContentView: UIView {
     private let heroIconView = UIImageView()
     private let subtitleLabel = UILabel()
     private let cardView = UIView()
-    private let emailField: AuthInputFieldView
-    private let loginButton = UIButton(type: .system)
     private let footerStack = UIStackView()
     private let footerLabel = UILabel()
     private let backgroundTapGesture = UITapGestureRecognizer()
@@ -123,6 +123,11 @@ extension LoginContentView {
         backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
         backgroundTapGesture.cancelsTouchesInView = false
         addGestureRecognizer(backgroundTapGesture)
+
+        emailField.setKeyboardType(.emailAddress)
+        emailField.setTextContentType(.emailAddress)
+        emailField.setAutocapitalizationType(.none)
+        passwordField.setTextContentType(.password)
     }
 
     func buildHierarchy() {

@@ -1,7 +1,10 @@
 import UIKit
 
 class RegisterContentView: UIView {
+    let fullNameField: AuthInputFieldView
+    let emailField: AuthInputFieldView
     let passwordField: AuthInputFieldView
+    let confirmPasswordField: AuthInputFieldView
     let checkboxButton = UIButton(type: .system)
     let registerButton = UIButton(type: .system)
     let loginButton = UIButton(type: .system)
@@ -12,9 +15,6 @@ class RegisterContentView: UIView {
     private let iconView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
-    private let fullNameField: AuthInputFieldView
-    private let emailField: AuthInputFieldView
-    private let confirmPasswordField: AuthInputFieldView
     private let termsRow = UIStackView()
     private let termsLabel = UILabel()
     private let footerStack = UIStackView()
@@ -132,6 +132,14 @@ extension RegisterContentView {
         backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
         backgroundTapGesture.cancelsTouchesInView = false
         addGestureRecognizer(backgroundTapGesture)
+
+        fullNameField.setTextContentType(.name)
+        fullNameField.setAutocapitalizationType(.words)
+        emailField.setKeyboardType(.emailAddress)
+        emailField.setTextContentType(.emailAddress)
+        emailField.setAutocapitalizationType(.none)
+        passwordField.setTextContentType(.newPassword)
+        confirmPasswordField.setTextContentType(.newPassword)
     }
 
     func buildHierarchy() {

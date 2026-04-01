@@ -6,15 +6,26 @@ class AppCoordinator: Coordinator {
 
     private let window: UIWindow
     private let authNavigationController = UINavigationController()
-    // auth ekranları push/pop ile ilerliyor. Bunun için bir UINavigationController gerekiyor
+    // token varsa home yoksa auth , login başarılıysa appkordinator > homekrodinator
+    private let tokenStore = TokenStore() //keychain wrapper
+    private lazy var apiClient = APIClient(tokenProvider: { [weak self] in // performans lazy ilk kullanıldığında oluşturulur
+        self?.tokenStore.accessToken // APIClient her request attığında “token var mı?” diye sorar
+       
+    })
+    private lazy var authService = AuthService(apiClient: apiClient)
 
     init(window: UIWindow) {
         self.window = window
     }
 
-    //app açılınca 
+    //   //token kontrolü flowu belirler
     func start() {
-        showAuthFlow()
+        try? tokenStore.clearTokens() // tokenleri siliyor
+        if tokenStore.accessToken?.isEmpty == false {
+            showHomeFlow()
+        } else {
+            showAuthFlow()
+        }
     }
 
     private func showAuthFlow() {
@@ -24,7 +35,11 @@ class AppCoordinator: Coordinator {
         window.rootViewController = authNavigationController
         window.makeKeyAndVisible()
 
-        let authCoordinator = AuthCoordinator(navigationController: authNavigationController)
+        let authCoordinator = AuthCoordinator(
+            navigationController: authNavigationController,
+            authService: authService,
+            tokenStore: tokenStore
+        )
         authCoordinator.onAuthCompleted = { [weak self] in
             self?.showHomeFlow()
         }
@@ -32,15 +47,13 @@ class AppCoordinator: Coordinator {
         authCoordinator.start()
     }
 
-    // auth flowu bitince home ' a geçiriyor auth navigation stack’i bırakılıyor, yerine home geliyor
     private func showHomeFlow() {
         let homeCoordinator = HomeCoordinator()
         children = [homeCoordinator]
         homeCoordinator.start()
+        window.backgroundColor = .white
         window.rootViewController = homeCoordinator.rootViewController
+        window.makeKeyAndVisible()
+        print("DEBUG App: home flow baslatildi, dashboard gosteriliyor.")
     }
 }
-
-
-/* auth'dan home geçişi push ile değil
- window.rootViewController değişerek oluyor*/

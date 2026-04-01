@@ -2,14 +2,16 @@ import UIKit
 
 class VerificationCodeViewController: UIViewController {
     var onBackToLogin: (() -> Void)?
-    var onVerify: (() -> Void)?
+    var onVerify: ((PendingRegistrationContext) -> Void)?
 
     private var timer: Timer?
     private let timerSeconds = 30
     private var remainingSeconds: Int
+    private let viewModel: VerificationCodeViewModel
     private let contentView = VerificationCodeContentView()
 
-    init() {
+    init(viewModel: VerificationCodeViewModel) {
+        self.viewModel = viewModel
         self.remainingSeconds = timerSeconds
         super.init(nibName: nil, bundle: nil)
     }
@@ -26,6 +28,7 @@ class VerificationCodeViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
         bindActions()
+        bindViewModel()
         observeKeyboard()
         startTimer()
     }
@@ -55,6 +58,44 @@ extension VerificationCodeViewController {
             self?.updateVerifyButtonState()
         }
         updateVerifyButtonState()
+    }
+
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] state in
+            guard let self else { return }
+            switch state {
+            case .idle:
+                self.setLoading(false)
+            case .loading:
+                self.setLoading(true)
+            case .success(let context, _):
+                self.setLoading(false)
+                self.onVerify?(context)
+            case .resendSuccess(let message):
+                self.setLoading(false)
+                self.contentView.codeInputView.clear()
+                self.startTimer()
+                self.contentView.codeInputView.focus()
+                self.updateVerifyButtonState()
+                self.showAlert(message: message)
+            case .failure(let message):
+                self.setLoading(false)
+                self.showAlert(message: message)
+            }
+        }
+    }
+
+    func setLoading(_ isLoading: Bool) {
+        contentView.verifyButton.isEnabled = !isLoading
+        contentView.verifyButton.alpha = isLoading ? 0.7 : 1
+        contentView.resendButton.isEnabled = !isLoading
+        contentView.resendButton.alpha = isLoading ? 0.7 : 1
+    }
+
+    func showAlert(message: String) {
+        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+        present(alert, animated: true)
     }
 
     func observeKeyboard() {
@@ -103,6 +144,7 @@ extension VerificationCodeViewController {
 
     func updateVerifyButtonState() {
         let isEnabled = contentView.codeInputView.code.count == 6
+        contentView.verifyButton.isEnabled = isEnabled
         contentView.verifyButton.alpha = isEnabled ? 1 : 0.65
     }
 
@@ -111,15 +153,16 @@ extension VerificationCodeViewController {
     }
 
     @objc func handleResendTap() {
-        contentView.codeInputView.clear()
-        startTimer()
-        contentView.codeInputView.focus()
-        updateVerifyButtonState()
+        Task {
+            await viewModel.resendCode()
+        }
     }
 
     @objc func handleVerifyTap() {
         guard contentView.codeInputView.code.count == 6 else { return }
-        onVerify?()
+        Task {
+            await viewModel.verify(code: contentView.codeInputView.code)
+        }
     }
 
     @objc func handleKeyboardWillShow(_ notification: Notification) {

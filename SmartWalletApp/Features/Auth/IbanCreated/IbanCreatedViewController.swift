@@ -3,6 +3,8 @@ import UIKit
 class IbanCreatedViewController: UIViewController {
     var onContinue: (() -> Void)?
 
+    private let ibanValueText: String
+
     private let contentView = UIView()
     private let cardView = UIView()
     private let iconWrapper = UIView()
@@ -19,11 +21,11 @@ class IbanCreatedViewController: UIViewController {
     private let titleText = "Hesabınız Oluşturuldu"
     private let subtitleText = "Size özel IBAN başarıyla oluşturuldu"
     private let ibanTitleText = "YENİ IBAN ADRESİNİZ"
-    private let ibanValueText = "TR123456789012345678912345"
     private let ibanDescriptionText = "Bu IBAN ile para transferi yapabilirsiniz"
     private let buttonTitleText = "Devam Et  →"
 
-    init() {
+    init(ibanValueText: String) {
+        self.ibanValueText = ibanValueText
         super.init(nibName: nil, bundle: nil)
     }
 

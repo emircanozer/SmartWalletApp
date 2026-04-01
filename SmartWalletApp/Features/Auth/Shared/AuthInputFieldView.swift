@@ -1,7 +1,5 @@
 import UIKit
 
-//custom view yapmak için ortak kullanım için burada tanımladık
-
 class AuthInputFieldView: UIView {
     private let titleRow = UIStackView()
     private let titleLabel = UILabel()
@@ -38,6 +36,14 @@ class AuthInputFieldView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    var text: String {
+        textField.text ?? ""
+    }
+
+    var trimmedText: String {
+        text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     func setTopActionTarget(_ target: Any?, action: Selector) {
         topActionButton.addTarget(target, action: action, for: .touchUpInside)
     }
@@ -48,6 +54,22 @@ class AuthInputFieldView: UIView {
 
     func toggleSecureEntry() {
         textField.isSecureTextEntry.toggle()
+    }
+
+    func setKeyboardType(_ keyboardType: UIKeyboardType) {
+        textField.keyboardType = keyboardType
+    }
+
+    func setTextContentType(_ textContentType: UITextContentType?) {
+        textField.textContentType = textContentType
+    }
+
+    func setAutocapitalizationType(_ type: UITextAutocapitalizationType) {
+        textField.autocapitalizationType = type
+    }
+
+    func setText(_ text: String) {
+        textField.text = text
     }
 
     private func setupView(placeholder: String, iconName: String, trailingIconName: String?, isSecure: Bool) {
