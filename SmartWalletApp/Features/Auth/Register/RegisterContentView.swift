@@ -24,7 +24,7 @@ class RegisterContentView: UIView {
     private let titleText = "Hesap Oluştur"
     private let subtitleText = "SmartWallet AI"
     private let fullNameTitleText = "Ad Soyad"
-    private let fullNamePlaceholderText = "Arda Furkan Sararmış"
+    private let fullNamePlaceholderText = "Adınız Soyadınız"
     private let emailTitleText = "E-posta"
     private let emailPlaceholderText = "ornek@mail.com"
     private let passwordTitleText = "Şifre"

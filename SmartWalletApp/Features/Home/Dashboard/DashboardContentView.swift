@@ -3,6 +3,7 @@ import UIKit
 class DashboardContentView: UIView {
     let tableView = UITableView(frame: .zero, style: .plain)
     let copyButton = UIButton(type: .system)
+    let seeAllButton = UIButton(type: .system)
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
@@ -16,22 +17,18 @@ class DashboardContentView: UIView {
     private let balanceCurrencyLabel = UILabel()
     private let quickActionsStack = UIStackView()
     private let sectionTitleLabel = UILabel()
-    private let seeAllButton = UIButton(type: .system)
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
+    private var tableHeightConstraint: NSLayoutConstraint?
 
     private let headerTitleText = "SmartWallet AI"
-    private let greetingText = "Merhaba, Arda"
-    private let ibanText = "TR12 3456 7890 1234 5678 90"
     private let balanceTitleText = "TOPLAM BAKİYE"
-    private let balanceValueText = "150.000"
-    private let balanceCurrencyText = "TL"
     private let sectionTitleText = "Son İşlemler"
     private let seeAllText = "Tümünü Gör"
-    // uicontrol olarak tuttuk arraye attık 
     private let quickActions: [DashboardQuickAction] = [
-        .init(title: "Para Gönder", iconName: "paperplane", isHighlighted: false),
-        .init(title: "Para Al", iconName: "banknote", isHighlighted: false),
-        .init(title: "AI Asistan", iconName: "person.crop.circle.badge.questionmark", isHighlighted: true),
-        .init(title: "Geçmiş", iconName: "clock.arrow.circlepath", isHighlighted: false)
+        .init(type: .sendMoney, title: "Para Gönder", iconName: "paperplane", isHighlighted: false),
+        .init(type: .requestMoney, title: "Para Al", iconName: "doc.text", isHighlighted: false),
+        .init(type: .aiAssistant, title: "AI Asistan", iconName: "creditcard", isHighlighted: true),
+        .init(type: .analysis, title: "Analiz", iconName: "chart.bar.fill", isHighlighted: false)
     ]
 
     override init(frame: CGRect) {
@@ -79,8 +76,8 @@ extension DashboardContentView {
         copyButton.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
         copyButton.tintColor = UIColor(white: 1.0, alpha: 0.7)
 
-        balanceTitleLabel.font = .systemFont(ofSize: 11, weight: .bold)
-        balanceTitleLabel.textColor = UIColor(white: 1.0, alpha: 0.3)
+        balanceTitleLabel.font = .systemFont(ofSize: 15, weight: .bold)
+        balanceTitleLabel.textColor = UIColor(white: 1.0, alpha: 0.62)
         balanceTitleLabel.numberOfLines = 1
 
         balanceValueLabel.font = .systemFont(ofSize: 52, weight: .bold)
@@ -100,11 +97,14 @@ extension DashboardContentView {
         seeAllButton.setTitleColor(UIColor(red: 0.49, green: 0.43, blue: 0.2, alpha: 1.0), for: .normal)
         seeAllButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
 
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.color = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.isScrollEnabled = false
-        tableView.rowHeight = 96
+        tableView.rowHeight = 122
         tableView.register(DashboardTransactionCell.self, forCellReuseIdentifier: DashboardTransactionCell.reuseIdentifier)
     }
 
@@ -125,6 +125,7 @@ extension DashboardContentView {
         contentContainer.addSubview(sectionTitleLabel)
         contentContainer.addSubview(seeAllButton)
         contentContainer.addSubview(tableView)
+        contentContainer.addSubview(loadingIndicator)
     }
 
     func setupLayout() {
@@ -143,10 +144,13 @@ extension DashboardContentView {
             quickActionsStack,
             sectionTitleLabel,
             seeAllButton,
-            tableView
+            tableView,
+            loadingIndicator
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
+
+        tableHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: 288)
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
@@ -210,24 +214,48 @@ extension DashboardContentView {
             tableView.topAnchor.constraint(equalTo: sectionTitleLabel.bottomAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 0),
             tableView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: 0),
-            tableView.heightAnchor.constraint(equalToConstant: 288),
-            tableView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -20)
+            tableView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -20),
+
+            loadingIndicator.centerXAnchor.constraint(equalTo: balanceCard.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: balanceCard.centerYAnchor)
         ])
+
+        tableHeightConstraint?.isActive = true
     }
 
     func applyContent() {
         headerTitleLabel.text = headerTitleText
-        greetingLabel.text = greetingText
-        ibanLabel.text = ibanText
         balanceTitleLabel.text = balanceTitleText
-        balanceValueLabel.text = balanceValueText
-        balanceCurrencyLabel.text = balanceCurrencyText
         sectionTitleLabel.text = sectionTitleText
         seeAllButton.setTitle(seeAllText, for: .normal)
+        greetingLabel.text = "Merhaba"
+        ibanLabel.text = "-"
+        balanceValueLabel.text = "0"
+        balanceCurrencyLabel.text = "TL"
 
         quickActions.forEach { action in
             quickActionsStack.addArrangedSubview(DashboardQuickActionControl(item: action))
         }
+    }
+
+    func applyData(_ data: DashboardViewData) {
+        greetingLabel.text = data.greetingText
+        ibanLabel.text = data.ibanText
+        balanceValueLabel.text = data.balanceText
+        balanceCurrencyLabel.text = data.currencyText
+        updateTransactionsHeight(count: data.previewTransactions.count)
+    }
+
+    func setLoading(_ isLoading: Bool) {
+        if isLoading {
+            loadingIndicator.startAnimating()
+        } else {
+            loadingIndicator.stopAnimating()
+        }
+    }
+
+    func updateTransactionsHeight(count: Int) {
+        tableHeightConstraint?.constant = count == 0 ? 0 : CGFloat(count) * 122
     }
 
     func applyCornerRadius() {
