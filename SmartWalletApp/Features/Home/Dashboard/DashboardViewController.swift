@@ -1,24 +1,40 @@
 import UIKit
 
 class DashboardViewController: UIViewController {
+    var onSeeAllTransactions: (([DashboardTransaction]) -> Void)?
+
+    private let viewModel: DashboardViewModel
     private let contentView = DashboardContentView()
     private let toastLabel = UILabel()
-    // mock verileri
-    private let transactions: [DashboardTransaction] = [
-        .init(category: .market, dateText: "1 Haziran", amountText: "-₺5.000", isIncome: false),
-        .init(category: .salary, dateText: "1 Haziran", amountText: "+₺50.000", isIncome: true),
-        .init(category: .restaurant, dateText: "28 Mayıs", amountText: "-₺1.200", isIncome: false)
-    ]
+    private var previewTransactions: [DashboardTransaction] = []
+    private var allTransactions: [DashboardTransaction] = []
+    private var currentIban: String = ""
+
+    init(viewModel: DashboardViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func loadView() {
-        view = contentView // tasarımı komple aldık
+        view = contentView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         bindTableView()
         bindActions()
+        bindViewModel()
         configureToast()
+        loadDashboard()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func viewDidLayoutSubviews() {
@@ -35,6 +51,36 @@ extension DashboardViewController {
 
     func bindActions() {
         contentView.copyButton.addTarget(self, action: #selector(handleCopyTap), for: .touchUpInside)
+        contentView.seeAllButton.addTarget(self, action: #selector(handleSeeAllTap), for: .touchUpInside)
+    }
+
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] state in
+            guard let self else { return }
+
+            switch state {
+            case .idle:
+                self.contentView.setLoading(false)
+            case .loading:
+                self.contentView.setLoading(true)
+            case .loaded(let data):
+                self.contentView.setLoading(false)
+                self.previewTransactions = data.previewTransactions
+                self.allTransactions = data.allTransactions
+                self.currentIban = data.ibanText
+                self.contentView.applyData(data)
+                self.contentView.tableView.reloadData()
+            case .failure(let message):
+                self.contentView.setLoading(false)
+                self.showAlert(message: message)
+            }
+        }
+    }
+
+    func loadDashboard() {
+        Task {
+            await viewModel.loadDashboard()
+        }
     }
 
     func configureToast() {
@@ -69,16 +115,27 @@ extension DashboardViewController {
         }
     }
 
+    func showAlert(message: String) {
+        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+        present(alert, animated: true)
+    }
+
     @objc func handleCopyTap() {
-        UIPasteboard.general.string = "TR12 3456 7890 1234 5678 90"
+        guard !currentIban.isEmpty else { return }
+        UIPasteboard.general.string = currentIban
         showToast()
+    }
+
+    @objc func handleSeeAllTap() {
+        guard !allTransactions.isEmpty else { return }
+        onSeeAllTransactions?(allTransactions)
     }
 }
 
-
 extension DashboardViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        transactions.count
+        previewTransactions.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -86,17 +143,16 @@ extension DashboardViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
-        cell.configure(with: transactions[indexPath.row])
+        cell.configure(with: previewTransactions[indexPath.row])
         return cell
     }
 }
 
-extension DashboardViewController: UITableViewDelegate { // row hight
+extension DashboardViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        96
+        122
     }
 
-    //seçince highlight kalmaması için
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }

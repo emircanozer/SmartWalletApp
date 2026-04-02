@@ -41,7 +41,6 @@ class WelcomeContentView: UIView {
     private let welcomeSubtitleText = "Finansal asistanınız her an yanınızda."
     private let primaryButtonTitleText = "Giriş Yap"
     private let secondaryButtonTitleText = "Kayıt Ol"
-    private let tertiaryButtonTitleText = "Dijital Şifre Al"
     private let shortcuts: [Shortcut] = [
         .init(title: "AI Analiz", iconName: "brain.head.profile"),
         .init(title: "Smart Limit", iconName: "gauge"),
@@ -310,7 +309,7 @@ extension WelcomeContentView {
         subtitleLabel.text = welcomeSubtitleText
         primaryButton.setTitle(primaryButtonTitleText, for: .normal)
         secondaryButton.setTitle(secondaryButtonTitleText, for: .normal)
-        tertiaryButton.setTitle(tertiaryButtonTitleText, for: .normal)
+       
 
         shortcuts.forEach { shortcut in
             shortcutsStack.addArrangedSubview(ShortcutItemView(title: shortcut.title, iconName: shortcut.iconName))

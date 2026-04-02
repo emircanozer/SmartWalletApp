@@ -13,6 +13,7 @@ class AppCoordinator: Coordinator {
        
     })
     private lazy var authService = AuthService(apiClient: apiClient)
+    private lazy var walletService = WalletService(apiClient: apiClient)
 
     init(window: UIWindow) {
         self.window = window
@@ -48,7 +49,7 @@ class AppCoordinator: Coordinator {
     }
 
     private func showHomeFlow() {
-        let homeCoordinator = HomeCoordinator()
+        let homeCoordinator = HomeCoordinator(walletService: walletService)
         children = [homeCoordinator]
         homeCoordinator.start()
         window.backgroundColor = .white
