@@ -1,5 +1,10 @@
 import Foundation
 
+/* service’ten gelen ham response’u alıyor
+ UI’ın kullanacağı DashboardViewData ve DashboardTransaction modeline çeviriyor*/
+
+
+
 enum DashboardViewState {
     case idle
     case loading
@@ -50,9 +55,10 @@ private extension DashboardViewModel {
         )
     }
 
-    //BACKENDEKİ FOOD APPTEKİ .food'a dönüştü 
+    //BACKENDEKİ ham modeli ui modele çevirdi çünkü ekranın veya cellin ham responsedan daha fazla bilgiye ihtiyacı var  ** önemli
     func mapTransaction(_ transaction: WalletTransactionResponse) -> DashboardTransaction {
         let category = TransactionCategory(backendValue: transaction.category)
+        let badgeTitle = category.badgeTitle(isIncome: transaction.isIncoming)
         let amountPrefix = transaction.isIncoming ? "+" : "-"
         let amountText = "\(amountPrefix)\(formatAmount(transaction.amount))"
         let date = parseDate(transaction.transactionTime)
@@ -61,10 +67,10 @@ private extension DashboardViewModel {
         return DashboardTransaction(
             id: transaction.id,
             title: category.title,
-            subtitle: trimmedDescription.isEmpty ? category.badgeTitle : trimmedDescription,
+            subtitle: trimmedDescription.isEmpty ? badgeTitle : trimmedDescription,
             date: date,
             dateText: formatDate(date),
-            categoryBadgeText: category.badgeTitle,
+            categoryBadgeText: badgeTitle,
             amount: transaction.amount,
             amountText: amountText,
             isIncome: transaction.isIncoming,

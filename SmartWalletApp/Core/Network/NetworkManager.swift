@@ -32,9 +32,9 @@ final class APIClient {
      */
     
     func send<Response: Decodable>(_ endpoint: Endpoint, as type: Response.Type = Response.self) async throws -> Response {
-        let request = try makeRequest(from: endpoint)
+        let request = try makeRequest(from: endpoint) // request oluşturuyor
         logRequest(request) // console için önemsiz
-        let (data, response) = try await session.data(for: request) // urlsession istek atıyor
+        let (data, response) = try await session.data(for: request) // sonra urlsession istek atıyor
         let httpResponse = try validate(response: response)
         logResponse(data: data, response: httpResponse)
 
@@ -51,7 +51,7 @@ final class APIClient {
         }
 
         do {
-            // gelen data verisini generic olan response tipine çeviriyoruz
+            // gelen data verisini generic olan response tipine çeviriyoruz (servis de bu fonk kullanılırken hangi response modeli döndürülmek istenirse o gelir)
             return try decoder.decode(Response.self, from: data)
         } catch {
             print("DEBUG Network: decode hatasi path=\(endpoint.path) responseType=\(Response.self) error=\(error.localizedDescription)")

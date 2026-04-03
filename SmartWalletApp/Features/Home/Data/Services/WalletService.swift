@@ -2,12 +2,14 @@ import Foundation
 
 final class WalletService {
     private let apiClient: APIClient
+    private let encoder = JSONEncoder()
 
     init(apiClient: APIClient) {
         self.apiClient = apiClient
     }
 
-    // auth daki gibi tanımladığımız fonk generic olduğu için burada da aynı apliclent fonsiyonunu kullanıdık 
+    // auth daki gibi tanımladığımız fonk generic olduğu için burada da aynı apliclent fonsiyonunu kullanıdık
+    // seçilen endpointe göre url ve return ettiği yani döndürmek istediği response göre ayrı oluyor
     func fetchMyWallet() async throws -> MyWalletResponse {
         try await apiClient.send(WalletEndpoint.myWallet, as: MyWalletResponse.self)
     }
@@ -15,11 +17,33 @@ final class WalletService {
     func fetchTransactions(walletId: String) async throws -> [WalletTransactionResponse] {
         try await apiClient.send(WalletEndpoint.transactions(walletId: walletId), as: [WalletTransactionResponse].self)
     }
+
+    func fetchRecipients() async throws -> [WalletRecipientResponse] {
+        try await apiClient.send(WalletEndpoint.recipients, as: [WalletRecipientResponse].self)
+    }
+
+    func fetchOwnerName(iban: String) async throws -> WalletOwnerNameResponse {
+        try await apiClient.send(WalletEndpoint.ownerName(iban: iban), as: WalletOwnerNameResponse.self)
+    }
+
+    func createContact(request: CreateWalletContactRequest) async throws {
+        let body = try encoder.encode(request)
+        try await apiClient.send(WalletEndpoint.contacts(body: body))
+    }
+
+    func transfer(request: WalletTransferRequest) async throws -> WalletTransferResponse {
+        let body = try encoder.encode(request)
+        return try await apiClient.send(WalletEndpoint.transfer(body: body), as: WalletTransferResponse.self)
+    }
 }
 
 private enum WalletEndpoint: Endpoint {
     case myWallet
     case transactions(walletId: String)
+    case recipients
+    case ownerName(iban: String)
+    case contacts(body: Data)
+    case transfer(body: Data)
 
     var path: String {
         switch self {
@@ -27,14 +51,38 @@ private enum WalletEndpoint: Endpoint {
             return "/api/Wallets/mywallet"
         case .transactions(let walletId):
             return "/api/Wallets/\(walletId)/transactions"
+        case .recipients:
+            return "/api/Wallets/recipients"
+        case .ownerName(let iban):
+            return "/api/Wallets/iban/\(iban)/owner-name"
+        case .contacts:
+            return "/api/Wallets/contacts"
+        case .transfer:
+            return "/api/Wallets/transfer"
         }
     }
 
     var method: HTTPMethod {
-        .get
+        switch self {
+        case .contacts, .transfer:
+            return .post
+        default:
+            return .get
+        }
     }
 
     var requiresAuthorization: Bool {
         true
+    }
+
+    var body: Data? {
+        switch self {
+        case .contacts(let body):
+            return body
+        case .transfer(let body):
+            return body
+        default:
+            return nil
+        }
     }
 }

@@ -1,11 +1,17 @@
 import UIKit
 
+/* ViewModel state’ini dinliyor
+ loading / loaded / failure durumlarına göre UI’ı güncelliyor
+ */
+
 class DashboardViewController: UIViewController {
     var onSeeAllTransactions: (([DashboardTransaction]) -> Void)?
+    var onSendMoneyTap: (() -> Void)?
 
     private let viewModel: DashboardViewModel
     private let contentView = DashboardContentView()
     private let toastLabel = UILabel()
+    private let refreshControl = UIRefreshControl()
     private var previewTransactions: [DashboardTransaction] = []
     private var allTransactions: [DashboardTransaction] = []
     private var currentIban: String = ""
@@ -28,13 +34,14 @@ class DashboardViewController: UIViewController {
         bindTableView()
         bindActions()
         bindViewModel()
+        configureRefreshControl()
         configureToast()
-        loadDashboard()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        loadDashboard()
     }
 
     override func viewDidLayoutSubviews() {
@@ -52,6 +59,19 @@ extension DashboardViewController {
     func bindActions() {
         contentView.copyButton.addTarget(self, action: #selector(handleCopyTap), for: .touchUpInside)
         contentView.seeAllButton.addTarget(self, action: #selector(handleSeeAllTap), for: .touchUpInside)
+        contentView.onQuickActionTap = { [weak self] actionType in
+            switch actionType {
+            case .sendMoney:
+                self?.onSendMoneyTap?()
+            default:
+                break
+            }
+        }
+    }
+
+    func configureRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
+        contentView.setRefreshControl(refreshControl)
     }
 
     func bindViewModel() {
@@ -61,10 +81,14 @@ extension DashboardViewController {
             switch state {
             case .idle:
                 self.contentView.setLoading(false)
+                self.refreshControl.endRefreshing()
             case .loading:
-                self.contentView.setLoading(true)
+                if !self.refreshControl.isRefreshing {
+                    self.contentView.setLoading(true)
+                }
             case .loaded(let data):
                 self.contentView.setLoading(false)
+                self.refreshControl.endRefreshing()
                 self.previewTransactions = data.previewTransactions
                 self.allTransactions = data.allTransactions
                 self.currentIban = data.ibanText
@@ -72,6 +96,7 @@ extension DashboardViewController {
                 self.contentView.tableView.reloadData()
             case .failure(let message):
                 self.contentView.setLoading(false)
+                self.refreshControl.endRefreshing()
                 self.showAlert(message: message)
             }
         }
@@ -131,6 +156,11 @@ extension DashboardViewController {
         guard !allTransactions.isEmpty else { return }
         onSeeAllTransactions?(allTransactions)
     }
+
+    @objc func handlePullToRefresh() {
+        loadDashboard()
+    }
+
 }
 
 extension DashboardViewController: UITableViewDataSource {

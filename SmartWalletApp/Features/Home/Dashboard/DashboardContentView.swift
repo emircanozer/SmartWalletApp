@@ -4,6 +4,7 @@ class DashboardContentView: UIView {
     let tableView = UITableView(frame: .zero, style: .plain)
     let copyButton = UIButton(type: .system)
     let seeAllButton = UIButton(type: .system)
+    var onQuickActionTap: ((DashboardQuickActionType) -> Void)?
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
@@ -45,6 +46,10 @@ class DashboardContentView: UIView {
 }
 
 extension DashboardContentView {
+    func setRefreshControl(_ refreshControl: UIRefreshControl) {
+        scrollView.refreshControl = refreshControl
+    }
+
     func configureView() {
         backgroundColor = .white
 
@@ -234,8 +239,14 @@ extension DashboardContentView {
         balanceCurrencyLabel.text = "TL"
 
         quickActions.forEach { action in
-            quickActionsStack.addArrangedSubview(DashboardQuickActionControl(item: action))
+            let control = DashboardQuickActionControl(item: action)
+            control.addTarget(self, action: #selector(handleQuickActionTap(_:)), for: .touchUpInside)
+            quickActionsStack.addArrangedSubview(control)
         }
+    }
+
+    @objc func handleQuickActionTap(_ sender: DashboardQuickActionControl) {
+        onQuickActionTap?(sender.actionType)
     }
 
     func applyData(_ data: DashboardViewData) {
