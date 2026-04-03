@@ -9,12 +9,10 @@ class TransactionsListContentView: UIView {
     let allFilterButton = UIButton(type: .system)
     let incomeFilterButton = UIButton(type: .system)
     let expenseFilterButton = UIButton(type: .system)
-    let transferFilterButton = UIButton(type: .system)
 
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let filtersStack = UIStackView()
-    private let filterCard = UIView()
     private let summaryCard = UIView()
     private let summaryTitleLabel = UILabel()
     private let summaryAmountLabel = UILabel()
@@ -49,12 +47,6 @@ extension TransactionsListContentView {
         filtersStack.alignment = .fill
         filtersStack.distribution = .fillEqually
         filtersStack.spacing = 8
-
-        filterCard.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.99, alpha: 1.0)
-        filterCard.layer.shadowColor = UIColor.black.cgColor
-        filterCard.layer.shadowOpacity = 0.04
-        filterCard.layer.shadowRadius = 10
-        filterCard.layer.shadowOffset = CGSize(width: 0, height: 4)
 
         summaryCard.backgroundColor = .black
         summaryCard.layer.shadowColor = UIColor.black.cgColor
@@ -91,28 +83,29 @@ extension TransactionsListContentView {
         tableView.rowHeight = 122
         tableView.register(DashboardTransactionCell.self, forCellReuseIdentifier: DashboardTransactionCell.reuseIdentifier)
 
-        [allFilterButton, incomeFilterButton, expenseFilterButton, transferFilterButton].forEach {
+        [allFilterButton, incomeFilterButton, expenseFilterButton, dateFilterButton].forEach {
             $0.setTitleColor(UIColor(red: 0.34, green: 0.36, blue: 0.41, alpha: 1.0), for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
             $0.backgroundColor = UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0)
         }
+
+        dateFilterButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
+        dateFilterButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        dateFilterButton.setTitleColor(UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0), for: .normal)
     }
 
     func buildHierarchy() {
         addSubview(titleLabel)
         addSubview(subtitleLabel)
         addSubview(filtersStack)
-        addSubview(filterCard)
+        addSubview(clearDateFilterButton)
         addSubview(summaryCard)
         addSubview(tableView)
         addSubview(emptyStateLabel)
 
-        [allFilterButton, incomeFilterButton, expenseFilterButton, transferFilterButton].forEach {
+        [allFilterButton, incomeFilterButton, expenseFilterButton, dateFilterButton].forEach {
             filtersStack.addArrangedSubview($0)
         }
-
-        filterCard.addSubview(dateFilterButton)
-        filterCard.addSubview(clearDateFilterButton)
 
         summaryCard.addSubview(summaryTitleLabel)
         summaryCard.addSubview(summaryAmountLabel)
@@ -125,7 +118,6 @@ extension TransactionsListContentView {
             titleLabel,
             subtitleLabel,
             filtersStack,
-            filterCard,
             summaryCard,
             summaryTitleLabel,
             summaryAmountLabel,
@@ -153,21 +145,11 @@ extension TransactionsListContentView {
             filtersStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             filtersStack.heightAnchor.constraint(equalToConstant: 42),
 
-            filterCard.topAnchor.constraint(equalTo: filtersStack.bottomAnchor, constant: 14),
-            filterCard.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            filterCard.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            clearDateFilterButton.topAnchor.constraint(equalTo: filtersStack.bottomAnchor, constant: 10),
+            clearDateFilterButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            clearDateFilterButton.heightAnchor.constraint(equalToConstant: 24),
 
-            dateFilterButton.topAnchor.constraint(equalTo: filterCard.topAnchor, constant: 14),
-            dateFilterButton.leadingAnchor.constraint(equalTo: filterCard.leadingAnchor, constant: 16),
-            dateFilterButton.heightAnchor.constraint(equalToConstant: 38),
-            dateFilterButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 120),
-
-            clearDateFilterButton.centerYAnchor.constraint(equalTo: dateFilterButton.centerYAnchor),
-            clearDateFilterButton.trailingAnchor.constraint(equalTo: filterCard.trailingAnchor, constant: -16),
-            clearDateFilterButton.leadingAnchor.constraint(greaterThanOrEqualTo: dateFilterButton.trailingAnchor, constant: 12),
-            clearDateFilterButton.bottomAnchor.constraint(equalTo: filterCard.bottomAnchor, constant: -14),
-
-            tableView.topAnchor.constraint(equalTo: filterCard.bottomAnchor, constant: 14),
+            tableView.topAnchor.constraint(equalTo: clearDateFilterButton.bottomAnchor, constant: 10),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
 
@@ -212,20 +194,17 @@ extension TransactionsListContentView {
         allFilterButton.setTitle(TransactionsFilterType.all.title, for: .normal)
         incomeFilterButton.setTitle(TransactionsFilterType.income.title, for: .normal)
         expenseFilterButton.setTitle(TransactionsFilterType.expense.title, for: .normal)
-        transferFilterButton.setTitle(TransactionsFilterType.transfer.title, for: .normal)
         summaryTitleLabel.text = "TOPLAM HAREKET"
         summaryAmountLabel.text = "₺0"
         summaryIconView.image = UIImage(systemName: "arrow.down.right")
     }
 
     func applyCornerRadius() {
-        [allFilterButton, incomeFilterButton, expenseFilterButton, transferFilterButton].forEach {
+        [allFilterButton, incomeFilterButton, expenseFilterButton, dateFilterButton].forEach {
             $0.layer.cornerRadius = 21
         }
-        filterCard.layer.cornerRadius = 20
         summaryCard.layer.cornerRadius = 18
         summaryIconContainer.layer.cornerRadius = 12
-        dateFilterButton.layer.cornerRadius = 10
     }
 
     func setEmptyStateVisible(_ isVisible: Bool) {
@@ -237,8 +216,7 @@ extension TransactionsListContentView {
         let buttons: [(UIButton, TransactionsFilterType)] = [
             (allFilterButton, .all),
             (incomeFilterButton, .income),
-            (expenseFilterButton, .expense),
-            (transferFilterButton, .transfer)
+            (expenseFilterButton, .expense)
         ]
 
         buttons.forEach { button, buttonFilter in

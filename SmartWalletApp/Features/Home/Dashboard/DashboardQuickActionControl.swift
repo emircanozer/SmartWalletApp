@@ -5,11 +5,13 @@ import UIKit
 // üstteki tıklanabilir işlem alanı component’i
 
 class DashboardQuickActionControl: UIControl {
+    let actionType: DashboardQuickActionType
     private let iconWrapper = UIView()
     private let iconView = UIImageView()
     private let titleLabel = UILabel()
 
     init(item: DashboardQuickAction) {
+        self.actionType = item.type
         super.init(frame: .zero)
         configureView(with: item)
         buildHierarchy()
@@ -23,6 +25,10 @@ class DashboardQuickActionControl: UIControl {
 
 extension DashboardQuickActionControl {
     func configureView(with item: DashboardQuickAction) {
+        iconWrapper.isUserInteractionEnabled = false
+        iconView.isUserInteractionEnabled = false
+        titleLabel.isUserInteractionEnabled = false
+
         let wrapperColor = item.isHighlighted
             ? UIColor(red: 1.0, green: 0.92, blue: 0.53, alpha: 1.0)
             : UIColor(red: 0.97, green: 0.97, blue: 0.98, alpha: 1.0)

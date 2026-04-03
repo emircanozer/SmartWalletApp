@@ -77,6 +77,11 @@ extension DashboardTransactionCell {
 
         amountLabel.font = .systemFont(ofSize: 20, weight: .bold)
         amountLabel.textAlignment = .right
+        amountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        amountLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        subtitleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
 
     func buildHierarchy() {

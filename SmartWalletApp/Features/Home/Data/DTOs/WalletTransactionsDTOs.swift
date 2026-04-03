@@ -1,6 +1,6 @@
 import Foundation
 
-// kategoriler için 
+// kategoriler için backenden gelen ham response modeli 
 struct WalletTransactionResponse: Decodable {
     let id: String
     let amount: Decimal

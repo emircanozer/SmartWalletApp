@@ -3,6 +3,7 @@ import UIKit
 class TransactionsListViewController: UIViewController {
     private let viewModel: TransactionsListViewModel
     private let contentView = TransactionsListContentView()
+    private let refreshControl = UIRefreshControl()
     private var transactions: [DashboardTransaction] = []
     private var selectedStartDate = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
     private var selectedEndDate = Date()
@@ -26,12 +27,14 @@ class TransactionsListViewController: UIViewController {
         bindTableView()
         bindActions()
         bindViewModel()
+        configureRefreshControl()
         viewModel.loadInitialState()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
+        refreshTransactions()
     }
 
     override func viewDidLayoutSubviews() {
@@ -46,17 +49,22 @@ extension TransactionsListViewController {
         contentView.tableView.delegate = self
     }
 
+    func configureRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
+        contentView.tableView.refreshControl = refreshControl
+    }
+
     func bindActions() {
         contentView.dateFilterButton.addTarget(self, action: #selector(handleDateFilterTap), for: .touchUpInside)
         contentView.clearDateFilterButton.addTarget(self, action: #selector(handleResetFilterTap), for: .touchUpInside)
         contentView.allFilterButton.addTarget(self, action: #selector(handleAllFilterTap), for: .touchUpInside)
         contentView.incomeFilterButton.addTarget(self, action: #selector(handleIncomeFilterTap), for: .touchUpInside)
         contentView.expenseFilterButton.addTarget(self, action: #selector(handleExpenseFilterTap), for: .touchUpInside)
-        contentView.transferFilterButton.addTarget(self, action: #selector(handleTransferFilterTap), for: .touchUpInside)
     }
 
     func bindViewModel() {
         viewModel.onTransactionsChange = { [weak self] data in
+            self?.refreshControl.endRefreshing()
             self?.transactions = data.transactions
             self?.contentView.setEmptyStateVisible(data.transactions.isEmpty)
             self?.contentView.applyFilterSelection(data.selectedFilter)
@@ -67,6 +75,11 @@ extension TransactionsListViewController {
                 showsPrefix: data.summaryShowsPrefix
             )
             self?.contentView.tableView.reloadData()
+        }
+
+        viewModel.onError = { [weak self] message in
+            self?.refreshControl.endRefreshing()
+            self?.showAlert(message: message)
         }
     }
 
@@ -106,8 +119,14 @@ extension TransactionsListViewController {
         viewModel.applyFilterType(.expense)
     }
 
-    @objc func handleTransferFilterTap() {
-        viewModel.applyFilterType(.transfer)
+    @objc func handlePullToRefresh() {
+        refreshTransactions()
+    }
+
+    func refreshTransactions() {
+        Task {
+            await viewModel.refreshTransactions()
+        }
     }
 
     func showAlert(message: String) {

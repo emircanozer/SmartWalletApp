@@ -95,6 +95,8 @@ extension TransactionsDateFilterViewController {
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.locale = Locale(identifier: "tr_TR")
         datePicker.maximumDate = Date()
+        datePicker.overrideUserInterfaceStyle = .light
+        datePicker.setValue(UIColor.black, forKey: "textColor")
         datePicker.addTarget(self, action: #selector(handleDateChanged), for: .valueChanged)
 
         applyButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
