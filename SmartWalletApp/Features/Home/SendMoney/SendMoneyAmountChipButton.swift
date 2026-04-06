@@ -34,7 +34,7 @@ final class SendMoneyAmountChipButton: UIButton {
     }
 }
 
-private extension SendMoneyAmountChipButton {
+ extension SendMoneyAmountChipButton {
     static func makeTitle(for amount: Decimal) -> String {
         let amountText = NSDecimalNumber(decimal: amount).stringValue
         return "\(amountText) TL"

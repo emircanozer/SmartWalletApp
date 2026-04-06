@@ -58,7 +58,7 @@ final class KeychainManager {
     }
 }
 
-private extension KeychainManager {
+ extension KeychainManager {
     func baseQuery(for key: String) -> [String: Any] {
         [
             // veri tipi (şifre gibi)

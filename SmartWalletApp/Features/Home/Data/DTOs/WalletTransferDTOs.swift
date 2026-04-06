@@ -13,6 +13,7 @@ struct WalletTransferResponse: Decodable {
     let transactionID: String
     let referenceNumber: String
     let receiverName: String
+    let receiverIban: String
     let amount: Decimal
     let transactionDate: String
     let description: String
@@ -26,6 +27,7 @@ struct WalletTransferResponse: Decodable {
         case referenceNumber
         case referenceNo
         case receiverName
+        case receiverIban
         case amount
         case transactionDate
         case description
@@ -45,6 +47,7 @@ struct WalletTransferResponse: Decodable {
             ?? container.decodeIfPresent(String.self, forKey: .referenceNo)
             ?? ""
         receiverName = try container.decode(String.self, forKey: .receiverName)
+        receiverIban = try container.decodeIfPresent(String.self, forKey: .receiverIban) ?? ""
         amount = try container.decode(Decimal.self, forKey: .amount)
         transactionDate = try container.decode(String.self, forKey: .transactionDate)
         description = try container.decode(String.self, forKey: .description)

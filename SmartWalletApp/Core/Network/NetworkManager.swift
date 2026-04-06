@@ -72,7 +72,7 @@ final class APIClient {
     }
 }
 
-private extension APIClient {
+ extension APIClient {
     // endpointten url request oluşturuyor
     func makeRequest(from endpoint: Endpoint) throws -> URLRequest {
         let url = baseURL.appending(path: endpoint.path)

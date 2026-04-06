@@ -1,6 +1,8 @@
 import UIKit
 
 final class SendMoneyViewController: UIViewController {
+    var onTransferSucceeded: ((WalletTransferResponse) -> Void)?
+
     private let viewModel: SendMoneyViewModel
     private let contentView = SendMoneyContentView()
     private let refreshControl = UIRefreshControl()
@@ -33,7 +35,7 @@ final class SendMoneyViewController: UIViewController {
     }
 }
 
-private extension SendMoneyViewController {
+ extension SendMoneyViewController {
     func bindActions() {
         contentView.ibanTextField.addTarget(self, action: #selector(handleIBANChanged), for: .editingChanged)
         contentView.amountTextField.addTarget(self, action: #selector(handleAmountChanged), for: .editingChanged)
@@ -55,16 +57,17 @@ private extension SendMoneyViewController {
                 if !self.refreshControl.isRefreshing {
                     self.contentView.setLoading(true)
                 }
+                // gelen veriyi ekrana basacak 
             case .loaded(let data):
                 self.contentView.setLoading(false)
                 self.refreshControl.endRefreshing()
-                self.contentView.applyData(data)
+                self.contentView.applyData(data) // **
                 self.bindRecipientRows()
                 self.bindAmountChips()
             case .transferSucceeded(let response):
                 self.contentView.setLoading(false)
                 self.refreshControl.endRefreshing()
-                self.showAlert(message: "\(response.message)\nReferans No: \(response.referenceNumber)")
+                self.onTransferSucceeded?(response)
             case .failure(let message):
                 self.contentView.setLoading(false)
                 self.refreshControl.endRefreshing()
@@ -183,7 +186,7 @@ extension SendMoneyViewController: UITextViewDelegate {
     }
 }
 
-private extension UIView {
+ extension UIView {
     var subviewsRecursive: [UIView] {
         subviews + subviews.flatMap { $0.subviewsRecursive }
     }

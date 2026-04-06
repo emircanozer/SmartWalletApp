@@ -73,7 +73,7 @@ private enum AuthEndpoint: Endpoint {
     }
 }
 
-private extension AuthService {
+ extension AuthService {
     func encode<T: Encodable>(_ value: T) throws -> Data {
         do {
             return try encoder.encode(value)

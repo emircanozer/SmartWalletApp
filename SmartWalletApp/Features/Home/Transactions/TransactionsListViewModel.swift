@@ -113,7 +113,7 @@ final class TransactionsListViewModel {
     }
 }
 
-private extension TransactionsListViewModel {
+ extension TransactionsListViewModel {
     func refreshFilteredTransactions() {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: startDate)

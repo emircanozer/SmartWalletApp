@@ -9,6 +9,8 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
     case education
     case health
     case transfer
+    
+    // backendden döner değerler int bir şey ifade etmediği için bir kez daha burada çevirme yapıyoruz 
 
     var backendValue: Int {
         switch self {
@@ -82,6 +84,7 @@ struct SendMoneyRecipient: Equatable {
     let isSaved: Bool
 }
 
+// alt taraftaki model
 struct SendMoneyLookupRecipient: Equatable {
     let name: String
     let maskedIban: String
@@ -89,6 +92,7 @@ struct SendMoneyLookupRecipient: Equatable {
     let isSaved: Bool
 }
 
+//ui model
 struct SendMoneyViewData {
     let balanceText: String
     let amountText: String

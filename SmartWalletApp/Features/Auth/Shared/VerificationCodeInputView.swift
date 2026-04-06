@@ -43,7 +43,7 @@ class VerificationCodeInputView: UIView {
     }
 }
 
-private extension VerificationCodeInputView {
+extension VerificationCodeInputView {
     func configureView() {
         backgroundColor = .clear
 

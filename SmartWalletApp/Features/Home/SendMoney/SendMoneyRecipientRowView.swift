@@ -41,7 +41,7 @@ final class SendMoneyRecipientRowView: UIControl {
     }
 }
 
-private extension SendMoneyRecipientRowView {
+ extension SendMoneyRecipientRowView {
     func configureView() {
         backgroundColor = .white
         layer.shadowColor = UIColor.black.cgColor

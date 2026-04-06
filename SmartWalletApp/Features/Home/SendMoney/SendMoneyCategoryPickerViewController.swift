@@ -27,7 +27,7 @@ final class SendMoneyCategoryPickerViewController: UIViewController {
     }
 }
 
-private extension SendMoneyCategoryPickerViewController {
+ extension SendMoneyCategoryPickerViewController {
     func configureView() {
         view.backgroundColor = .white
 

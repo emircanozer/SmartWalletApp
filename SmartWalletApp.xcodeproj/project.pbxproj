@@ -148,6 +148,8 @@
 				DEVELOPMENT_TEAM = 757YXXC7H9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SmartWalletApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SmartWallet;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -179,6 +181,8 @@
 				DEVELOPMENT_TEAM = 757YXXC7H9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SmartWalletApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SmartWallet;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

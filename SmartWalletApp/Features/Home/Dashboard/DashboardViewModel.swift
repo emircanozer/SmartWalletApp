@@ -38,7 +38,7 @@ final class DashboardViewModel {
     }
 }
 
-private extension DashboardViewModel {
+ extension DashboardViewModel {
     //Backend → UI Model'e çevirme
     func makeViewData(wallet: MyWalletResponse, transactions: [WalletTransactionResponse]) -> DashboardViewData {
         // her birini ui modeline çeviriyor

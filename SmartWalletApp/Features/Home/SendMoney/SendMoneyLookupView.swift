@@ -39,7 +39,7 @@ final class SendMoneyLookupView: UIView {
     }
 }
 
-private extension SendMoneyLookupView {
+ extension SendMoneyLookupView {
     func configureView() {
         backgroundColor = UIColor(red: 0.96, green: 0.99, blue: 0.96, alpha: 1.0)
         isHidden = true

@@ -3,7 +3,7 @@ import Foundation
 enum SendMoneyViewState {
     case idle
     case loading
-    case loaded(SendMoneyViewData)
+    case loaded(SendMoneyViewData) // veri de taşıyor state ile birlikte 
     case transferSucceeded(WalletTransferResponse)
     case failure(String)
 }
@@ -229,7 +229,7 @@ final class SendMoneyViewModel {
     }
 }
 
-private extension SendMoneyViewModel {
+ extension SendMoneyViewModel {
     func emitLoadedState() {
         onStateChange?(.loaded(makeViewData()))
     }
