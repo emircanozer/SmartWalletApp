@@ -1,5 +1,6 @@
 import Foundation
 
+// ViewModel state case içine veri koyuyor
 enum SendMoneyViewState {
     case idle
     case loading
@@ -231,6 +232,8 @@ final class SendMoneyViewModel {
 
  extension SendMoneyViewModel {
     func emitLoadedState() {
+        // ekrana basılacak veri hazır
+        //al bunu UI’da göster
         onStateChange?(.loaded(makeViewData()))
     }
 

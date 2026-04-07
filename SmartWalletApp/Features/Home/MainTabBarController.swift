@@ -10,8 +10,8 @@ class MainTabBarController: UITabBarController { // tabbar tanımlanması için 
 extension MainTabBarController {
     func configureTabBar() {
         tabBar.backgroundColor = .white
-        tabBar.tintColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        tabBar.unselectedItemTintColor = UIColor(red: 0.68, green: 0.71, blue: 0.78, alpha: 1.0)
+        tabBar.tintColor = AppColor.primaryYellow
+        tabBar.unselectedItemTintColor = AppColor.tabInactive
         tabBar.layer.shadowColor = UIColor.black.cgColor
         tabBar.layer.shadowOpacity = 0.08
         tabBar.layer.shadowRadius = 18
@@ -20,14 +20,14 @@ extension MainTabBarController {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        appearance.stackedLayoutAppearance.selected.iconColor = AppColor.primaryYellow
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0),
+            .foregroundColor: AppColor.primaryYellow,
             .font: UIFont.systemFont(ofSize: 10, weight: .bold)
         ]
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(red: 0.68, green: 0.71, blue: 0.78, alpha: 1.0)
+        appearance.stackedLayoutAppearance.normal.iconColor = AppColor.tabInactive
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .foregroundColor: UIColor(red: 0.68, green: 0.71, blue: 0.78, alpha: 1.0),
+            .foregroundColor: AppColor.tabInactive,
             .font: UIFont.systemFont(ofSize: 10, weight: .medium)
         ]
 

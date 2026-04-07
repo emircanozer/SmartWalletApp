@@ -71,22 +71,22 @@ extension SendMoneyContentView {
         scrollView.keyboardDismissMode = .onDrag
 
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
 
         subtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.47, green: 0.49, blue: 0.55, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.mutedText
         subtitleLabel.numberOfLines = 0
 
         amountSectionLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        amountSectionLabel.textColor = UIColor(red: 0.55, green: 0.57, blue: 0.63, alpha: 1.0)
+        amountSectionLabel.textColor = AppColor.secondaryText
 
         balanceInfoLabel.font = .systemFont(ofSize: 13, weight: .semibold)
-        balanceInfoLabel.textColor = UIColor(red: 0.55, green: 0.57, blue: 0.63, alpha: 1.0)
+        balanceInfoLabel.textColor = AppColor.secondaryText
 
-        amountCard.backgroundColor = UIColor(red: 0.14, green: 0.18, blue: 0.24, alpha: 1.0)
+        amountCard.backgroundColor = AppColor.darkSurfaceSoft
 
         amountTitleLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        amountTitleLabel.textColor = UIColor(red: 0.57, green: 0.58, blue: 0.66, alpha: 1.0)
+        amountTitleLabel.textColor = AppColor.amountLabelMuted
         amountTitleLabel.textAlignment = .center
 
         amountInputStack.axis = .horizontal
@@ -103,7 +103,7 @@ extension SendMoneyContentView {
         amountTextField.textAlignment = .left
 
         amountErrorLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        amountErrorLabel.textColor = UIColor(red: 0.9, green: 0.27, blue: 0.24, alpha: 1.0)
+        amountErrorLabel.textColor = AppColor.dangerStrong
         amountErrorLabel.numberOfLines = 0
         amountErrorLabel.isHidden = true
 
@@ -113,60 +113,60 @@ extension SendMoneyContentView {
         amountChipsStack.spacing = 8
 
         recipientsTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        recipientsTitleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        recipientsTitleLabel.textColor = AppColor.primaryText
 
-        allRecipientsButton.setTitleColor(UIColor(red: 0.49, green: 0.43, blue: 0.2, alpha: 1.0), for: .normal)
+        allRecipientsButton.setTitleColor(AppColor.accentOlive, for: .normal)
         allRecipientsButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
 
         recipientsStack.axis = .vertical
         recipientsStack.spacing = 10
 
         ibanSectionLabel.font = .systemFont(ofSize: 16, weight: .bold)
-        ibanSectionLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        ibanSectionLabel.textColor = AppColor.primaryText
 
-        ibanFieldContainer.backgroundColor = UIColor(red: 0.99, green: 0.99, blue: 1.0, alpha: 1.0)
+        ibanFieldContainer.backgroundColor = AppColor.surfacePanel
         ibanFieldContainer.layer.borderWidth = 1
-        ibanFieldContainer.layer.borderColor = UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0).cgColor
+        ibanFieldContainer.layer.borderColor = AppColor.chipSurface.cgColor
 
         ibanIconView.image = UIImage(systemName: "creditcard")
-        ibanIconView.tintColor = UIColor(red: 0.72, green: 0.73, blue: 0.78, alpha: 1.0)
+        ibanIconView.tintColor = AppColor.iconMuted
         ibanIconView.contentMode = .scaleAspectFit
 
         ibanTextField.font = .systemFont(ofSize: 15, weight: .semibold)
-        ibanTextField.textColor = UIColor(red: 0.23, green: 0.25, blue: 0.31, alpha: 1.0)
+        ibanTextField.textColor = AppColor.inputText
         ibanTextField.autocapitalizationType = .allCharacters
         ibanTextField.autocorrectionType = .no
 
         categorySectionLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        categorySectionLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        categorySectionLabel.textColor = AppColor.primaryText
 
-        categoryFieldContainer.backgroundColor = UIColor(red: 0.99, green: 0.99, blue: 1.0, alpha: 1.0)
+        categoryFieldContainer.backgroundColor = AppColor.surfacePanel
         categoryFieldContainer.layer.borderWidth = 1
-        categoryFieldContainer.layer.borderColor = UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0).cgColor
+        categoryFieldContainer.layer.borderColor = AppColor.chipSurface.cgColor
 
         categoryButton.contentHorizontalAlignment = .left
-        categoryButton.setTitleColor(UIColor(red: 0.23, green: 0.25, blue: 0.31, alpha: 1.0), for: .normal)
+        categoryButton.setTitleColor(AppColor.inputText, for: .normal)
         categoryButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
 
         categoryChevronView.image = UIImage(systemName: "chevron.down")
-        categoryChevronView.tintColor = UIColor(red: 0.72, green: 0.73, blue: 0.78, alpha: 1.0)
+        categoryChevronView.tintColor = AppColor.iconMuted
         categoryChevronView.contentMode = .scaleAspectFit
 
         noteSectionLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        noteSectionLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        noteSectionLabel.textColor = AppColor.primaryText
 
-        noteContainer.backgroundColor = UIColor(red: 0.99, green: 0.99, blue: 1.0, alpha: 1.0)
+        noteContainer.backgroundColor = AppColor.surfacePanel
         noteContainer.layer.borderWidth = 1
-        noteContainer.layer.borderColor = UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0).cgColor
+        noteContainer.layer.borderColor = AppColor.chipSurface.cgColor
 
         noteTextView.font = .systemFont(ofSize: 15, weight: .medium)
-        noteTextView.textColor = UIColor(red: 0.23, green: 0.25, blue: 0.31, alpha: 1.0)
+        noteTextView.textColor = AppColor.inputText
         noteTextView.backgroundColor = .clear
 
         notePlaceholderLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        notePlaceholderLabel.textColor = UIColor(red: 0.78, green: 0.79, blue: 0.83, alpha: 1.0)
+        notePlaceholderLabel.textColor = AppColor.notePlaceholder
 
-        confirmButton.backgroundColor = UIColor(red: 0.18, green: 0.19, blue: 0.21, alpha: 1.0)
+        confirmButton.backgroundColor = AppColor.darkSurface
         confirmButton.setTitleColor(.white, for: .normal)
         confirmButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
 
@@ -402,6 +402,7 @@ extension SendMoneyContentView {
         confirmButton.setTitle("Onayla →", for: .normal)
     }
 
+    //viewModelden gelen data verisi
     func applyData(_ data: SendMoneyViewData) {
         balanceInfoLabel.text = "Kullanılabilir bakiye: \(data.balanceText)"
         amountTextField.text = data.amountText

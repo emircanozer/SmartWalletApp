@@ -53,7 +53,7 @@ class IbanCreatedViewController: UIViewController {
 
 extension IbanCreatedViewController {
     func configureView() {
-        view.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1.0)
+        view.backgroundColor = AppColor.appBackground
         navigationController?.setNavigationBarHidden(true, animated: false)
 
         contentView.backgroundColor = .clear
@@ -64,7 +64,7 @@ extension IbanCreatedViewController {
         cardView.layer.shadowRadius = 24
         cardView.layer.shadowOffset = CGSize(width: 0, height: 12)
 
-        iconWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        iconWrapper.backgroundColor = AppColor.primaryYellow
 
         iconView.image = UIImage(systemName: "square.fill")
         iconView.tintColor = .white
@@ -72,37 +72,37 @@ extension IbanCreatedViewController {
 
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
 
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.56, green: 0.58, blue: 0.63, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.secondaryText
         subtitleLabel.numberOfLines = 0
 
         ibanTitleLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        ibanTitleLabel.textColor = UIColor(red: 0.47, green: 0.49, blue: 0.54, alpha: 1.0)
+        ibanTitleLabel.textColor = AppColor.mutedText
 
-        ibanContainer.backgroundColor = UIColor(red: 0.96, green: 0.97, blue: 0.98, alpha: 1.0)
+        ibanContainer.backgroundColor = AppColor.surfaceMuted
 
         ibanIconView.image = UIImage(systemName: "wallet.pass.fill")
-        ibanIconView.tintColor = UIColor(red: 0.62, green: 0.65, blue: 0.71, alpha: 1.0)
+        ibanIconView.tintColor = AppColor.placeholderText
         ibanIconView.contentMode = .scaleAspectFit
 
         ibanValueLabel.font = .systemFont(ofSize: 15, weight: .bold)
-        ibanValueLabel.textColor = UIColor(red: 0.33, green: 0.35, blue: 0.41, alpha: 1.0)
+        ibanValueLabel.textColor = AppColor.mutedText
         ibanValueLabel.lineBreakMode = .byTruncatingMiddle
 
         copyButton.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
-        copyButton.tintColor = UIColor(red: 0.45, green: 0.47, blue: 0.54, alpha: 1.0)
+        copyButton.tintColor = AppColor.bodyText
 
         ibanDescriptionLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        ibanDescriptionLabel.textColor = UIColor(red: 0.64, green: 0.66, blue: 0.71, alpha: 1.0)
+        ibanDescriptionLabel.textColor = AppColor.placeholderText
         ibanDescriptionLabel.numberOfLines = 0
 
-        continueButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        continueButton.backgroundColor = AppColor.primaryYellow
         continueButton.setTitleColor(.white, for: .normal)
         continueButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
-        continueButton.layer.shadowColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor
+        continueButton.layer.shadowColor = AppColor.primaryYellow.cgColor
         continueButton.layer.shadowOpacity = 0.2
         continueButton.layer.shadowRadius = 18
         continueButton.layer.shadowOffset = CGSize(width: 0, height: 10)

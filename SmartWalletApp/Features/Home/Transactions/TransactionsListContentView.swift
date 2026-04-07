@@ -37,10 +37,10 @@ extension TransactionsListContentView {
         backgroundColor = .white
 
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
 
         subtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.44, green: 0.47, blue: 0.55, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.tertiaryText
         subtitleLabel.numberOfLines = 0
 
         filtersStack.axis = .horizontal
@@ -55,26 +55,26 @@ extension TransactionsListContentView {
         summaryCard.layer.shadowOffset = CGSize(width: 0, height: 8)
 
         summaryTitleLabel.font = .systemFont(ofSize: 13, weight: .bold)
-        summaryTitleLabel.textColor = UIColor(white: 1.0, alpha: 0.62)
+        summaryTitleLabel.textColor = AppColor.white62
 
         summaryAmountLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        summaryAmountLabel.textColor = UIColor(red: 1.0, green: 0.81, blue: 0.05, alpha: 1.0)
+        summaryAmountLabel.textColor = AppColor.accentGold
 
-        summaryIconContainer.backgroundColor = UIColor(red: 0.11, green: 0.11, blue: 0.11, alpha: 1.0)
-        summaryIconView.tintColor = UIColor(red: 1.0, green: 0.81, blue: 0.05, alpha: 1.0)
+        summaryIconContainer.backgroundColor = AppColor.titleDark
+        summaryIconView.tintColor = AppColor.accentGold
         summaryIconView.contentMode = .scaleAspectFit
 
-        dateFilterButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        dateFilterButton.setTitleColor(UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0), for: .normal)
+        dateFilterButton.backgroundColor = AppColor.primaryYellow
+        dateFilterButton.setTitleColor(AppColor.primaryText, for: .normal)
         dateFilterButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
 
-        clearDateFilterButton.setTitleColor(UIColor(red: 0.49, green: 0.43, blue: 0.2, alpha: 1.0), for: .normal)
+        clearDateFilterButton.setTitleColor(AppColor.accentOlive, for: .normal)
         clearDateFilterButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
 
         emptyStateLabel.textAlignment = .center
         emptyStateLabel.numberOfLines = 0
         emptyStateLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        emptyStateLabel.textColor = UIColor(red: 0.48, green: 0.5, blue: 0.56, alpha: 1.0)
+        emptyStateLabel.textColor = AppColor.quietText
         emptyStateLabel.isHidden = true
 
         tableView.backgroundColor = .white
@@ -84,14 +84,14 @@ extension TransactionsListContentView {
         tableView.register(DashboardTransactionCell.self, forCellReuseIdentifier: DashboardTransactionCell.reuseIdentifier)
 
         [allFilterButton, incomeFilterButton, expenseFilterButton, dateFilterButton].forEach {
-            $0.setTitleColor(UIColor(red: 0.34, green: 0.36, blue: 0.41, alpha: 1.0), for: .normal)
+            $0.setTitleColor(AppColor.mutedText, for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
-            $0.backgroundColor = UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0)
+            $0.backgroundColor = AppColor.chipSurface
         }
 
         dateFilterButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
-        dateFilterButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        dateFilterButton.setTitleColor(UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0), for: .normal)
+        dateFilterButton.backgroundColor = AppColor.primaryYellow
+        dateFilterButton.setTitleColor(AppColor.primaryText, for: .normal)
     }
 
     func buildHierarchy() {
@@ -222,12 +222,12 @@ extension TransactionsListContentView {
         buttons.forEach { button, buttonFilter in
             let isSelected = buttonFilter == filter
             button.backgroundColor = isSelected
-                ? UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-                : UIColor(red: 0.92, green: 0.93, blue: 0.95, alpha: 1.0)
+                ? AppColor.primaryYellow
+                : AppColor.chipSurface
             button.setTitleColor(
                 isSelected
-                    ? UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
-                    : UIColor(red: 0.34, green: 0.36, blue: 0.41, alpha: 1.0),
+                    ? AppColor.primaryText
+                    : AppColor.mutedText,
                 for: .normal
             )
         }
@@ -237,8 +237,8 @@ extension TransactionsListContentView {
         summaryTitleLabel.text = title
         summaryAmountLabel.text = amountText
         summaryAmountLabel.textColor = isPositive
-            ? UIColor(red: 1.0, green: 0.81, blue: 0.05, alpha: 1.0)
-            : UIColor(red: 0.96, green: 0.65, blue: 0.12, alpha: 1.0)
+            ? AppColor.accentGold
+            : AppColor.warningOrange
         summaryIconView.image = UIImage(systemName: showsPrefix ? (isPositive ? "arrow.down.left" : "arrow.up.right") : "equal")
     }
 

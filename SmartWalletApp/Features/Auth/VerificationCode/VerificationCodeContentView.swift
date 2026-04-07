@@ -41,8 +41,8 @@ extension VerificationCodeContentView {
         backgroundColor = .white
         contentContainer.backgroundColor = .white
 
-        logoWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        logoWrapper.layer.shadowColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor
+        logoWrapper.backgroundColor = AppColor.primaryYellow
+        logoWrapper.layer.shadowColor = AppColor.primaryYellow.cgColor
         logoWrapper.layer.shadowOpacity = 0.18
         logoWrapper.layer.shadowRadius = 18
         logoWrapper.layer.shadowOffset = CGSize(width: 0, height: 10)
@@ -53,26 +53,26 @@ extension VerificationCodeContentView {
 
         brandLabel.textAlignment = .center
         brandLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        brandLabel.textColor = UIColor(red: 0.2, green: 0.22, blue: 0.28, alpha: 1.0)
+        brandLabel.textColor = AppColor.brandTextSoft
 
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0)
+        titleLabel.textColor = AppColor.authHeadingText
 
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.55, green: 0.58, blue: 0.64, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.secondaryText
         subtitleLabel.numberOfLines = 0
 
-        verifyButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        verifyButton.setTitleColor(UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0), for: .normal)
+        verifyButton.backgroundColor = AppColor.primaryYellow
+        verifyButton.setTitleColor(AppColor.authHeadingText, for: .normal)
         verifyButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
-        verifyButton.layer.shadowColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor
+        verifyButton.layer.shadowColor = AppColor.primaryYellow.cgColor
         verifyButton.layer.shadowOpacity = 0.18
         verifyButton.layer.shadowRadius = 18
         verifyButton.layer.shadowOffset = CGSize(width: 0, height: 10)
 
-        resendButton.setTitleColor(UIColor(red: 0.47, green: 0.49, blue: 0.56, alpha: 1.0), for: .normal)
+        resendButton.setTitleColor(AppColor.actionMutedText, for: .normal)
         resendButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         resendButton.isHidden = true
 
@@ -81,13 +81,13 @@ extension VerificationCodeContentView {
         timerStack.spacing = 4
 
         timerIconView.image = UIImage(systemName: "clock")
-        timerIconView.tintColor = UIColor(red: 0.63, green: 0.65, blue: 0.71, alpha: 1.0)
+        timerIconView.tintColor = AppColor.placeholderText
         timerIconView.contentMode = .scaleAspectFit
 
         timerLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        timerLabel.textColor = UIColor(red: 0.63, green: 0.65, blue: 0.71, alpha: 1.0)
+        timerLabel.textColor = AppColor.placeholderText
 
-        backToLoginButton.setTitleColor(UIColor(red: 0.42, green: 0.44, blue: 0.5, alpha: 1.0), for: .normal)
+        backToLoginButton.setTitleColor(AppColor.actionMutedText, for: .normal)
         backToLoginButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
 
         keyboardTapGesture.addTarget(self, action: #selector(handleBackgroundTap))

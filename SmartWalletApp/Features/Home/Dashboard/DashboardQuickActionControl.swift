@@ -30,12 +30,12 @@ extension DashboardQuickActionControl {
         titleLabel.isUserInteractionEnabled = false
 
         let wrapperColor = item.isHighlighted
-            ? UIColor(red: 1.0, green: 0.92, blue: 0.53, alpha: 1.0)
-            : UIColor(red: 0.97, green: 0.97, blue: 0.98, alpha: 1.0)
+            ? AppColor.quickActionHighlight
+            : AppColor.surfaceMuted
 
         let iconColor = item.isHighlighted
-            ? UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
-            : UIColor(red: 0.46, green: 0.47, blue: 0.52, alpha: 1.0)
+            ? AppColor.primaryText
+            : AppColor.bodyText
 
         iconWrapper.backgroundColor = wrapperColor
         iconView.image = UIImage(systemName: item.iconName)
@@ -45,7 +45,7 @@ extension DashboardQuickActionControl {
         titleLabel.text = item.title.uppercased()
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 11, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.32, green: 0.33, blue: 0.38, alpha: 1.0)
+        titleLabel.textColor = AppColor.inputText
         titleLabel.numberOfLines = 2
     }
 

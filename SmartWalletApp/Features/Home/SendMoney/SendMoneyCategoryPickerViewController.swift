@@ -32,11 +32,11 @@ final class SendMoneyCategoryPickerViewController: UIViewController {
         view.backgroundColor = .white
 
         titleLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
         titleLabel.text = "Kategori Seç"
 
         tableView.backgroundColor = .white
-        tableView.tintColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        tableView.tintColor = AppColor.primaryText
         tableView.separatorStyle = .none
         tableView.rowHeight = 58
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
@@ -85,9 +85,9 @@ extension SendMoneyCategoryPickerViewController: UITableViewDataSource, UITableV
         content.text = category.title
         content.secondaryText = category.subtitle
         content.textProperties.font = .systemFont(ofSize: 16, weight: .semibold)
-        content.textProperties.color = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        content.textProperties.color = AppColor.primaryText
         content.secondaryTextProperties.font = .systemFont(ofSize: 13, weight: .medium)
-        content.secondaryTextProperties.color = UIColor(red: 0.46, green: 0.48, blue: 0.54, alpha: 1.0)
+        content.secondaryTextProperties.color = AppColor.bodyText
         cell.contentConfiguration = content
         cell.backgroundColor = .white
         cell.accessoryType = category == selectedCategory ? .checkmark : .none

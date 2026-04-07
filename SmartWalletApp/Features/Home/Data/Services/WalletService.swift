@@ -31,8 +31,9 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.contacts(body: body))
     }
 
+    // request modeli gönderiyoruz
     func transfer(request: WalletTransferRequest) async throws -> WalletTransferResponse {
-        let body = try encoder.encode(request)
+        let body = try encoder.encode(request) //ilk encode
         return try await apiClient.send(WalletEndpoint.transfer(body: body), as: WalletTransferResponse.self)
     }
 }

@@ -51,11 +51,11 @@ extension TransferSuccessContentView {
         scrollView.showsVerticalScrollIndicator = false
 
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
         titleLabel.textAlignment = .center
 
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.45, green: 0.47, blue: 0.54, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.bodyText
         subtitleLabel.textAlignment = .center
         subtitleLabel.numberOfLines = 0
 
@@ -67,22 +67,22 @@ extension TransferSuccessContentView {
 
         [dateTitleLabel, referenceTitleLabel].forEach {
             $0.font = .systemFont(ofSize: 11, weight: .bold)
-            $0.textColor = UIColor(red: 0.64, green: 0.66, blue: 0.71, alpha: 1.0)
+            $0.textColor = AppColor.placeholderText
         }
 
         [dateValueLabel, referenceValueLabel].forEach {
             $0.font = .systemFont(ofSize: 15, weight: .bold)
-            $0.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+            $0.textColor = AppColor.primaryText
             $0.textAlignment = .right
         }
 
-        dateDivider.backgroundColor = UIColor(red: 0.94, green: 0.95, blue: 0.97, alpha: 1.0)
+        dateDivider.backgroundColor = AppColor.divider
 
-        returnHomeButton.backgroundColor = UIColor(red: 0.18, green: 0.19, blue: 0.21, alpha: 1.0)
+        returnHomeButton.backgroundColor = AppColor.darkSurface
         returnHomeButton.setTitleColor(.white, for: .normal)
         returnHomeButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
 
-        receiptButton.setTitleColor(UIColor(red: 0.49, green: 0.43, blue: 0.2, alpha: 1.0), for: .normal)
+        receiptButton.setTitleColor(AppColor.accentOlive, for: .normal)
         receiptButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
     }
 

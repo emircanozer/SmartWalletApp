@@ -70,15 +70,15 @@ extension TransactionsDateFilterViewController {
         contentView.backgroundColor = .white
 
         titleLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
 
         subtitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.44, green: 0.47, blue: 0.55, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.tertiaryText
         subtitleLabel.numberOfLines = 1
 
         [startFieldButton, endFieldButton].forEach {
-            $0.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.98, alpha: 1.0)
-            $0.setTitleColor(UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0), for: .normal)
+            $0.backgroundColor = AppColor.surfaceMuted
+            $0.setTitleColor(AppColor.primaryText, for: .normal)
             $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
             $0.contentHorizontalAlignment = .left
         }
@@ -86,10 +86,10 @@ extension TransactionsDateFilterViewController {
         startFieldButton.addTarget(self, action: #selector(handleStartTap), for: .touchUpInside)
         endFieldButton.addTarget(self, action: #selector(handleEndTap), for: .touchUpInside)
 
-        pickerCard.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.99, alpha: 1.0)
+        pickerCard.backgroundColor = AppColor.appBackground
 
         pickerTitleLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        pickerTitleLabel.textColor = UIColor(red: 0.44, green: 0.47, blue: 0.55, alpha: 1.0)
+        pickerTitleLabel.textColor = AppColor.tertiaryText
 
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
@@ -99,13 +99,13 @@ extension TransactionsDateFilterViewController {
         datePicker.setValue(UIColor.black, forKey: "textColor")
         datePicker.addTarget(self, action: #selector(handleDateChanged), for: .valueChanged)
 
-        applyButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        applyButton.setTitleColor(UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0), for: .normal)
+        applyButton.backgroundColor = AppColor.primaryYellow
+        applyButton.setTitleColor(AppColor.primaryText, for: .normal)
         applyButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
         applyButton.addTarget(self, action: #selector(handleApplyTap), for: .touchUpInside)
 
-        clearButton.backgroundColor = UIColor(red: 0.95, green: 0.96, blue: 0.97, alpha: 1.0)
-        clearButton.setTitleColor(UIColor(red: 0.34, green: 0.36, blue: 0.41, alpha: 1.0), for: .normal)
+        clearButton.backgroundColor = AppColor.divider
+        clearButton.setTitleColor(AppColor.mutedText, for: .normal)
         clearButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
         clearButton.addTarget(self, action: #selector(handleClearTap), for: .touchUpInside)
     }
@@ -255,8 +255,8 @@ extension TransactionsDateFilterViewController {
     }
 
     private func updateFieldSelection() {
-        let selectedColor = UIColor(red: 1.0, green: 0.97, blue: 0.88, alpha: 1.0)
-        let normalColor = UIColor(red: 0.97, green: 0.97, blue: 0.98, alpha: 1.0)
+        let selectedColor = AppColor.warmHighlight
+        let normalColor = AppColor.surfaceMuted
 
         startFieldButton.backgroundColor = activeField == .start ? selectedColor : normalColor
         endFieldButton.backgroundColor = activeField == .end ? selectedColor : normalColor

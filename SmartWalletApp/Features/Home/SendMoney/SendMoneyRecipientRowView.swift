@@ -33,10 +33,10 @@ final class SendMoneyRecipientRowView: UIControl {
 
     func applySelected(_ isSelected: Bool) {
         layer.borderWidth = isSelected ? 1.5 : 0
-        layer.borderColor = isSelected ? UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor : UIColor.clear.cgColor
+        layer.borderColor = isSelected ? AppColor.primaryYellow.cgColor : UIColor.clear.cgColor
         selectionOuterView.layer.borderColor = isSelected
-            ? UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor
-            : UIColor(red: 0.86, green: 0.87, blue: 0.9, alpha: 1.0).cgColor
+            ? AppColor.primaryYellow.cgColor
+            : AppColor.chipBorder.cgColor
         selectionInnerView.isHidden = !isSelected
     }
 }
@@ -49,23 +49,23 @@ final class SendMoneyRecipientRowView: UIControl {
         layer.shadowRadius = 10
         layer.shadowOffset = CGSize(width: 0, height: 4)
 
-        avatarView.backgroundColor = UIColor(red: 0.96, green: 0.97, blue: 0.98, alpha: 1.0)
+        avatarView.backgroundColor = AppColor.surfaceMuted
 
         avatarLabel.font = .systemFont(ofSize: 15, weight: .bold)
-        avatarLabel.textColor = UIColor(red: 0.35, green: 0.37, blue: 0.43, alpha: 1.0)
+        avatarLabel.textColor = AppColor.mutedText
         avatarLabel.textAlignment = .center
 
         nameLabel.font = .systemFont(ofSize: 15, weight: .bold)
-        nameLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        nameLabel.textColor = AppColor.primaryText
 
         subtitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.52, green: 0.54, blue: 0.6, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.tertiaryText
 
         selectionOuterView.layer.borderWidth = 1
-        selectionOuterView.layer.borderColor = UIColor(red: 0.86, green: 0.87, blue: 0.9, alpha: 1.0).cgColor
+        selectionOuterView.layer.borderColor = AppColor.chipBorder.cgColor
         selectionOuterView.backgroundColor = .clear
 
-        selectionInnerView.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        selectionInnerView.backgroundColor = AppColor.primaryYellow
         selectionInnerView.isHidden = true
     }
 

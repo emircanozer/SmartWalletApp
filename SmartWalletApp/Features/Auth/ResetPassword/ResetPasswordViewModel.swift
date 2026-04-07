@@ -10,30 +10,53 @@ enum ResetPasswordViewState {
 final class ResetPasswordViewModel {
     var onStateChange: ((ResetPasswordViewState) -> Void)?
 
+    let context: PendingPasswordResetContext
     private let authService: AuthService
 
-    init(authService: AuthService) {
+    init(context: PendingPasswordResetContext, authService: AuthService) {
+        self.context = context
         self.authService = authService
     }
 
     @MainActor
-    func sendResetLink(email: String) async {
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+    func resetPassword(newPassword: String, confirmPassword: String) async {
+        let trimmedPassword = newPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        guard !trimmedEmail.isEmpty else {
-            onStateChange?(.failure("E-posta alanını doldurun."))
+        guard !trimmedPassword.isEmpty, !trimmedConfirmPassword.isEmpty else {
+            onStateChange?(.failure("Lütfen yeni şifre alanlarını doldurun."))
+            return
+        }
+
+        guard trimmedPassword.count >= 6 else {
+            onStateChange?(.failure("Yeni şifre en az 6 karakter olmalıdır."))
+            return
+        }
+
+        guard trimmedPassword == trimmedConfirmPassword else {
+            onStateChange?(.failure("Şifreler birbiriyle eşleşmiyor."))
             return
         }
 
         onStateChange?(.loading)
 
         do {
-            try await authService.forgotPassword(request: ForgotPasswordRequest(email: trimmedEmail))
-            print("DEBUG Auth: forgot-password basarili. email=\(trimmedEmail)")
-            onStateChange?(.success("Sıfırlama bağlantısı e-posta adresinize gönderildi."))
+            let response = try await authService.resetPassword(
+                request: ResetPasswordRequest(
+                    email: context.email,
+                    code: context.code,
+                    newPassword: trimmedPassword
+                )
+            )
+
+            guard response.success else {
+                onStateChange?(.failure(response.message))
+                return
+            }
+
+            onStateChange?(.success(response.message))
         } catch {
-            print("DEBUG Auth: forgot-password hatasi: \(error.localizedDescription)")
-            onStateChange?(.failure(error.localizedDescription))
+            onStateChange?(.failure("Şifre güncellenemedi. \(error.localizedDescription)"))
         }
     }
 }
