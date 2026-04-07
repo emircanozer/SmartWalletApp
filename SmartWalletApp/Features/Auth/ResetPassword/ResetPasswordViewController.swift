@@ -2,6 +2,7 @@ import UIKit
 
 final class ResetPasswordViewController: UIViewController {
     var onBack: (() -> Void)?
+    // şifre sıfırlama başarılı olursa dışarı haber verebilirim
     var onResetCompleted: (() -> Void)?
 
     private let viewModel: ResetPasswordViewModel
@@ -30,7 +31,7 @@ final class ResetPasswordViewController: UIViewController {
     }
 }
 
-private extension ResetPasswordViewController {
+ extension ResetPasswordViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.updateButton.addTarget(self, action: #selector(handleUpdateTap), for: .touchUpInside)
@@ -48,6 +49,7 @@ private extension ResetPasswordViewController {
             case .loading:
                 self.setLoading(true)
             case .success:
+                
                 self.setLoading(false)
                 self.onResetCompleted?()
             case .failure(let message):

@@ -29,7 +29,7 @@ final class ResetPasswordSuccessViewController: UIViewController {
     }
 }
 
-private extension ResetPasswordSuccessViewController {
+extension ResetPasswordSuccessViewController {
     func bindActions() {
         contentView.loginButton.addTarget(self, action: #selector(handleLoginTap), for: .touchUpInside)
         contentView.homeButton.addTarget(self, action: #selector(handleHomeTap), for: .touchUpInside)

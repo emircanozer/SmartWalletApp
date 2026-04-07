@@ -36,6 +36,9 @@ class HomeCoordinator: Coordinator {
         dashboardViewController.onSendMoneyTap = { [weak self] in
             self?.showSendMoneyTab()
         }
+        dashboardViewController.onAnalysisTap = { [weak self] in
+            self?.showExpenseAnalysis()
+        }
         sendMoneyViewController.onTransferSucceeded = { [weak self] response in
             self?.showTransferSuccess(response)
         }
@@ -78,6 +81,18 @@ class HomeCoordinator: Coordinator {
     private func showSendMoneyTab() {
         guard let sendMoneyNavigationController else { return }
         rootViewController.selectedViewController = sendMoneyNavigationController
+    }
+
+    private func showExpenseAnalysis() {
+        guard let controllers = rootViewController.viewControllers,
+              let navigationController = controllers.first as? UINavigationController else { return }
+
+        let viewModel = ExpenseAnalysisViewModel(walletService: walletService)
+        let viewController = ExpenseAnalysisViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
     }
 
     private func showTransferSuccess(_ response: WalletTransferResponse) {

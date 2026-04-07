@@ -44,7 +44,7 @@ extension ResetPasswordSuccessContentView {
     }
 }
 
-private extension ResetPasswordSuccessContentView {
+ extension ResetPasswordSuccessContentView {
     func configureView() {
         backgroundColor = .white
 
@@ -62,7 +62,7 @@ private extension ResetPasswordSuccessContentView {
         iconWrapper.layer.shadowRadius = 0
         iconWrapper.layer.shadowOffset = .zero
 
-        iconImageView.image = UIImage(named: "CheckMarkicon")
+        iconImageView.image = UIImage(named: "CheckMarkicon")?.withRenderingMode(.alwaysOriginal)
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.clipsToBounds = true
 

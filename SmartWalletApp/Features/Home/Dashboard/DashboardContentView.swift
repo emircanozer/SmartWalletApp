@@ -249,6 +249,7 @@ extension DashboardContentView {
         onQuickActionTap?(sender.actionType)
     }
 
+    // controllerdan gelen veriyi basıyoruz
     func applyData(_ data: DashboardViewData) {
         greetingLabel.text = data.greetingText
         ibanLabel.text = data.ibanText

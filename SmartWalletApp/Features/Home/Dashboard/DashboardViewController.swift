@@ -7,6 +7,7 @@ import UIKit
 class DashboardViewController: UIViewController {
     var onSeeAllTransactions: (([DashboardTransaction]) -> Void)?
     var onSendMoneyTap: (() -> Void)?
+    var onAnalysisTap: (() -> Void)?
 
     private let viewModel: DashboardViewModel
     private let contentView = DashboardContentView()
@@ -63,6 +64,8 @@ extension DashboardViewController {
             switch actionType {
             case .sendMoney:
                 self?.onSendMoneyTap?()
+            case .analysis:
+                self?.onAnalysisTap?()
             default:
                 break
             }
@@ -86,6 +89,7 @@ extension DashboardViewController {
                 if !self.refreshControl.isRefreshing {
                     self.contentView.setLoading(true)
                 }
+                //vm'den closure ile gelen ekrana basacağımız data verisini burada alıp kullanıyoruz 
             case .loaded(let data):
                 self.contentView.setLoading(false)
                 self.refreshControl.endRefreshing()

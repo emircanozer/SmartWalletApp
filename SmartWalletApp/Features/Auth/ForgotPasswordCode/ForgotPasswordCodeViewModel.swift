@@ -31,6 +31,7 @@ final class ForgotPasswordCodeViewModel {
         onStateChange?(.loading)
 
         do {
+            
             let response = try await authService.verifyPasswordResetCode(
                 request: VerifyPasswordResetCodeRequest(email: email, code: trimmedCode)
             )

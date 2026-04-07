@@ -2,6 +2,7 @@ import UIKit
 
 final class ForgotPasswordCodeViewController: UIViewController {
     var onBack: (() -> Void)?
+    //viewmodelden veri buraya geldi controller da bu closure'un içine koyup kordinatöre gönderdi kordinatör da sayfa geçişini sağladı geçilecek sayfa geçmek için veri yani context bekliyordu vm den aldık burada 
     var onVerified: ((PendingPasswordResetContext) -> Void)?
 
     private let viewModel: ForgotPasswordCodeViewModel
@@ -38,7 +39,7 @@ final class ForgotPasswordCodeViewController: UIViewController {
     }
 }
 
-private extension ForgotPasswordCodeViewController {
+ extension ForgotPasswordCodeViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.verifyButton.addTarget(self, action: #selector(handleVerifyTap), for: .touchUpInside)
@@ -58,6 +59,7 @@ private extension ForgotPasswordCodeViewController {
                 self.setLoading(false)
             case .loading:
                 self.setLoading(true)
+                // view modelde içi doldurulan state burada
             case .success(let context, _):
                 self.setLoading(false)
                 self.onVerified?(context)

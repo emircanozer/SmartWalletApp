@@ -10,6 +10,10 @@
 		E38A9CC12F726D3300B4118F /* SmartWalletApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartWalletApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXBuildFile section */
+		E3A100002F90000100B4118F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = E3A100012F90000100B4118F /* DGCharts */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		E38A9CD32F726D3600B4118F /* Exceptions for "SmartWalletApp" folder in "SmartWalletApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A100002F90000100B4118F /* DGCharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,12 +83,21 @@
 			);
 			name = SmartWalletApp;
 			packageProductDependencies = (
+				E3A100012F90000100B4118F /* DGCharts */,
 			);
 			productName = SmartWalletApp;
 			productReference = E38A9CC12F726D3300B4118F /* SmartWalletApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E3A100012F90000100B4118F /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E3A100022F90000100B4118F /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXProject section */
 		E38A9CB92F726D3300B4118F /* Project object */ = {
@@ -107,6 +121,9 @@
 			);
 			mainGroup = E38A9CB82F726D3300B4118F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E3A100022F90000100B4118F /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E38A9CC22F726D3300B4118F /* Products */;
 			projectDirPath = "";
@@ -116,6 +133,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E3A100022F90000100B4118F /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChartsOrg/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin PBXResourcesBuildPhase section */
 		E38A9CBF2F726D3300B4118F /* Resources */ = {
