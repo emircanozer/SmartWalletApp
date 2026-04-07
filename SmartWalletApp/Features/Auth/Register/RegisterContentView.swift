@@ -83,23 +83,23 @@ extension RegisterContentView {
 
         contentContainer.backgroundColor = .white
 
-        iconWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        iconWrapper.layer.shadowColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor
+        iconWrapper.backgroundColor = AppColor.primaryYellow
+        iconWrapper.layer.shadowColor = AppColor.primaryYellow.cgColor
         iconWrapper.layer.shadowOpacity = 0.18
         iconWrapper.layer.shadowRadius = 16
         iconWrapper.layer.shadowOffset = CGSize(width: 0, height: 10)
 
         iconView.image = UIImage(systemName: "globe")
-        iconView.tintColor = UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0)
+        iconView.tintColor = AppColor.authHeadingText
         iconView.contentMode = .scaleAspectFit
 
         titleLabel.textAlignment = .center
         titleLabel.font = .systemFont(ofSize: 28, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0)
+        titleLabel.textColor = AppColor.authHeadingText
 
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = .systemFont(ofSize: 17, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.55, green: 0.58, blue: 0.64, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.secondaryText
 
         termsRow.axis = .horizontal
         termsRow.alignment = .top
@@ -107,15 +107,15 @@ extension RegisterContentView {
 
         checkboxButton.layer.cornerRadius = 6
         checkboxButton.layer.borderWidth = 1
-        checkboxButton.layer.borderColor = UIColor(red: 0.87, green: 0.89, blue: 0.93, alpha: 1.0).cgColor
-        checkboxButton.tintColor = UIColor(red: 1.0, green: 0.78, blue: 0.0, alpha: 1.0)
+        checkboxButton.layer.borderColor = AppColor.filledBorder.cgColor
+        checkboxButton.tintColor = AppColor.accentYellow
 
         termsLabel.numberOfLines = 0
         termsLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        termsLabel.textColor = UIColor(red: 0.34, green: 0.37, blue: 0.44, alpha: 1.0)
+        termsLabel.textColor = AppColor.mutedText
 
-        registerButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        registerButton.setTitleColor(UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0), for: .normal)
+        registerButton.backgroundColor = AppColor.primaryYellow
+        registerButton.setTitleColor(AppColor.authHeadingText, for: .normal)
         registerButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
 
         footerStack.axis = .horizontal
@@ -124,9 +124,9 @@ extension RegisterContentView {
         footerStack.distribution = .equalCentering
 
         footerLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        footerLabel.textColor = UIColor(red: 0.55, green: 0.58, blue: 0.64, alpha: 1.0)
+        footerLabel.textColor = AppColor.secondaryText
 
-        loginButton.setTitleColor(UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0), for: .normal)
+        loginButton.setTitleColor(AppColor.authHeadingText, for: .normal)
         loginButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
 
         backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
@@ -261,7 +261,7 @@ extension RegisterContentView {
         let attributedText = NSMutableAttributedString(
             string: termsTitleText,
             attributes: [
-                .foregroundColor: UIColor(red: 0.34, green: 0.37, blue: 0.44, alpha: 1.0),
+                .foregroundColor: AppColor.mutedText,
                 .font: UIFont.systemFont(ofSize: 14, weight: .medium)
             ]
         )
@@ -269,7 +269,7 @@ extension RegisterContentView {
         if let range = termsTitleText.range(of: "Gizlilik Politikası") {
             let nsRange = NSRange(range, in: termsTitleText)
             attributedText.addAttributes([
-                .foregroundColor: UIColor(red: 1.0, green: 0.78, blue: 0.0, alpha: 1.0),
+                .foregroundColor: AppColor.accentYellow,
                 .font: UIFont.systemFont(ofSize: 14, weight: .bold)
             ], range: nsRange)
         }

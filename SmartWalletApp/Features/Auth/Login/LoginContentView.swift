@@ -68,46 +68,46 @@ extension LoginContentView {
         headerStack.spacing = 14
 
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        backButton.tintColor = UIColor(red: 0.35, green: 0.38, blue: 0.46, alpha: 1.0)
+        backButton.tintColor = AppColor.navigationTint
 
         brandStack.axis = .horizontal
         brandStack.alignment = .center
         brandStack.spacing = 10
 
-        logoWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        logoWrapper.backgroundColor = AppColor.primaryYellow
         logoImageView.image = UIImage(systemName: "wallet.pass.fill")
         logoImageView.tintColor = .black
         logoImageView.contentMode = .scaleAspectFit
 
         brandLabel.font = .systemFont(ofSize: 20, weight: .bold)
-        brandLabel.textColor = UIColor(red: 0.23, green: 0.25, blue: 0.32, alpha: 1.0)
+        brandLabel.textColor = AppColor.brandTextStrong
 
-        heroWrapper.backgroundColor = UIColor(red: 1.0, green: 0.99, blue: 0.96, alpha: 1.0)
+        heroWrapper.backgroundColor = AppColor.surfaceWarm
         heroWrapper.layer.cornerRadius = 34
 
-        heroIconWrapper.backgroundColor = UIColor(red: 1.0, green: 0.98, blue: 0.93, alpha: 1.0)
+        heroIconWrapper.backgroundColor = AppColor.surfaceWarmSoft
         heroIconWrapper.layer.borderWidth = 1
-        heroIconWrapper.layer.borderColor = UIColor(red: 0.98, green: 0.92, blue: 0.76, alpha: 1.0).cgColor
+        heroIconWrapper.layer.borderColor = AppColor.borderWarm.cgColor
 
         heroIconView.image = UIImage(systemName: "creditcard.fill")
-        heroIconView.tintColor = UIColor(red: 0.98, green: 0.78, blue: 0.0, alpha: 1.0)
+        heroIconView.tintColor = AppColor.primaryYellow
         heroIconView.contentMode = .scaleAspectFit
 
         subtitleLabel.textAlignment = .center
-        subtitleLabel.textColor = UIColor(red: 0.55, green: 0.58, blue: 0.64, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.secondaryText
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         subtitleLabel.numberOfLines = 0
 
         cardView.backgroundColor = .white
         cardView.layer.borderWidth = 1
-        cardView.layer.borderColor = UIColor(red: 0.98, green: 0.92, blue: 0.76, alpha: 1.0).cgColor
+        cardView.layer.borderColor = AppColor.borderWarm.cgColor
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.05
         cardView.layer.shadowRadius = 20
         cardView.layer.shadowOffset = CGSize(width: 0, height: 10)
 
-        loginButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        loginButton.setTitleColor(UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0), for: .normal)
+        loginButton.backgroundColor = AppColor.primaryYellow
+        loginButton.setTitleColor(AppColor.authHeadingText, for: .normal)
         loginButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
 
         footerStack.axis = .horizontal
@@ -115,9 +115,9 @@ extension LoginContentView {
         footerStack.distribution = .equalCentering
 
         footerLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        footerLabel.textColor = UIColor(red: 0.55, green: 0.58, blue: 0.64, alpha: 1.0)
+        footerLabel.textColor = AppColor.secondaryText
 
-        registerButton.setTitleColor(UIColor(red: 0.98, green: 0.78, blue: 0.0, alpha: 1.0), for: .normal)
+        registerButton.setTitleColor(AppColor.primaryYellow, for: .normal)
         registerButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
 
         backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))

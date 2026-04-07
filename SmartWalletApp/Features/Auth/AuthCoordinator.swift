@@ -35,7 +35,7 @@ class AuthCoordinator: Coordinator {
             self?.showRegister()
         }
         viewController.onForgotPassword = { [weak self] in
-            self?.showResetPassword()
+            self?.showForgotPassword()
         }
         viewController.onAuthenticated = { [weak self] in
             self?.onAuthCompleted?()
@@ -67,9 +67,21 @@ class AuthCoordinator: Coordinator {
         showLogin()
     }
 
-    private func showResetPassword() {
-        let viewModel = ResetPasswordViewModel(authService: authService)
-        let viewController = ResetPasswordViewController(viewModel: viewModel)
+    private func showForgotPassword() {
+        let viewModel = ForgotPasswordViewModel(authService: authService)
+        let viewController = ForgotPasswordViewController(viewModel: viewModel)
+        viewController.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        viewController.onCodeVerificationRequired = { [weak self] email in
+            self?.showForgotPasswordCode(email: email)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showForgotPasswordCode(email: String) {
+        let viewModel = ForgotPasswordCodeViewModel(email: email, authService: authService)
+        let viewController = ForgotPasswordCodeViewController(viewModel: viewModel)
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
         }

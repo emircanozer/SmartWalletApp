@@ -167,17 +167,17 @@ private class VerificationDigitView: UIView {
     func configure(symbol: String, isActive: Bool, isFilled: Bool) {
         titleLabel.text = symbol.isEmpty ? "•" : symbol
         titleLabel.textColor = symbol.isEmpty
-            ? UIColor(red: 0.54, green: 0.57, blue: 0.63, alpha: 1.0)
-            : UIColor(red: 0.24, green: 0.27, blue: 0.34, alpha: 1.0)
+            ? AppColor.verificationEmptyText
+            : AppColor.verificationFilledText
 
-        backgroundColor = isActive ? .white : UIColor(red: 0.91, green: 0.92, blue: 0.94, alpha: 1.0)
+        backgroundColor = isActive ? .white : AppColor.codeInactive
         layer.borderWidth = isActive ? 3 : 0
-        layer.borderColor = isActive ? UIColor(red: 0.2, green: 0.4, blue: 0.98, alpha: 1.0).cgColor : UIColor.clear.cgColor
+        layer.borderColor = isActive ? AppColor.accentBlue.cgColor : UIColor.clear.cgColor
 
         if isFilled {
             backgroundColor = .white
             layer.borderWidth = 2
-            layer.borderColor = UIColor(red: 0.86, green: 0.88, blue: 0.92, alpha: 1.0).cgColor
+            layer.borderColor = AppColor.filledBorder.cgColor
         }
     }
 }

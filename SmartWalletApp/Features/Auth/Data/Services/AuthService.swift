@@ -33,9 +33,9 @@ final class AuthService {
         return try await apiClient.send(AuthEndpoint.resendVerificationCode(body: body), as: ResendVerificationCodeResponse.self)
     }
 
-    func forgotPassword(request: ForgotPasswordRequest) async throws {
+    func forgotPassword(request: ForgotPasswordRequest) async throws -> ForgotPasswordResponse {
         let body = try encode(request)
-        try await apiClient.send(AuthEndpoint.forgotPassword(body: body))
+        return try await apiClient.send(AuthEndpoint.forgotPassword(body: body), as: ForgotPasswordResponse.self)
     }
 }
 

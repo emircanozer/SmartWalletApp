@@ -92,11 +92,11 @@ extension TransferReceiptContentView {
         appNameLabel.numberOfLines = 1
 
         titleLabel.font = .systemFont(ofSize: 32, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
         titleLabel.textAlignment = .center
 
         subtitleLabel.font = .systemFont(ofSize: 13, weight: .bold)
-        subtitleLabel.textColor = UIColor(red: 0.74, green: 0.75, blue: 0.79, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.receiptSubtitle
         subtitleLabel.textAlignment = .center
 
         detailCard.backgroundColor = .white
@@ -107,12 +107,12 @@ extension TransferReceiptContentView {
 
         [senderTitleLabel, receiverTitleLabel, ibanTitleLabel, amountTitleLabel, dateTitleLabel, referenceTitleLabel, categoryTitleLabel, noteTitleLabel].forEach {
             $0.font = .systemFont(ofSize: 11, weight: .bold)
-            $0.textColor = UIColor(red: 0.69, green: 0.71, blue: 0.76, alpha: 1.0)
+            $0.textColor = AppColor.receiptLabel
         }
 
         [senderValueLabel, receiverValueLabel, amountValueLabel, dateValueLabel, categoryValueLabel].forEach {
             $0.font = .systemFont(ofSize: 16, weight: .bold)
-            $0.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+            $0.textColor = AppColor.primaryText
             $0.textAlignment = .right
             $0.numberOfLines = 1
         }
@@ -120,24 +120,24 @@ extension TransferReceiptContentView {
         amountValueLabel.font = .systemFont(ofSize: 24, weight: .bold)
 
         referenceValueLabel.font = .systemFont(ofSize: 16, weight: .bold)
-        referenceValueLabel.textColor = UIColor(red: 0.58, green: 0.49, blue: 0.13, alpha: 1.0)
+        referenceValueLabel.textColor = AppColor.accentOlive
         referenceValueLabel.textAlignment = .right
 
         ibanValueLabel.font = .monospacedSystemFont(ofSize: 14, weight: .medium)
-        ibanValueLabel.textColor = UIColor(red: 0.45, green: 0.47, blue: 0.54, alpha: 1.0)
+        ibanValueLabel.textColor = AppColor.bodyText
         ibanValueLabel.numberOfLines = 0
 
-        noteContainerView.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.98, alpha: 1.0)
-        noteAccentView.backgroundColor = UIColor(red: 0.63, green: 0.54, blue: 0.11, alpha: 0.9)
+        noteContainerView.backgroundColor = AppColor.surfaceMuted
+        noteAccentView.backgroundColor = AppColor.noteAccent
         noteValueLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        noteValueLabel.textColor = UIColor(red: 0.24, green: 0.25, blue: 0.29, alpha: 1.0)
+        noteValueLabel.textColor = AppColor.verificationFilledText
         noteValueLabel.numberOfLines = 0
 
-        downloadButton.backgroundColor = UIColor(red: 0.35, green: 0.35, blue: 0.37, alpha: 1.0)
+        downloadButton.backgroundColor = AppColor.buttonGray
         downloadButton.setTitleColor(.white, for: .normal)
         downloadButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
 
-        shareButton.setTitleColor(UIColor(red: 0.58, green: 0.49, blue: 0.13, alpha: 1.0), for: .normal)
+        shareButton.setTitleColor(AppColor.accentOlive, for: .normal)
         shareButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
 
         activityIndicator.hidesWhenStopped = true
@@ -298,12 +298,12 @@ extension TransferReceiptContentView {
             string: fullText,
             attributes: [
                 .font: UIFont.systemFont(ofSize: 27, weight: .bold),
-                .foregroundColor: UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+                .foregroundColor: AppColor.primaryText
             ]
         )
         if let aiRange = fullText.range(of: "AI") {
             attributed.addAttributes([
-                .foregroundColor: UIColor(red: 1.0, green: 0.76, blue: 0.06, alpha: 1.0)
+                .foregroundColor: AppColor.accentGold
             ], range: NSRange(aiRange, in: fullText))
         }
         appNameLabel.attributedText = attributed

@@ -60,36 +60,36 @@ extension DashboardContentView {
 
         headerTitleLabel.textAlignment = .center
         headerTitleLabel.font = .systemFont(ofSize: 22, weight: .bold)
-        headerTitleLabel.textColor = UIColor(red: 0.1, green: 0.13, blue: 0.2, alpha: 1.0)
+        headerTitleLabel.textColor = AppColor.titleDark
 
-        profileButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        profileButton.backgroundColor = AppColor.primaryYellow
         profileButton.setImage(UIImage(systemName: "wallet.pass"), for: .normal)
         profileButton.tintColor = .white
 
         greetingLabel.font = .systemFont(ofSize: 32, weight: .bold)
-        greetingLabel.textColor = UIColor(red: 0.1, green: 0.13, blue: 0.2, alpha: 1.0)
+        greetingLabel.textColor = AppColor.titleDark
 
-        balanceCard.backgroundColor = UIColor(red: 0.12, green: 0.15, blue: 0.2, alpha: 1.0)
+        balanceCard.backgroundColor = AppColor.darkSurfaceAlt
         balanceCard.layer.shadowColor = UIColor.black.cgColor
         balanceCard.layer.shadowOpacity = 0.14
         balanceCard.layer.shadowRadius = 30
         balanceCard.layer.shadowOffset = CGSize(width: 0, height: 18)
 
         ibanLabel.font = .monospacedSystemFont(ofSize: 13, weight: .semibold)
-        ibanLabel.textColor = UIColor(white: 1.0, alpha: 0.62)
+        ibanLabel.textColor = AppColor.white62
 
         copyButton.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
-        copyButton.tintColor = UIColor(white: 1.0, alpha: 0.7)
+        copyButton.tintColor = AppColor.white70
 
         balanceTitleLabel.font = .systemFont(ofSize: 15, weight: .bold)
-        balanceTitleLabel.textColor = UIColor(white: 1.0, alpha: 0.62)
+        balanceTitleLabel.textColor = AppColor.white62
         balanceTitleLabel.numberOfLines = 1
 
         balanceValueLabel.font = .systemFont(ofSize: 52, weight: .bold)
-        balanceValueLabel.textColor = UIColor(red: 0.99, green: 0.97, blue: 0.92, alpha: 1.0)
+        balanceValueLabel.textColor = AppColor.balanceDisplay
 
         balanceCurrencyLabel.font = .systemFont(ofSize: 28, weight: .bold)
-        balanceCurrencyLabel.textColor = UIColor(red: 1.0, green: 0.8, blue: 0.03, alpha: 1.0)
+        balanceCurrencyLabel.textColor = AppColor.accentGold
 
         quickActionsStack.axis = .horizontal
         quickActionsStack.alignment = .top
@@ -97,13 +97,13 @@ extension DashboardContentView {
         quickActionsStack.spacing = 12
 
         sectionTitleLabel.font = .systemFont(ofSize: 24, weight: .bold)
-        sectionTitleLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        sectionTitleLabel.textColor = AppColor.primaryText
 
-        seeAllButton.setTitleColor(UIColor(red: 0.49, green: 0.43, blue: 0.2, alpha: 1.0), for: .normal)
+        seeAllButton.setTitleColor(AppColor.accentOlive, for: .normal)
         seeAllButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
 
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.color = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        loadingIndicator.color = AppColor.primaryText
 
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none

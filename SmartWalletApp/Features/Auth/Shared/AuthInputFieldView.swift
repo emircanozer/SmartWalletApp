@@ -78,15 +78,15 @@ class AuthInputFieldView: UIView {
         titleRow.distribution = .equalSpacing
 
         titleLabel.font = .systemFont(ofSize: 14, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.39, green: 0.41, blue: 0.48, alpha: 1.0)
+        titleLabel.textColor = AppColor.fieldTitleText
 
-        topActionButton.setTitleColor(UIColor(red: 0.98, green: 0.78, blue: 0.0, alpha: 1.0), for: .normal)
+        topActionButton.setTitleColor(AppColor.primaryYellow, for: .normal)
         topActionButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
         topActionButton.isHidden = topActionButton.title(for: .normal) == nil
 
         containerView.backgroundColor = .white
         containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = UIColor(red: 0.91, green: 0.92, blue: 0.95, alpha: 1.0).cgColor
+        containerView.layer.borderColor = AppColor.borderSoft.cgColor
         containerView.layer.cornerRadius = 12
 
         contentStack.axis = .horizontal
@@ -94,29 +94,29 @@ class AuthInputFieldView: UIView {
         contentStack.spacing = 10
 
         leadingImageView.image = UIImage(systemName: iconName)
-        leadingImageView.tintColor = UIColor(red: 0.72, green: 0.75, blue: 0.8, alpha: 1.0)
+        leadingImageView.tintColor = AppColor.iconMuted
         leadingImageView.contentMode = .scaleAspectFit
 
         textField.borderStyle = .none
         textField.font = .systemFont(ofSize: 16, weight: .medium)
-        textField.textColor = UIColor(red: 0.28, green: 0.31, blue: 0.38, alpha: 1.0)
+        textField.textColor = AppColor.inputText
         textField.isSecureTextEntry = isSecure
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.attributedPlaceholder = NSAttributedString(
             string: placeholderText,
             attributes: [
-                .foregroundColor: UIColor(red: 0.65, green: 0.69, blue: 0.76, alpha: 1.0),
+                .foregroundColor: AppColor.placeholderText,
                 .font: UIFont.systemFont(ofSize: 16, weight: .medium)
             ]
         )
 
-        trailingButton.tintColor = UIColor(red: 0.72, green: 0.75, blue: 0.8, alpha: 1.0)
+        trailingButton.tintColor = AppColor.iconMuted
         trailingButton.setImage(trailingIconName == nil ? nil : UIImage(systemName: trailingIconName!), for: .normal)
         trailingButton.isHidden = trailingIconName == nil
 
         helperLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        helperLabel.textColor = UIColor(red: 0.73, green: 0.75, blue: 0.8, alpha: 1.0)
+        helperLabel.textColor = AppColor.helperText
         helperLabel.numberOfLines = 0
         helperLabel.isHidden = helperLabel.text == nil
     }

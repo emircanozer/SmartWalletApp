@@ -138,7 +138,7 @@ extension VerificationCodeViewController {
         let isFinished = remainingSeconds == 0
         contentView.timerStack.isHidden = isFinished
         contentView.resendButton.isHidden = !isFinished
-        contentView.resendButton.setTitleColor(UIColor(red: 0.87, green: 0.23, blue: 0.23, alpha: 1.0), for: .normal)
+        contentView.resendButton.setTitleColor(AppColor.danger, for: .normal)
         contentView.timerLabel.text = "\(remainingSeconds) saniye"
     }
 

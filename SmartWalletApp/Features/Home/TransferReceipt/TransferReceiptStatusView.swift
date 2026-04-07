@@ -28,23 +28,23 @@ final class TransferReceiptStatusView: UIView {
 
 extension TransferReceiptStatusView {
     func configureView() {
-        glowView.backgroundColor = UIColor(red: 1.0, green: 0.85, blue: 0.15, alpha: 0.18)
-        glowView.layer.shadowColor = UIColor(red: 1.0, green: 0.84, blue: 0.1, alpha: 1.0).cgColor
+        glowView.backgroundColor = AppColor.accentGold.withAlphaComponent(0.18)
+        glowView.layer.shadowColor = AppColor.accentGold.cgColor
         glowView.layer.shadowOpacity = 0.34
         glowView.layer.shadowRadius = 24
         glowView.layer.shadowOffset = .zero
 
-        outerCircleView.backgroundColor = UIColor(red: 0.18, green: 0.19, blue: 0.21, alpha: 1.0)
+        outerCircleView.backgroundColor = AppColor.darkSurface
 
         middleCircleView.backgroundColor = .clear
         middleCircleView.layer.borderWidth = 5
-        middleCircleView.layer.borderColor = UIColor(red: 0.63, green: 0.54, blue: 0.11, alpha: 0.9).cgColor
+        middleCircleView.layer.borderColor = AppColor.noteAccent.cgColor
 
-        innerCircleView.backgroundColor = UIColor(red: 1.0, green: 0.83, blue: 0.08, alpha: 1.0)
+        innerCircleView.backgroundColor = AppColor.accentGold
 
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .black)
         checkImageView.image = UIImage(systemName: "checkmark", withConfiguration: symbolConfig)
-        checkImageView.tintColor = UIColor(red: 0.18, green: 0.19, blue: 0.21, alpha: 1.0)
+        checkImageView.tintColor = AppColor.darkSurface
         checkImageView.contentMode = .scaleAspectFit
     }
 

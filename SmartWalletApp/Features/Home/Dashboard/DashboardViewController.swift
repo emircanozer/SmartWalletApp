@@ -115,7 +115,7 @@ extension DashboardViewController {
         toastLabel.textAlignment = .center
         toastLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         toastLabel.textColor = .white
-        toastLabel.backgroundColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 0.92)
+        toastLabel.backgroundColor = AppColor.primaryText.withAlphaComponent(0.92)
         toastLabel.layer.cornerRadius = 12
         toastLabel.clipsToBounds = true
         view.addSubview(toastLabel)

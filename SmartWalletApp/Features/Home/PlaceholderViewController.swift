@@ -22,7 +22,7 @@ class PlaceholderViewController: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = titleText
         titleLabel.font = .systemFont(ofSize: 28, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.18, green: 0.19, blue: 0.25, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
         view.addSubview(titleLabel)
 
         NSLayoutConstraint.activate([

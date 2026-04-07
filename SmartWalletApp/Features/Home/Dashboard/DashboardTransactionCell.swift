@@ -39,8 +39,8 @@ extension DashboardTransactionCell {
         badgeLabel.text = item.categoryBadgeText
         amountLabel.text = item.amountText
         amountLabel.textColor = item.isIncome
-            ? UIColor(red: 0.33, green: 0.73, blue: 0.4, alpha: 1.0)
-            : UIColor(red: 0.87, green: 0.27, blue: 0.23, alpha: 1.0)
+            ? AppColor.success
+            : AppColor.danger
 
         iconWrapper.backgroundColor = item.category.iconBackgroundColor
         iconView.image = UIImage(systemName: item.category.iconName)
@@ -60,19 +60,19 @@ extension DashboardTransactionCell {
         iconView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 19, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.18, green: 0.19, blue: 0.25, alpha: 1.0)
+        titleLabel.textColor = AppColor.primaryText
         titleLabel.numberOfLines = 1
 
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        subtitleLabel.textColor = UIColor(red: 0.4, green: 0.42, blue: 0.48, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.bodyText
         subtitleLabel.numberOfLines = 1
 
         dateLabel.font = .systemFont(ofSize: 13, weight: .semibold)
-        dateLabel.textColor = UIColor(red: 0.48, green: 0.5, blue: 0.56, alpha: 1.0)
+        dateLabel.textColor = AppColor.quietText
 
         badgeLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        badgeLabel.textColor = UIColor(red: 0.34, green: 0.36, blue: 0.41, alpha: 1.0)
-        badgeLabel.backgroundColor = UIColor(red: 0.94, green: 0.95, blue: 0.97, alpha: 1.0)
+        badgeLabel.textColor = AppColor.mutedText
+        badgeLabel.backgroundColor = AppColor.divider
         badgeLabel.clipsToBounds = true
 
         amountLabel.font = .systemFont(ofSize: 20, weight: .bold)

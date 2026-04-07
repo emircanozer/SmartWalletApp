@@ -48,14 +48,14 @@ final class TransferSuccessIndicatorView: UIView {
         backgroundColor = .clear
 
        
-        glowView.backgroundColor = UIColor(red: 1.0, green: 0.9, blue: 0.35, alpha: 0.16)
-        glowView.layer.shadowColor = UIColor(red: 1.0, green: 0.86, blue: 0.2, alpha: 0.72).cgColor
+        glowView.backgroundColor = AppColor.accentGold.withAlphaComponent(0.16)
+        glowView.layer.shadowColor = AppColor.accentGold.withAlphaComponent(0.72).cgColor
         glowView.layer.shadowOpacity = 1
         glowView.layer.shadowRadius = 38
         glowView.layer.shadowOffset = .zero
 
        
-        outerRingView.backgroundColor = UIColor(red: 0.19, green: 0.2, blue: 0.21, alpha: 1.0)
+        outerRingView.backgroundColor = AppColor.darkSurface
         outerRingView.layer.shadowColor = UIColor.black.withAlphaComponent(0.18).cgColor
         outerRingView.layer.shadowOpacity = 1
         outerRingView.layer.shadowRadius = 18
@@ -64,15 +64,15 @@ final class TransferSuccessIndicatorView: UIView {
        
         middleRingView.backgroundColor = .clear
         middleRingView.layer.borderWidth = 4
-        middleRingView.layer.borderColor = UIColor(red: 0.53, green: 0.47, blue: 0.08, alpha: 1.0).cgColor
+        middleRingView.layer.borderColor = AppColor.noteAccent.cgColor
 
         
-        innerCircleView.backgroundColor = UIColor(red: 1.0, green: 0.84, blue: 0.17, alpha: 1.0)
+        innerCircleView.backgroundColor = AppColor.accentGold
 
         
         let symbolConfig = UIImage.SymbolConfiguration(pointSize: 34, weight: .black)
         checkImageView.image = UIImage(systemName: "checkmark", withConfiguration: symbolConfig)
-        checkImageView.tintColor = UIColor(red: 0.17, green: 0.18, blue: 0.21, alpha: 1.0)
+        checkImageView.tintColor = AppColor.darkSurface
         checkImageView.contentMode = .scaleAspectFit
     }
 

@@ -88,13 +88,13 @@ extension WelcomeContentView {
         brandStack.alignment = .center
         brandStack.spacing = 10
 
-        logoWrapper.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+        logoWrapper.backgroundColor = AppColor.primaryYellow
         logoImageView.image = UIImage(systemName: "wallet.pass.fill")
         logoImageView.tintColor = .black
         logoImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 21, weight: .bold)
-        titleLabel.textColor = UIColor(red: 0.11, green: 0.12, blue: 0.2, alpha: 1.0)
+        titleLabel.textColor = AppColor.titleDark
         titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         titleLabel.lineBreakMode = .byTruncatingTail
 
@@ -102,30 +102,30 @@ extension WelcomeContentView {
         headerActionsStack.alignment = .center
         headerActionsStack.spacing = 14
 
-        languageButton.setTitleColor(UIColor(red: 0.34, green: 0.38, blue: 0.47, alpha: 1.0), for: .normal)
+        languageButton.setTitleColor(AppColor.mutedText, for: .normal)
         languageButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
 
         notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
-        notificationButton.tintColor = UIColor(red: 0.23, green: 0.26, blue: 0.33, alpha: 1.0)
+        notificationButton.tintColor = AppColor.inputText
 
-        avatarOrbitView.backgroundColor = UIColor(red: 1.0, green: 0.98, blue: 0.93, alpha: 1.0)
+        avatarOrbitView.backgroundColor = AppColor.surfaceWarmSoft
         avatarOrbitView.layer.borderWidth = 1
-        avatarOrbitView.layer.borderColor = UIColor(red: 0.99, green: 0.89, blue: 0.62, alpha: 1.0).cgColor
+        avatarOrbitView.layer.borderColor = AppColor.borderWarm.cgColor
 
         avatarCircleView.backgroundColor = .white
         avatarCircleView.layer.borderWidth = 5
-        avatarCircleView.layer.borderColor = UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0).cgColor
+        avatarCircleView.layer.borderColor = AppColor.accentYellow.cgColor
 
         avatarIconView.image = UIImage(systemName: "person.crop.circle.fill")
-        avatarIconView.tintColor = UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0)
+        avatarIconView.tintColor = AppColor.accentYellow
         avatarIconView.contentMode = .scaleAspectFit
 
         welcomeLabel.textAlignment = .center
-        welcomeLabel.textColor = UIColor(red: 0.11, green: 0.12, blue: 0.2, alpha: 1.0)
+        welcomeLabel.textColor = AppColor.titleDark
         welcomeLabel.font = .systemFont(ofSize: 30, weight: .bold)
 
         subtitleLabel.textAlignment = .center
-        subtitleLabel.textColor = UIColor(red: 0.5, green: 0.53, blue: 0.6, alpha: 1.0)
+        subtitleLabel.textColor = AppColor.tertiaryText
         subtitleLabel.font = .systemFont(ofSize: 17, weight: .regular)
         subtitleLabel.numberOfLines = 0
 
@@ -134,21 +134,21 @@ extension WelcomeContentView {
         shortcutsStack.distribution = .fillEqually
         shortcutsStack.spacing = 8
 
-        primaryButton.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
-        primaryButton.setTitleColor(UIColor(red: 0.12, green: 0.13, blue: 0.2, alpha: 1.0), for: .normal)
+        primaryButton.backgroundColor = AppColor.primaryYellow
+        primaryButton.setTitleColor(AppColor.titleDark, for: .normal)
         primaryButton.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
-        primaryButton.layer.shadowColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0).cgColor
+        primaryButton.layer.shadowColor = AppColor.primaryYellow.cgColor
         primaryButton.layer.shadowOpacity = 0.2
         primaryButton.layer.shadowRadius = 18
         primaryButton.layer.shadowOffset = CGSize(width: 0, height: 10)
 
         secondaryButton.backgroundColor = .white
-        secondaryButton.setTitleColor(UIColor(red: 0.94, green: 0.74, blue: 0.0, alpha: 1.0), for: .normal)
+        secondaryButton.setTitleColor(AppColor.accentYellow, for: .normal)
         secondaryButton.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
         secondaryButton.layer.borderWidth = 1
-        secondaryButton.layer.borderColor = UIColor(red: 0.98, green: 0.92, blue: 0.76, alpha: 1.0).cgColor
+        secondaryButton.layer.borderColor = AppColor.borderWarm.cgColor
 
-        tertiaryButton.setTitleColor(UIColor(red: 0.45, green: 0.48, blue: 0.56, alpha: 1.0), for: .normal)
+        tertiaryButton.setTitleColor(AppColor.bodyText, for: .normal)
         tertiaryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
 
         bottomBar.backgroundColor = .white
@@ -345,17 +345,17 @@ class ShortcutItemView: UIView {
         stack.translatesAutoresizingMaskIntoConstraints = false
 
         iconContainer.translatesAutoresizingMaskIntoConstraints = false
-        iconContainer.backgroundColor = UIColor(red: 1.0, green: 0.98, blue: 0.93, alpha: 1.0)
+        iconContainer.backgroundColor = AppColor.surfaceWarmSoft
         iconContainer.layer.cornerRadius = 22
 
         iconView.translatesAutoresizingMaskIntoConstraints = false
         iconView.image = UIImage(systemName: iconName)
-        iconView.tintColor = UIColor(red: 0.95, green: 0.76, blue: 0.0, alpha: 1.0)
+        iconView.tintColor = AppColor.accentYellow
         iconView.contentMode = .scaleAspectFit
 
         titleLabel.text = title
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor(red: 0.28, green: 0.31, blue: 0.38, alpha: 1.0)
+        titleLabel.textColor = AppColor.inputText
         titleLabel.font = .systemFont(ofSize: 10, weight: .medium)
         titleLabel.numberOfLines = 2
 
@@ -396,11 +396,11 @@ class FooterTabItemView: UIView {
             circle.translatesAutoresizingMaskIntoConstraints = false
             iconView.translatesAutoresizingMaskIntoConstraints = false
 
-            circle.backgroundColor = UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0)
+            circle.backgroundColor = AppColor.primaryYellow
             circle.layer.cornerRadius = 25
 
             iconView.image = UIImage(systemName: iconName)
-            iconView.tintColor = UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0)
+            iconView.tintColor = AppColor.authHeadingText
             iconView.contentMode = .scaleAspectFit
 
             addSubview(circle)
@@ -429,11 +429,11 @@ class FooterTabItemView: UIView {
 
             iconView.translatesAutoresizingMaskIntoConstraints = false
             iconView.image = UIImage(systemName: iconName)
-            iconView.tintColor = UIColor(red: 0.72, green: 0.75, blue: 0.8, alpha: 1.0)
+            iconView.tintColor = AppColor.iconMuted
             iconView.contentMode = .scaleAspectFit
 
             titleLabel.text = title
-            titleLabel.textColor = UIColor(red: 0.72, green: 0.75, blue: 0.8, alpha: 1.0)
+            titleLabel.textColor = AppColor.iconMuted
             titleLabel.font = .systemFont(ofSize: 10, weight: .medium)
             titleLabel.textAlignment = .center
 

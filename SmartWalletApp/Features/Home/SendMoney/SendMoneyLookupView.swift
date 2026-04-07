@@ -35,22 +35,22 @@ final class SendMoneyLookupView: UIView {
         ibanLabel.isHidden = true
         let iconName = recipient.isSaved ? "star.fill" : "star"
         starButton.setImage(UIImage(systemName: iconName), for: .normal)
-        starButton.tintColor = UIColor(red: 1.0, green: 0.76, blue: 0.06, alpha: 1.0)
+        starButton.tintColor = AppColor.accentGold
     }
 }
 
  extension SendMoneyLookupView {
     func configureView() {
-        backgroundColor = UIColor(red: 0.96, green: 0.99, blue: 0.96, alpha: 1.0)
+        backgroundColor = AppColor.successSurface
         isHidden = true
 
-        dotView.backgroundColor = UIColor(red: 0.35, green: 0.75, blue: 0.39, alpha: 1.0)
+        dotView.backgroundColor = AppColor.successStrong
 
         nameLabel.font = .systemFont(ofSize: 13, weight: .bold)
-        nameLabel.textColor = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
+        nameLabel.textColor = AppColor.primaryText
 
         ibanLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        ibanLabel.textColor = UIColor(red: 0.42, green: 0.45, blue: 0.52, alpha: 1.0)
+        ibanLabel.textColor = AppColor.bodyText
         ibanLabel.isHidden = true
 
         starButton.contentMode = .scaleAspectFit

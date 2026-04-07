@@ -14,6 +14,7 @@ struct VerifyEmailResponse: Decodable {
         case success
         case capitalizedMessage = "Message"
         case capitalizedSuccess = "Success"
+        case typoSuccess = "succes"
     }
 
     init(from decoder: Decoder) throws {
@@ -25,6 +26,7 @@ struct VerifyEmailResponse: Decodable {
         success =
             (try? container.decode(Bool.self, forKey: .success)) ??
             (try? container.decode(Bool.self, forKey: .capitalizedSuccess)) ??
+            (try? container.decode(Bool.self, forKey: .typoSuccess)) ??
             false
     }
     /* DTO'daki initleri yazma sebebimiz :

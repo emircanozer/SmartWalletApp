@@ -1,14 +1,14 @@
 import Foundation
 
-enum ResetPasswordViewState {
+enum ForgotPasswordViewState {
     case idle
     case loading
-    case success(String)
+    case success(String, ForgotPasswordResponse)
     case failure(String)
 }
 
-final class ResetPasswordViewModel {
-    var onStateChange: ((ResetPasswordViewState) -> Void)?
+final class ForgotPasswordViewModel {
+    var onStateChange: ((ForgotPasswordViewState) -> Void)?
 
     private let authService: AuthService
 
@@ -28,9 +28,9 @@ final class ResetPasswordViewModel {
         onStateChange?(.loading)
 
         do {
-            try await authService.forgotPassword(request: ForgotPasswordRequest(email: trimmedEmail))
+            let response = try await authService.forgotPassword(request: ForgotPasswordRequest(email: trimmedEmail))
             print("DEBUG Auth: forgot-password basarili. email=\(trimmedEmail)")
-            onStateChange?(.success("Sıfırlama bağlantısı e-posta adresinize gönderildi."))
+            onStateChange?(.success(trimmedEmail, response))
         } catch {
             print("DEBUG Auth: forgot-password hatasi: \(error.localizedDescription)")
             onStateChange?(.failure(error.localizedDescription))
