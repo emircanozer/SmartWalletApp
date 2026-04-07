@@ -51,7 +51,7 @@ extension ResetPasswordContentView {
     }
 }
 
-private extension ResetPasswordContentView {
+extension ResetPasswordContentView {
     func configureView() {
         backgroundColor = .white
 

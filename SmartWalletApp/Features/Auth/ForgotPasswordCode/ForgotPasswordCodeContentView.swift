@@ -42,7 +42,7 @@ extension ForgotPasswordCodeContentView {
     }
 }
 
-private extension ForgotPasswordCodeContentView {
+ extension ForgotPasswordCodeContentView {
     func configureView() {
         backgroundColor = .white
         contentContainer.backgroundColor = .white

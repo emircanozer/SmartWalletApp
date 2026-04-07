@@ -26,6 +26,10 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.ownerName(iban: iban), as: WalletOwnerNameResponse.self)
     }
 
+    func fetchAnalysis() async throws -> WalletAnalysisResponse {
+        try await apiClient.send(WalletEndpoint.analysis, as: WalletAnalysisResponse.self)
+    }
+
     func createContact(request: CreateWalletContactRequest) async throws {
         let body = try encoder.encode(request)
         try await apiClient.send(WalletEndpoint.contacts(body: body))
@@ -43,6 +47,7 @@ private enum WalletEndpoint: Endpoint {
     case transactions(walletId: String)
     case recipients
     case ownerName(iban: String)
+    case analysis
     case contacts(body: Data)
     case transfer(body: Data)
 
@@ -56,6 +61,8 @@ private enum WalletEndpoint: Endpoint {
             return "/api/Wallets/recipients"
         case .ownerName(let iban):
             return "/api/Wallets/iban/\(iban)/owner-name"
+        case .analysis:
+            return "/api/Wallets/analysis"
         case .contacts:
             return "/api/Wallets/contacts"
         case .transfer:

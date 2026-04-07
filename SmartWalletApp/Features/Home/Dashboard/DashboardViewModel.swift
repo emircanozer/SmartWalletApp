@@ -3,8 +3,6 @@ import Foundation
 /* service’ten gelen ham response’u alıyor
  UI’ın kullanacağı DashboardViewData ve DashboardTransaction modeline çeviriyor*/
 
-
-
 enum DashboardViewState {
     case idle
     case loading
@@ -21,7 +19,8 @@ final class DashboardViewModel {
     init(walletService: WalletService) {
         self.walletService = walletService
     }
-
+    
+    /* bu closure sonunda UI güncellemesine gidiyor her ne kadar burada label boyamamıyor ama state yayınlıyor o state controller’da UI güncellemesine dönüşüyor o yüzden controller da da olmasa bile mainactoru burada da kullanmak güvenli */
     @MainActor
     func loadDashboard() async {
         onStateChange?(.loading)
@@ -39,7 +38,7 @@ final class DashboardViewModel {
 }
 
  extension DashboardViewModel {
-    //Backend → UI Model'e çevirme
+    //ham response'u  UI Model'e çevirme
     func makeViewData(wallet: MyWalletResponse, transactions: [WalletTransactionResponse]) -> DashboardViewData {
         // her birini ui modeline çeviriyor
         let mappedTransactions = transactions.map(mapTransaction)
