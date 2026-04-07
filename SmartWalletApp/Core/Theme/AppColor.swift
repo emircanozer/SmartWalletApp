@@ -14,7 +14,7 @@ enum AppColor {
     static let fieldTitleText = named("FieldTitleText", fallback: UIColor(red: 0.39, green: 0.41, blue: 0.48, alpha: 1.0))
     static let borderSoft = named("BorderSoft", fallback: UIColor(red: 0.91, green: 0.92, blue: 0.95, alpha: 1.0))
     static let iconMuted = named("IconMuted", fallback: UIColor(red: 0.72, green: 0.75, blue: 0.8, alpha: 1.0))
-    static let placeholderText = named("PlaceholderText", fallback: UIColor(red: 0.65, green: 0.69, blue: 0.76, alpha: 1.0))
+    static let placeholderText = named("InputPlaceholderText", fallback: UIColor(red: 0.65, green: 0.69, blue: 0.76, alpha: 1.0))
     static let helperText = named("HelperText", fallback: UIColor(red: 0.73, green: 0.75, blue: 0.8, alpha: 1.0))
     static let inputText = named("InputText", fallback: UIColor(red: 0.28, green: 0.31, blue: 0.38, alpha: 1.0))
     static let codeInactive = named("CodeInactive", fallback: UIColor(red: 0.91, green: 0.92, blue: 0.94, alpha: 1.0))

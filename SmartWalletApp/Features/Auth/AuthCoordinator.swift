@@ -85,7 +85,48 @@ class AuthCoordinator: Coordinator {
         viewController.onBack = { [weak self] in
             self?.navigationController.popViewController(animated: true)
         }
+        viewController.onVerified = { [weak self] context in
+            self?.showResetPassword(context: context)
+        }
         navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showResetPassword(context: PendingPasswordResetContext) {
+        let viewModel = ResetPasswordViewModel(context: context, authService: authService)
+        let viewController = ResetPasswordViewController(viewModel: viewModel)
+        viewController.onBack = { [weak self] in
+            self?.navigationController.popViewController(animated: true)
+        }
+        viewController.onResetCompleted = { [weak self] in
+            self?.showResetPasswordSuccess()
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showResetPasswordSuccess() {
+        let viewModel = ResetPasswordSuccessViewModel()
+        let viewController = ResetPasswordSuccessViewController(viewModel: viewModel)
+        viewController.onLoginTap = { [weak self] in
+            self?.routeToLoginFromForgotPassword()
+        }
+        viewController.onHomeTap = { [weak self] in
+            self?.routeToWelcomeFromForgotPassword()
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func routeToLoginFromForgotPassword() {
+        if let loginViewController = navigationController.viewControllers.first(where: { $0 is LoginViewController }) {
+            navigationController.popToViewController(loginViewController, animated: true)
+            return
+        }
+
+        navigationController.popToRootViewController(animated: false)
+        showLogin()
+    }
+
+    private func routeToWelcomeFromForgotPassword() {
+        navigationController.popToRootViewController(animated: true)
     }
 
     //registerin verdiği veriyi alıyor parametre olarak diğer ekrana(viewmodele) taşıyor

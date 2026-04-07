@@ -37,6 +37,16 @@ final class AuthService {
         let body = try encode(request)
         return try await apiClient.send(AuthEndpoint.forgotPassword(body: body), as: ForgotPasswordResponse.self)
     }
+
+    func verifyPasswordResetCode(request: VerifyPasswordResetCodeRequest) async throws -> VerifyPasswordResetCodeResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.verifyPasswordResetCode(body: body), as: VerifyPasswordResetCodeResponse.self)
+    }
+
+    func resetPassword(request: ResetPasswordRequest) async throws -> ResetPasswordResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.resetPassword(body: body), as: ResetPasswordResponse.self)
+    }
 }
 
 private enum AuthEndpoint: Endpoint {
@@ -45,6 +55,8 @@ private enum AuthEndpoint: Endpoint {
     case verifyEmail(body: Data)
     case resendVerificationCode(body: Data)
     case forgotPassword(body: Data)
+    case verifyPasswordResetCode(body: Data)
+    case resetPassword(body: Data)
 
     var path: String {
         switch self {
@@ -58,6 +70,10 @@ private enum AuthEndpoint: Endpoint {
             return "/api/Auth/resend-verification-code"
         case .forgotPassword:
             return "/api/Auth/forgot-password"
+        case .verifyPasswordResetCode:
+            return "/api/Auth/verify-code"
+        case .resetPassword:
+            return "/api/Auth/reset-password"
         }
     }
 
@@ -67,7 +83,7 @@ private enum AuthEndpoint: Endpoint {
 
     var body: Data? {
         switch self {
-        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body):
+        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body):
             return body
         }
     }

@@ -402,6 +402,7 @@ extension SendMoneyContentView {
         confirmButton.setTitle("Onayla →", for: .normal)
     }
 
+    //viewModelden gelen data verisi
     func applyData(_ data: SendMoneyViewData) {
         balanceInfoLabel.text = "Kullanılabilir bakiye: \(data.balanceText)"
         amountTextField.text = data.amountText

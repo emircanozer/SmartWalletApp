@@ -2,7 +2,7 @@ import UIKit
 
 final class ForgotPasswordCodeViewController: UIViewController {
     var onBack: (() -> Void)?
-    var onVerified: ((String) -> Void)?
+    var onVerified: ((PendingPasswordResetContext) -> Void)?
 
     private let viewModel: ForgotPasswordCodeViewModel
     private let contentView = ForgotPasswordCodeContentView()
@@ -58,10 +58,9 @@ private extension ForgotPasswordCodeViewController {
                 self.setLoading(false)
             case .loading:
                 self.setLoading(true)
-            case .success(let message):
+            case .success(let context, _):
                 self.setLoading(false)
-                self.onVerified?(self.viewModel.email)
-                self.showAlert(message: message)
+                self.onVerified?(context)
             case .resendSuccess(let message):
                 self.setLoading(false)
                 self.contentView.codeInputView.clear()

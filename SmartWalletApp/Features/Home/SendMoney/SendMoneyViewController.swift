@@ -45,6 +45,7 @@ final class SendMoneyViewController: UIViewController {
         contentView.noteTextView.delegate = self
     }
 
+     // ViewController switch ile içini açıyor
     func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }

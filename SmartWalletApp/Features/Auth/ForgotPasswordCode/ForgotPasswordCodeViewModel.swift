@@ -3,7 +3,7 @@ import Foundation
 enum ForgotPasswordCodeViewState {
     case idle
     case loading
-    case success(String)
+    case success(PendingPasswordResetContext, String)
     case resendSuccess(String)
     case failure(String)
 }
@@ -31,8 +31,8 @@ final class ForgotPasswordCodeViewModel {
         onStateChange?(.loading)
 
         do {
-            let response = try await authService.verifyEmail(
-                request: VerifyEmailRequest(email: email, code: trimmedCode)
+            let response = try await authService.verifyPasswordResetCode(
+                request: VerifyPasswordResetCodeRequest(email: email, code: trimmedCode)
             )
 
             guard response.success else {
@@ -40,7 +40,7 @@ final class ForgotPasswordCodeViewModel {
                 return
             }
 
-            onStateChange?(.success(response.message))
+            onStateChange?(.success(PendingPasswordResetContext(email: email, code: trimmedCode), response.message))
         } catch {
             onStateChange?(.failure("Kod doğrulanamadı. \(error.localizedDescription)"))
         }
