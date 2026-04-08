@@ -90,6 +90,7 @@ extension VerificationCodeViewController {
         contentView.verifyButton.alpha = isLoading ? 0.7 : 1
         contentView.resendButton.isEnabled = !isLoading
         contentView.resendButton.alpha = isLoading ? 0.7 : 1
+        setCenteredLoading(isLoading)
     }
 
     func showAlert(message: String) {

@@ -25,13 +25,19 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
+        enableInteractivePopGesture()
         bindActions()
         bindViewModel()
+        observeKeyboard()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         contentView.applyCornerRadius()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -40,6 +46,8 @@ extension LoginViewController {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.loginButton.addTarget(self, action: #selector(handleLoginTap), for: .touchUpInside)
         contentView.registerButton.addTarget(self, action: #selector(handleRegisterTap), for: .touchUpInside)
+        contentView.emailField.setEditingDidBeginTarget(self, action: #selector(handleFieldEditingDidBegin(_:)))
+        contentView.passwordField.setEditingDidBeginTarget(self, action: #selector(handleFieldEditingDidBegin(_:)))
         contentView.passwordField.setTrailingTarget(self, action: #selector(handlePasswordVisibilityTap))
         contentView.passwordField.setTopActionTarget(self, action: #selector(handleForgotPasswordTap))
     }
@@ -64,8 +72,9 @@ extension LoginViewController {
     }
 
     func setLoading(_ isLoading: Bool) {
+        contentView.loginButton.alpha = isLoading ? 0.85 : 1
         contentView.loginButton.isEnabled = !isLoading
-        contentView.loginButton.alpha = isLoading ? 0.7 : 1
+        setCenteredLoading(isLoading)
     }
 
     func showAlert(message: String) {
@@ -97,5 +106,31 @@ extension LoginViewController {
 
     @objc func handleForgotPasswordTap() {
         onForgotPassword?()
+    }
+
+    
+    @objc func handleFieldEditingDidBegin(_ sender: UIView) {
+        let targetView = sender.nearestSuperview(of: AuthInputFieldView.self) ?? sender
+        contentView.scrollToVisible(targetView)
+    }
+
+    func observeKeyboard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func handleKeyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
+        contentView.setKeyboardBottomInset(bottomInset)
+
+        if let firstResponder = view.currentFirstResponder {
+            let targetView = firstResponder.nearestSuperview(of: AuthInputFieldView.self) ?? firstResponder
+            contentView.scrollToVisible(targetView)
+        }
+    }
+
+    @objc func handleKeyboardWillHide(_ notification: Notification) {
+        contentView.setKeyboardBottomInset(0)
     }
 }

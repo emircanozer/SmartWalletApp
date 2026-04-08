@@ -22,6 +22,7 @@ final class ExpenseAnalysisViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
+        enableInteractivePopGesture()
         bindActions()
         bindViewModel()
         loadData()

@@ -32,7 +32,6 @@ final class SendMoneyContentView: UIView {
     private let noteSectionLabel = UILabel()
     private let noteContainer = UIView()
     private let notePlaceholderLabel = UILabel()
-    private let loadingIndicator = UIActivityIndicatorView(style: .medium)
 
     private var amountChipButtons: [SendMoneyAmountChipButton] = []
     private var recipientViews: [SendMoneyRecipientRowView] = []
@@ -61,6 +60,16 @@ final class SendMoneyContentView: UIView {
 extension SendMoneyContentView {
     func setRefreshControl(_ refreshControl: UIRefreshControl) {
         scrollView.refreshControl = refreshControl
+    }
+
+    func setKeyboardBottomInset(_ inset: CGFloat) {
+        scrollView.contentInset.bottom = inset
+        scrollView.verticalScrollIndicatorInsets.bottom = inset
+    }
+
+    func scrollToVisible(_ view: UIView) {
+        let rect = view.convert(view.bounds, to: scrollView)
+        scrollView.scrollRectToVisible(rect.insetBy(dx: 0, dy: -24), animated: true)
     }
 
     func configureView() {
@@ -169,8 +178,6 @@ extension SendMoneyContentView {
         confirmButton.backgroundColor = AppColor.darkSurface
         confirmButton.setTitleColor(.white, for: .normal)
         confirmButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
-
-        loadingIndicator.hidesWhenStopped = true
     }
 
     func buildHierarchy() {
@@ -202,7 +209,6 @@ extension SendMoneyContentView {
         amountCard.addSubview(amountTitleLabel)
         amountCard.addSubview(amountInputStack)
         amountCard.addSubview(amountChipsStack)
-        amountCard.addSubview(loadingIndicator)
 
         amountInputStack.addArrangedSubview(amountCurrencyLabel)
         amountInputStack.addArrangedSubview(amountTextField)
@@ -248,8 +254,7 @@ extension SendMoneyContentView {
             noteTextView,
             notePlaceholderLabel,
             balanceInfoLabel,
-            confirmButton,
-            loadingIndicator
+            confirmButton
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -301,9 +306,6 @@ extension SendMoneyContentView {
             amountChipsStack.trailingAnchor.constraint(equalTo: amountCard.trailingAnchor, constant: -12),
             amountChipsStack.heightAnchor.constraint(equalToConstant: 38),
             amountChipsStack.bottomAnchor.constraint(equalTo: amountCard.bottomAnchor, constant: -14),
-
-            loadingIndicator.topAnchor.constraint(equalTo: amountCard.topAnchor, constant: 16),
-            loadingIndicator.trailingAnchor.constraint(equalTo: amountCard.trailingAnchor, constant: -16),
 
             amountErrorLabel.topAnchor.constraint(equalTo: amountCard.bottomAnchor, constant: 8),
             amountErrorLabel.leadingAnchor.constraint(equalTo: amountCard.leadingAnchor, constant: 2),
@@ -437,9 +439,5 @@ extension SendMoneyContentView {
             recipientsStack.addArrangedSubview(view)
             return view
         }
-    }
-
-    func setLoading(_ isLoading: Bool) {
-        isLoading ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
     }
 }

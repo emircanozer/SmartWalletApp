@@ -24,9 +24,11 @@ final class ForgotPasswordCodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
+        enableInteractivePopGesture()
         bindActions()
         bindViewModel()
         observeKeyboard()
+        contentView.backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -77,10 +79,13 @@ final class ForgotPasswordCodeViewController: UIViewController {
     }
 
     func setLoading(_ isLoading: Bool) {
-        contentView.verifyButton.isEnabled = !isLoading
-        contentView.verifyButton.alpha = isLoading ? 0.7 : 1
+        contentView.verifyButton.alpha = isLoading ? 0.85 : 1
+        setCenteredLoading(isLoading)
         contentView.resendButton.isEnabled = !isLoading
         contentView.resendButton.alpha = isLoading ? 0.7 : 1
+        if !isLoading {
+            updateVerifyButtonState()
+        }
     }
 
     func updateVerifyButtonState() {
@@ -115,6 +120,10 @@ final class ForgotPasswordCodeViewController: UIViewController {
         Task {
             await viewModel.resendCode()
         }
+    }
+
+    @objc func handleBackgroundTap() {
+        view.endEditing(true)
     }
 
     @objc func handleKeyboardWillShow(_ notification: Notification) {

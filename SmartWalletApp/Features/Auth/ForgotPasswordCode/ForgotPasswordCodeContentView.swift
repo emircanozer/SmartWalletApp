@@ -7,6 +7,7 @@ final class ForgotPasswordCodeContentView: UIView {
     let verifyButton = UIButton(type: .system)
     let resendButton = UIButton(type: .system)
     let backButton = UIButton(type: .system)
+    let backgroundTapGesture = UITapGestureRecognizer()
 
     private let contentContainer = UIView()
     private let brandLabel = UILabel()
@@ -83,6 +84,9 @@ extension ForgotPasswordCodeContentView {
 
         resendButton.setTitleColor(AppColor.warmActionText, for: .normal)
         resendButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+
+        backgroundTapGesture.cancelsTouchesInView = false
+        addGestureRecognizer(backgroundTapGesture)
     }
 
     func buildHierarchy() {

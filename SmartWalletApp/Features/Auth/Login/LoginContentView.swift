@@ -7,6 +7,7 @@ class LoginContentView: UIView {
     let loginButton = UIButton(type: .system)
     let registerButton = UIButton(type: .system)
 
+    private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let headerStack = UIStackView()
     private let brandStack = UIStackView()
@@ -61,6 +62,9 @@ class LoginContentView: UIView {
 extension LoginContentView {
     func configureView() {
         backgroundColor = .white
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceVertical = true
+        scrollView.keyboardDismissMode = .interactive
         contentContainer.backgroundColor = .white
 
         headerStack.axis = .horizontal
@@ -131,7 +135,8 @@ extension LoginContentView {
     }
 
     func buildHierarchy() {
-        addSubview(contentContainer)
+        addSubview(scrollView)
+        scrollView.addSubview(contentContainer)
 
         contentContainer.addSubview(headerStack)
         contentContainer.addSubview(heroWrapper)
@@ -160,6 +165,7 @@ extension LoginContentView {
 
     func setupLayout() {
         [
+            scrollView,
             contentContainer,
             headerStack,
             backButton,
@@ -181,10 +187,17 @@ extension LoginContentView {
         }
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+
+            contentContainer.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            contentContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            contentContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            contentContainer.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
 
             headerStack.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 12),
             headerStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
@@ -241,7 +254,7 @@ extension LoginContentView {
             footerStack.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
             footerStack.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -20),
 
-            cardView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -24)
+            cardView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -24)
         ])
     }
 
@@ -262,5 +275,15 @@ extension LoginContentView {
 
     @objc func handleBackgroundTap() {
         endEditing(true)
+    }
+
+    func setKeyboardBottomInset(_ inset: CGFloat) {
+        scrollView.contentInset.bottom = inset
+        scrollView.verticalScrollIndicatorInsets.bottom = inset
+    }
+
+    func scrollToVisible(_ view: UIView) {
+        let rect = view.convert(view.bounds, to: scrollView)
+        scrollView.scrollRectToVisible(rect.insetBy(dx: 0, dy: -24), animated: true)
     }
 }

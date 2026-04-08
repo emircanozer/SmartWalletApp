@@ -45,7 +45,7 @@ final class SendMoneyViewModel {
             recipients = recipientResponses.enumerated().map { index, recipient in
                 SendMoneyRecipient(
                     id: "\(index)-\(recipient.iban)",
-                    name: recipient.fullName,
+                    name: recipient.contactName ?? recipient.fullName,
                     subtitle: "",
                     iban: recipient.iban,
                     isSaved: true
@@ -86,8 +86,7 @@ final class SendMoneyViewModel {
             guard let self else { return }
             await self.loadLookupRecipient(
                 iban: normalized,
-                isSaved: matchedRecipient != nil,
-                fallbackName: matchedRecipient?.name
+                isSaved: matchedRecipient != nil
             )
         }
     }
@@ -118,8 +117,7 @@ final class SendMoneyViewModel {
             guard let self else { return }
             await self.loadLookupRecipient(
                 iban: recipient.iban,
-                isSaved: true,
-                fallbackName: recipient.name
+                isSaved: true
             )
         }
     }
@@ -152,7 +150,7 @@ final class SendMoneyViewModel {
             recipients = recipientResponses.enumerated().map { index, recipient in
                 SendMoneyRecipient(
                     id: "\(index)-\(recipient.iban)",
-                    name: recipient.fullName,
+                    name: recipient.contactName ?? recipient.fullName,
                     subtitle: "",
                     iban: recipient.iban,
                     isSaved: true
@@ -162,8 +160,7 @@ final class SendMoneyViewModel {
             if let savedRecipient = recipients.first(where: { $0.iban == recipient.iban }) {
                 await loadLookupRecipient(
                     iban: savedRecipient.iban,
-                    isSaved: true,
-                    fallbackName: savedRecipient.name
+                    isSaved: true
                 )
             } else {
                 lookupRecipient = nil
@@ -288,14 +285,6 @@ final class SendMoneyViewModel {
         NSDecimalNumber(decimal: amount).stringValue
     }
 
-    func maskName(_ name: String) -> String {
-        let parts = name.split(separator: " ")
-        return parts.map { part in
-            guard let first = part.first else { return "" }
-            return "\(first)***"
-        }.joined(separator: " ")
-    }
-
     func resetForm() {
         enteredIBAN = ""
         amountText = "100"
@@ -308,7 +297,7 @@ final class SendMoneyViewModel {
     }
 
     @MainActor
-    func loadLookupRecipient(iban: String, isSaved: Bool, fallbackName: String?) async {
+    func loadLookupRecipient(iban: String, isSaved: Bool) async {
         do {
             let response = try await walletService.fetchOwnerName(iban: iban)
             guard !Task.isCancelled else { return }
@@ -321,16 +310,7 @@ final class SendMoneyViewModel {
             emitLoadedState()
         } catch {
             guard !Task.isCancelled else { return }
-            if let fallbackName {
-                lookupRecipient = SendMoneyLookupRecipient(
-                    name: maskName(fallbackName),
-                    maskedIban: maskName(fallbackName),
-                    iban: iban,
-                    isSaved: isSaved
-                )
-            } else {
-                lookupRecipient = nil
-            }
+            lookupRecipient = nil
             emitLoadedState()
         }
     }

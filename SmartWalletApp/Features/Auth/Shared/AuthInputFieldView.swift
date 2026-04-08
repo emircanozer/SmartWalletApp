@@ -52,6 +52,11 @@ class AuthInputFieldView: UIView {
         trailingButton.addTarget(target, action: action, for: .touchUpInside)
     }
 
+    // içteki gerçek UITextField focus alınca controller’a haber veriyor
+    func setEditingDidBeginTarget(_ target: Any?, action: Selector) {
+        textField.addTarget(target, action: action, for: .editingDidBegin)
+    }
+
     func toggleSecureEntry() {
         textField.isSecureTextEntry.toggle()
     }

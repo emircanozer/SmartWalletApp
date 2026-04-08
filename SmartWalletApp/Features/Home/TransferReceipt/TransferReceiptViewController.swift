@@ -21,6 +21,7 @@ final class TransferReceiptViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        enableInteractivePopGesture()
         bindViewModel()
         bindActions()
         loadReceipt()

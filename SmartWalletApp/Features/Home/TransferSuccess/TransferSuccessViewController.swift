@@ -23,6 +23,7 @@ final class TransferSuccessViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        enableInteractivePopGesture()
         bindViewModel()
         bindActions()
         viewModel.load()

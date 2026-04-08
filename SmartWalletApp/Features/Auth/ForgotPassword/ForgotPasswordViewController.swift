@@ -39,12 +39,14 @@ class ForgotPasswordViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        enableInteractivePopGesture()
         configureView()
         buildHierarchy()
         setupLayout()
         applyContent()
         bindActions()
         bindViewModel()
+        observeKeyboard()
     }
 
     override func viewDidLayoutSubviews() {
@@ -52,6 +54,10 @@ class ForgotPasswordViewController: UIViewController {
         logoWrapper.layer.cornerRadius = 9
         heroCard.layer.cornerRadius = 18
         sendButton.layer.cornerRadius = 12
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -225,8 +231,9 @@ extension ForgotPasswordViewController {
     }
 
     func setLoading(_ isLoading: Bool) {
+        sendButton.alpha = isLoading ? 0.85 : 1
         sendButton.isEnabled = !isLoading
-        sendButton.alpha = isLoading ? 0.7 : 1
+        setCenteredLoading(isLoading)
     }
 
     func showAlert(message: String) {
@@ -246,6 +253,28 @@ extension ForgotPasswordViewController {
     @objc func handleSendTap() {
         Task {
             await viewModel.sendResetLink(email: emailField.trimmedText)
+        }
+    }
+
+    func observeKeyboard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func handleKeyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+              let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else { return }
+
+        let translation = min(max(0, keyboardFrame.height - view.safeAreaInsets.bottom) * 0.32, 110)
+        UIView.animate(withDuration: duration) {
+            self.contentView.transform = CGAffineTransform(translationX: 0, y: -translation)
+        }
+    }
+
+    @objc func handleKeyboardWillHide(_ notification: Notification) {
+        let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.25
+        UIView.animate(withDuration: duration) {
+            self.contentView.transform = .identity
         }
     }
 }

@@ -49,6 +49,16 @@ extension ResetPasswordContentView {
     func dismissKeyboard() {
         endEditing(true)
     }
+
+    func setKeyboardBottomInset(_ inset: CGFloat) {
+        scrollView.contentInset.bottom = inset
+        scrollView.verticalScrollIndicatorInsets.bottom = inset
+    }
+
+    func scrollToVisible(_ view: UIView) {
+        let rect = view.convert(view.bounds, to: scrollView)
+        scrollView.scrollRectToVisible(rect.insetBy(dx: 0, dy: -24), animated: true)
+    }
 }
 
 extension ResetPasswordContentView {

@@ -80,6 +80,7 @@ extension RegisterContentView {
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
+        scrollView.keyboardDismissMode = .interactive
 
         contentContainer.backgroundColor = .white
 
@@ -280,6 +281,16 @@ extension RegisterContentView {
     func applyCornerRadius() {
         iconWrapper.layer.cornerRadius = 15
         registerButton.layer.cornerRadius = 12
+    }
+
+    func setKeyboardBottomInset(_ inset: CGFloat) {
+        scrollView.contentInset.bottom = inset
+        scrollView.verticalScrollIndicatorInsets.bottom = inset
+    }
+
+    func scrollToVisible(_ view: UIView) {
+        let rect = view.convert(view.bounds, to: scrollView)
+        scrollView.scrollRectToVisible(rect.insetBy(dx: 0, dy: -24), animated: true)
     }
 
     @objc func handleBackgroundTap() {

@@ -6,6 +6,7 @@ final class SendMoneyViewController: UIViewController {
     private let viewModel: SendMoneyViewModel
     private let contentView = SendMoneyContentView()
     private let refreshControl = UIRefreshControl()
+    private var isSubmittingTransfer = false
 
     init(viewModel: SendMoneyViewModel) {
         self.viewModel = viewModel
@@ -22,10 +23,12 @@ final class SendMoneyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        enableInteractivePopGesture()
         bindActions()
         bindViewModel()
         bindDismissKeyboard()
         configureRefreshControl()
+        observeKeyboard()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -33,12 +36,18 @@ final class SendMoneyViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         loadScreen()
     }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
  extension SendMoneyViewController {
     func bindActions() {
         contentView.ibanTextField.addTarget(self, action: #selector(handleIBANChanged), for: .editingChanged)
         contentView.amountTextField.addTarget(self, action: #selector(handleAmountChanged), for: .editingChanged)
+        contentView.ibanTextField.addTarget(self, action: #selector(handleEditingDidBegin(_:)), for: .editingDidBegin)
+        contentView.amountTextField.addTarget(self, action: #selector(handleEditingDidBegin(_:)), for: .editingDidBegin)
         contentView.lookupView.starButton.addTarget(self, action: #selector(handleSaveRecipientTap), for: .touchUpInside)
         contentView.categoryButton.addTarget(self, action: #selector(handleCategoryTap), for: .touchUpInside)
         contentView.confirmButton.addTarget(self, action: #selector(handleConfirmTap), for: .touchUpInside)
@@ -52,25 +61,29 @@ final class SendMoneyViewController: UIViewController {
 
             switch state {
             case .idle:
-                self.contentView.setLoading(false)
+                self.setCenteredLoading(false)
+                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
             case .loading:
                 if !self.refreshControl.isRefreshing {
-                    self.contentView.setLoading(true)
+                    self.setCenteredLoading(true) // indicator de geliyor
                 }
                 // gelen veriyi ekrana basacak 
             case .loaded(let data):
-                self.contentView.setLoading(false)
+                self.setCenteredLoading(false)
+                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
                 self.contentView.applyData(data) // **
                 self.bindRecipientRows()
                 self.bindAmountChips()
             case .transferSucceeded(let response):
-                self.contentView.setLoading(false)
+                self.setCenteredLoading(false)
+                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
                 self.onTransferSucceeded?(response)
             case .failure(let message):
-                self.contentView.setLoading(false)
+                self.setCenteredLoading(false)
+                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
                 self.showAlert(message: message)
             }
@@ -151,6 +164,7 @@ final class SendMoneyViewController: UIViewController {
     }
 
     @objc func handleConfirmTap() {
+        isSubmittingTransfer = true
         Task {
             await viewModel.confirmTransfer()
         }
@@ -179,11 +193,39 @@ final class SendMoneyViewController: UIViewController {
     @objc func handlePullToRefresh() {
         loadScreen()
     }
+
+    @objc func handleEditingDidBegin(_ sender: UIView) {
+        contentView.scrollToVisible(sender)
+    }
+
+    func observeKeyboard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func handleKeyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
+        contentView.setKeyboardBottomInset(bottomInset)
+
+        if let firstResponder = view.currentFirstResponder {
+            contentView.scrollToVisible(firstResponder)
+        }
+    }
+
+    @objc func handleKeyboardWillHide(_ notification: Notification) {
+        contentView.setKeyboardBottomInset(0)
+    }
+
 }
 
 extension SendMoneyViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         viewModel.updateNote(textView.text)
+    }
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        contentView.scrollToVisible(textView)
     }
 }
 

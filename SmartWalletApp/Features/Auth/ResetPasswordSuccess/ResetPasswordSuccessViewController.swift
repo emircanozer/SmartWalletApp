@@ -23,6 +23,7 @@ final class ResetPasswordSuccessViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
+        enableInteractivePopGesture()
         bindActions()
         bindViewModel()
         viewModel.load()

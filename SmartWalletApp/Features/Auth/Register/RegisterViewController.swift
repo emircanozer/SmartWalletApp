@@ -23,14 +23,20 @@ class RegisterViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        enableInteractivePopGesture()
         bindActions()
         bindViewModel()
         updateCheckboxAppearance()
+        observeKeyboard()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         contentView.applyCornerRadius()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -61,8 +67,9 @@ extension RegisterViewController {
     }
 
     func setLoading(_ isLoading: Bool) {
+        contentView.registerButton.alpha = isLoading ? 0.85 : 1
         contentView.registerButton.isEnabled = !isLoading
-        contentView.registerButton.alpha = isLoading ? 0.7 : 1
+        setCenteredLoading(isLoading)
     }
 
     func showAlert(message: String) {
@@ -99,5 +106,25 @@ extension RegisterViewController {
 
     @objc func handlePasswordVisibilityTap() {
         contentView.passwordField.toggleSecureEntry()
+    }
+
+    func observeKeyboard() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func handleKeyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
+        contentView.setKeyboardBottomInset(bottomInset)
+
+        if let firstResponder = view.currentFirstResponder {
+            let targetView = firstResponder.nearestSuperview(of: AuthInputFieldView.self) ?? firstResponder
+            contentView.scrollToVisible(targetView)
+        }
+    }
+
+    @objc func handleKeyboardWillHide(_ notification: Notification) {
+        contentView.setKeyboardBottomInset(0)
     }
 }
