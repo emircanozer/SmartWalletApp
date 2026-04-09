@@ -36,7 +36,7 @@ class WelcomeContentView: UIView {
         let isHighlighted: Bool
     }
 
-    private let languageTitleText = "TR/EN"
+    
     private let welcomeTitleText = "Hoş Geldiniz"
     private let welcomeSubtitleText = "Finansal asistanınız her an yanınızda."
     private let primaryButtonTitleText = "Giriş Yap"
@@ -49,11 +49,11 @@ class WelcomeContentView: UIView {
         .init(title: "Piyasalar", iconName: "chart.line.uptrend.xyaxis")
     ]
     private let tabItems: [TabItem] = [
-        .init(title: "Hizmetler", iconName: "bolt.fill", isHighlighted: false),
-        .init(title: "Piyasalar", iconName: "chart.bar.fill", isHighlighted: false),
+        .init(title: "Anasayfa", iconName: "house", isHighlighted: false),
+        .init(title: "Piyasalar", iconName: "chart.bar.xaxis.ascending", isHighlighted: false),
         .init(title: "", iconName: "cpu", isHighlighted: true),
-        .init(title: "Hesaplarım", iconName: "person.text.rectangle", isHighlighted: false),
-        .init(title: "Diğer", iconName: "square.grid.2x2", isHighlighted: false)
+        .init(title: "Transfer", iconName: "arrow.left.arrow.right", isHighlighted: false),
+        .init(title: "Profil", iconName: "person", isHighlighted: false)
     ]
 
     override init(frame: CGRect) {
@@ -304,7 +304,6 @@ extension WelcomeContentView {
 
     func applyContent() {
         titleLabel.text = "SmartWallet AI"
-        languageButton.setTitle(languageTitleText, for: .normal)
         welcomeLabel.text = welcomeTitleText
         subtitleLabel.text = welcomeSubtitleText
         primaryButton.setTitle(primaryButtonTitleText, for: .normal)

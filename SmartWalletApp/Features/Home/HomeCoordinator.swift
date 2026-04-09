@@ -18,12 +18,12 @@ class HomeCoordinator: Coordinator {
         let sendMoneyViewModel = SendMoneyViewModel(walletService: walletService)
         let sendMoneyViewController = SendMoneyViewController(viewModel: sendMoneyViewModel)
 
-        let walletViewController = PlaceholderViewController(titleText: "Cüzdan")
+        let walletViewController = PlaceholderViewController(titleText: "Piyasalar")
         let assistantViewController = PlaceholderViewController(titleText: "AI Asistan")
         let profileViewController = PlaceholderViewController(titleText: "Profil")
 
         let dashboardNavigationController = makeNavigationController(root: dashboardViewController, title: "Ana Sayfa", imageName: "house")
-        let walletNavigationController = makeNavigationController(root: walletViewController, title: "Cüzdan", imageName: "creditcard")
+        let walletNavigationController = makeNavigationController(root: walletViewController, title: "Piyasalar", imageName: "chart.bar.xaxis.ascending")
         let assistantNavigationController = makeNavigationController(root: assistantViewController, title: "AI Asistan", imageName: "cpu")
         let sendMoneyNavigationController = makeNavigationController(root: sendMoneyViewController, title: "Transfer", imageName: "arrow.left.arrow.right")
         let profileNavigationController = makeNavigationController(root: profileViewController, title: "Profil", imageName: "person")
