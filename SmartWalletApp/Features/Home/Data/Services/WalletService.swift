@@ -30,6 +30,10 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.analysis, as: WalletAnalysisResponse.self)
     }
 
+    func fetchPortfolioSummary() async throws -> PortfolioSummaryResponse {
+        try await apiClient.send(WalletEndpoint.portfolioSummary, as: PortfolioSummaryResponse.self)
+    }
+
     func createContact(request: CreateWalletContactRequest) async throws {
         let body = try encoder.encode(request)
         try await apiClient.send(WalletEndpoint.contacts(body: body))
@@ -42,12 +46,14 @@ final class WalletService {
     }
 }
 
+// gerekli url buradan alınıyor 
 private enum WalletEndpoint: Endpoint {
     case myWallet
     case transactions(walletId: String)
     case recipients
     case ownerName(iban: String)
     case analysis
+    case portfolioSummary
     case contacts(body: Data)
     case transfer(body: Data)
 
@@ -63,6 +69,8 @@ private enum WalletEndpoint: Endpoint {
             return "/api/Wallets/iban/\(iban)/owner-name"
         case .analysis:
             return "/api/Wallets/analysis"
+        case .portfolioSummary:
+            return "/api/Portfolios/summary"
         case .contacts:
             return "/api/Wallets/contacts"
         case .transfer:
