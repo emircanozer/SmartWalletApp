@@ -144,7 +144,7 @@ enum TransactionCategory {
 enum DashboardQuickActionType {
     case sendMoney
     case requestMoney
-    case aiAssistant
+    case investmentPortfolio
     case analysis
 }
 

@@ -86,6 +86,7 @@ final class APIClient {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
+        // token gerekiyorsa 
         if endpoint.requiresAuthorization, let token = tokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }

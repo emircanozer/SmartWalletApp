@@ -50,7 +50,7 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
         case .health:
             return "Sağlık"
         case .transfer:
-            return "Para Transferi"
+            return "Bireysel Ödeme"
         }
     }
 
