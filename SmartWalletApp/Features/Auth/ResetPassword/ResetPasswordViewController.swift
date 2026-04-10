@@ -55,7 +55,6 @@ final class ResetPasswordViewController: UIViewController {
             case .loading:
                 self.setLoading(true)
             case .success:
-                
                 self.setLoading(false)
                 self.onResetCompleted?()
             case .failure(let message):
