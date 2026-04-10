@@ -7,7 +7,7 @@ import Foundation
 
 final class TokenStore {
     // sabit key isimleri
-    private enum Keys {
+     enum Keys {
         static let accessToken = "access_token"
         static let refreshToken = "refresh_token"
         static let refreshTokenExpiration = "refresh_token_expiration"

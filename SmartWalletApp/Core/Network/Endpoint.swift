@@ -15,7 +15,7 @@ protocol Endpoint {
     var method: HTTPMethod { get }
     var headers: [String: String] { get }
     var body: Data? { get }
-    var requiresAuthorization: Bool { get }
+    var requiresAuthorization: Bool { get } // token için  
 }
 
 // belirtmezsen default değerler veriyor

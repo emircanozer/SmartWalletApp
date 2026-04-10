@@ -49,7 +49,8 @@ final class AuthService {
     }
 }
 
-private enum AuthEndpoint: Endpoint {
+ enum AuthEndpoint: Endpoint {
+    // hepsi post parametrelerden anlayabilirsin
     case register(body: Data)
     case login(body: Data)
     case verifyEmail(body: Data)
@@ -89,6 +90,7 @@ private enum AuthEndpoint: Endpoint {
     }
 }
 
+// encode yapar post için requestleri burada encode yani Json Data'ya çeviriyoruz generic endodable olan her model ile çalışılır !!
  extension AuthService {
     func encode<T: Encodable>(_ value: T) throws -> Data {
         do {

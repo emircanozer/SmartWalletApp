@@ -62,7 +62,7 @@ extension ResetPasswordSuccessContentView {
         iconWrapper.layer.shadowRadius = 0
         iconWrapper.layer.shadowOffset = .zero
 
-        iconImageView.image = UIImage(named: "CheckMarkicon")?.withRenderingMode(.alwaysOriginal)
+        iconImageView.image = UIImage(named: "checkMarkicon")?.withRenderingMode(.alwaysOriginal)
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.clipsToBounds = true
 

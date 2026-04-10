@@ -3,7 +3,7 @@ import UIKit
 final class TransactionsDateFilterViewController: UIViewController {
     var onApply: ((Date, Date) -> Void)?
 
-    private enum ActiveField {
+     enum ActiveField {
         case start
         case end
     }
