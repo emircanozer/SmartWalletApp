@@ -39,7 +39,7 @@ final class MarketPricesViewModel {
     }
 }
 
-private extension MarketPricesViewModel {
+extension MarketPricesViewModel {
     func map(_ response: [PortfolioPriceResponse]) -> MarketPricesViewData {
         let items = response.map { price in
             let assetType = MarketAssetType(backendValue: price.assetType)

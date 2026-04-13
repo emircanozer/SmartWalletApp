@@ -37,6 +37,9 @@ class HomeCoordinator: Coordinator {
         dashboardViewController.onSendMoneyTap = { [weak self] in
             self?.showSendMoneyTab()
         }
+        dashboardViewController.onInvestmentTradingTap = { [weak self] in
+            self?.showInvestmentTrading()
+        }
         dashboardViewController.onInvestmentPortfolioTap = { [weak self] in
             self?.showInvestmentPortfolio()
         }
@@ -107,6 +110,22 @@ class HomeCoordinator: Coordinator {
         let viewController = InvestmentPortfolioViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showInvestmentTrading() {
+        guard let controllers = rootViewController.viewControllers,
+              let navigationController = controllers.first as? UINavigationController else { return }
+
+        let viewModel = InvestmentTradingViewModel(walletService: walletService)
+        let viewController = InvestmentTradingViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onTradeCompleted = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: true)
+            self?.rootViewController.selectedIndex = 0
         }
         navigationController.pushViewController(viewController, animated: true)
     }

@@ -7,6 +7,7 @@ import UIKit
 class DashboardViewController: UIViewController {
     var onSeeAllTransactions: (([DashboardTransaction]) -> Void)?
     var onSendMoneyTap: (() -> Void)?
+    var onInvestmentTradingTap: (() -> Void)?
     var onInvestmentPortfolioTap: (() -> Void)?
     var onAnalysisTap: (() -> Void)?
 
@@ -65,12 +66,12 @@ extension DashboardViewController {
             switch actionType {
             case .sendMoney:
                 self?.onSendMoneyTap?()
+            case .investmentTrading:
+                self?.onInvestmentTradingTap?()
             case .investmentPortfolio:
                 self?.onInvestmentPortfolioTap?()
             case .analysis:
                 self?.onAnalysisTap?()
-            default:
-                break
             }
         }
     }

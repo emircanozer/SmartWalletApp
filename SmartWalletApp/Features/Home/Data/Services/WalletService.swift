@@ -38,6 +38,16 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.portfolioPrices, as: [PortfolioPriceResponse].self)
     }
 
+    func buyPortfolioAsset(request: PortfolioTradeRequest) async throws -> PortfolioTradeResponse {
+        let body = try encoder.encode(request)
+        return try await apiClient.send(WalletEndpoint.portfolioBuy(body: body), as: PortfolioTradeResponse.self)
+    }
+
+    func sellPortfolioAsset(request: PortfolioTradeRequest) async throws -> PortfolioTradeResponse {
+        let body = try encoder.encode(request)
+        return try await apiClient.send(WalletEndpoint.portfolioSell(body: body), as: PortfolioTradeResponse.self)
+    }
+
     func createContact(request: CreateWalletContactRequest) async throws {
         let body = try encoder.encode(request)
         try await apiClient.send(WalletEndpoint.contacts(body: body))
@@ -59,6 +69,8 @@ final class WalletService {
     case analysis
     case portfolioSummary
     case portfolioPrices
+    case portfolioBuy(body: Data)
+    case portfolioSell(body: Data)
     case contacts(body: Data)
     case transfer(body: Data)
 
@@ -78,6 +90,10 @@ final class WalletService {
             return "/api/Portfolios/summary"
         case .portfolioPrices:
             return "/api/Portfolios/prices"
+        case .portfolioBuy:
+            return "/api/Portfolios/buy"
+        case .portfolioSell:
+            return "/api/Portfolios/sell"
         case .contacts:
             return "/api/Wallets/contacts"
         case .transfer:
@@ -87,7 +103,7 @@ final class WalletService {
 
     var method: HTTPMethod {
         switch self {
-        case .contacts, .transfer:
+        case .portfolioBuy, .portfolioSell, .contacts, .transfer:
             return .post
         default:
             return .get
@@ -100,6 +116,10 @@ final class WalletService {
 
     var body: Data? {
         switch self {
+        case .portfolioBuy(let body):
+            return body
+        case .portfolioSell(let body):
+            return body
         case .contacts(let body):
             return body
         case .transfer(let body):

@@ -31,7 +31,7 @@ final class MarketPricesViewController: UIViewController {
     }
 }
 
-private extension MarketPricesViewController {
+ extension MarketPricesViewController {
     func configureRefreshControl() {
         refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
         contentView.setRefreshControl(refreshControl)

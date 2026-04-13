@@ -27,7 +27,7 @@ class DashboardContentView: UIView {
     private let seeAllText = "Tümünü Gör"
     private let quickActions: [DashboardQuickAction] = [
         .init(type: .sendMoney, title: "Para Gönder", iconName: "paperplane", isHighlighted: false),
-        .init(type: .requestMoney, title: "YATIRIM İŞLEMİ", iconName: "chart.line.uptrend.xyaxis", isHighlighted: false),
+        .init(type: .investmentTrading, title: "YATIRIM İŞLEMİ", iconName: "chart.line.uptrend.xyaxis", isHighlighted: false),
         .init(type: .investmentPortfolio, title: "YATIRIM PORTFÖYÜ", iconName: "chart.pie", isHighlighted: false),
         .init(type: .analysis, title: "HARCAMA ANALİZİ", iconName: "chart.bar.horizontal.page", isHighlighted: false)
     ]
