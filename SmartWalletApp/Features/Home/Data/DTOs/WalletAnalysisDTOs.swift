@@ -5,6 +5,7 @@ struct WalletAnalysisResponse: Decodable {
     let dailyAverageExpense: Decimal
     let topSendingCategory: String
     let categoryDetails: [WalletAnalysisCategoryResponse]
+    let aiAnalysisAdvice: String
 }
 
 struct WalletAnalysisCategoryResponse: Decodable {

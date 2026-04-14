@@ -13,6 +13,10 @@ enum InvestmentAssetType {
     case silver
     case usd
     case eur
+    case gbp
+    case chf
+    case sar
+    case kwd
     case other(Int)
 
     init(backendValue: Int) {
@@ -25,7 +29,14 @@ enum InvestmentAssetType {
             self = .usd
         case 4:
             self = .eur
-        
+        case 5:
+            self = .gbp
+        case 6:
+            self = .chf
+        case 7:
+            self = .sar
+        case 8:
+            self = .kwd
         default:
             self = .other(backendValue)
         }
@@ -41,7 +52,14 @@ enum InvestmentAssetType {
             return "USD"
         case .eur:
             return "EUR"
-        
+        case .gbp:
+            return "GBP"
+        case .chf:
+            return "CHF"
+        case .sar:
+            return "SAR"
+        case .kwd:
+            return "KWD"
         case .other(let value):
             return "Varlık \(value)"
         }
@@ -57,6 +75,14 @@ enum InvestmentAssetType {
             return "dollarsign.circle.fill"
         case .eur:
             return "eurosign.circle.fill"
+        case .gbp:
+            return "sterlingsign.circle.fill"
+        case .chf:
+            return "francsign.circle.fill"
+        case .sar:
+            return "banknote.fill"
+        case .kwd:
+            return "creditcard.fill"
         case .other:
             return "briefcase.fill"
         }
@@ -72,7 +98,12 @@ enum InvestmentAssetType {
             return UIColor(red: 0.52, green: 0.41, blue: 0.12, alpha: 1.0)
         case .eur:
             return UIColor(red: 0.39, green: 0.58, blue: 0.86, alpha: 1.0)
-        
+        case .gbp:
+            return UIColor(red: 0.53, green: 0.43, blue: 0.68, alpha: 1.0)
+        case .chf:
+            return UIColor(red: 0.76, green: 0.31, blue: 0.29, alpha: 1.0)
+        case .sar, .kwd:
+            return AppColor.accentOlive
         case .other:
             return AppColor.iconMuted
         }
@@ -88,7 +119,12 @@ enum InvestmentAssetType {
             return UIColor(red: 0.98, green: 0.97, blue: 0.93, alpha: 1.0)
         case .eur:
             return UIColor(red: 0.95, green: 0.97, blue: 1.0, alpha: 1.0)
-        
+        case .gbp:
+            return UIColor(red: 0.97, green: 0.95, blue: 1.0, alpha: 1.0)
+        case .chf:
+            return UIColor(red: 1.0, green: 0.95, blue: 0.95, alpha: 1.0)
+        case .sar, .kwd:
+            return UIColor(red: 0.98, green: 0.97, blue: 0.93, alpha: 1.0)
         case .other:
             return AppColor.surfaceMuted
         }
@@ -98,7 +134,7 @@ enum InvestmentAssetType {
         switch self {
         case .gold, .silver:
             return "gr"
-        case .usd, .eur:
+        case .usd, .eur, .gbp, .chf, .sar, .kwd:
             return "birim"
         case .other:
             return "adet"
@@ -115,6 +151,14 @@ enum InvestmentAssetType {
             return .usd
         case .eur:
             return .eur
+        case .gbp:
+            return .gbp
+        case .chf:
+            return .chf
+        case .sar:
+            return .sar
+        case .kwd:
+            return .kwd
         case .other:
             return .other
         }
@@ -126,6 +170,10 @@ enum InvestmentAllocationGroup: CaseIterable {
     case silver
     case usd
     case eur
+    case gbp
+    case chf
+    case sar
+    case kwd
     case other
 
     var title: String {
@@ -138,6 +186,14 @@ enum InvestmentAllocationGroup: CaseIterable {
             return "USD"
         case .eur:
             return "EUR"
+        case .gbp:
+            return "GBP"
+        case .chf:
+            return "CHF"
+        case .sar:
+            return "SAR"
+        case .kwd:
+            return "KWD"
         case .other:
             return "Diğer"
         }
@@ -153,6 +209,12 @@ enum InvestmentAllocationGroup: CaseIterable {
             return UIColor(red: 0.52, green: 0.41, blue: 0.12, alpha: 1.0)
         case .eur:
             return UIColor(red: 0.39, green: 0.58, blue: 0.86, alpha: 1.0)
+        case .gbp:
+            return UIColor(red: 0.53, green: 0.43, blue: 0.68, alpha: 1.0)
+        case .chf:
+            return UIColor(red: 0.76, green: 0.31, blue: 0.29, alpha: 1.0)
+        case .sar, .kwd:
+            return AppColor.accentOlive
         case .other:
             return UIColor(red: 0.83, green: 0.85, blue: 0.9, alpha: 1.0)
         }

@@ -37,6 +37,9 @@ class HomeCoordinator: Coordinator {
         dashboardViewController.onSendMoneyTap = { [weak self] in
             self?.showSendMoneyTab()
         }
+        dashboardViewController.onInvestmentTradingTap = { [weak self] in
+            self?.showInvestmentTrading()
+        }
         dashboardViewController.onInvestmentPortfolioTap = { [weak self] in
             self?.showInvestmentPortfolio()
         }
@@ -105,6 +108,70 @@ class HomeCoordinator: Coordinator {
 
         let viewModel = InvestmentPortfolioViewModel(walletService: walletService)
         let viewController = InvestmentPortfolioViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onTradeTap = { [weak self] in
+            self?.showInvestmentTrading()
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showInvestmentTrading() {
+        guard let controllers = rootViewController.viewControllers,
+              let navigationController = controllers.first as? UINavigationController else { return }
+
+        let viewModel = InvestmentTradingViewModel(walletService: walletService)
+        let viewController = InvestmentTradingViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onReviewTrade = { [weak self] context in
+            self?.showInvestmentTradeConfirmation(context)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showInvestmentTradeConfirmation(_ context: InvestmentTradeContext) {
+        guard let controllers = rootViewController.viewControllers,
+              let navigationController = controllers.first as? UINavigationController else { return }
+
+        let viewModel = InvestmentTradeConfirmationViewModel(walletService: walletService, context: context)
+        let viewController = InvestmentTradeConfirmationViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onApproved = { [weak self] successContext in
+            self?.showInvestmentTradeSuccess(successContext)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showInvestmentTradeSuccess(_ context: InvestmentTradeSuccessContext) {
+        guard let controllers = rootViewController.viewControllers,
+              let navigationController = controllers.first as? UINavigationController else { return }
+
+        let viewModel = InvestmentTradeSuccessViewModel(context: context)
+        let viewController = InvestmentTradeSuccessViewController(viewModel: viewModel)
+        viewController.onClose = { [weak navigationController] in
+            navigationController?.popToRootViewController(animated: true)
+        }
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: true)
+            self?.rootViewController.selectedIndex = 0
+        }
+        viewController.onShowHistory = { [weak self] in
+            self?.showInvestmentHistory()
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showInvestmentHistory() {
+        guard let controllers = rootViewController.viewControllers,
+              let navigationController = controllers.first as? UINavigationController else { return }
+
+        let viewModel = InvestmentHistoryViewModel(walletService: walletService)
+        let viewController = InvestmentHistoryViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
         }

@@ -59,7 +59,7 @@ extension MarketPricesContentView {
     }
 }
 
-private extension MarketPricesContentView {
+ extension MarketPricesContentView {
     func configureView() {
         backgroundColor = AppColor.appBackground
 

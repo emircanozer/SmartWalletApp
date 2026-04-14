@@ -115,7 +115,7 @@ final class ExpenseAnalysisViewModel {
             chartSlices: chartSlices,
             categoryItems: categoryItems,
             aiInsightTitle: "YAPAY ZEKA ANALİZİ",
-            aiInsightBody: "Bu ay en fazla harcama \(response.topSendingCategory) kategorisinde yapıldı. Geçen aya göre %12'lik bir artış gözlemleniyor."
+            aiInsightBody: response.aiAnalysisAdvice
         )
     }
 

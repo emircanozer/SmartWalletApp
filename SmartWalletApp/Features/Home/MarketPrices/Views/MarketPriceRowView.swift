@@ -48,7 +48,7 @@ extension MarketPriceRowView {
     }
 }
 
-private extension MarketPriceRowView {
+extension MarketPriceRowView {
     func configureView() {
         backgroundColor = .white
 

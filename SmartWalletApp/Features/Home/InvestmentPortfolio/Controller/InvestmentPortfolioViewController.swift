@@ -1,11 +1,15 @@
 import UIKit
 
-final class MarketPricesViewController: UIViewController {
-    private let viewModel: MarketPricesViewModel
-    private let contentView = MarketPricesContentView()
+final class InvestmentPortfolioViewController: UIViewController {
+    
+    var onBack: (() -> Void)?
+    var onTradeTap: (() -> Void)?
+
+    private let viewModel: InvestmentPortfolioViewModel
+    private let contentView = InvestmentPortfolioContentView()
     private let refreshControl = UIRefreshControl()
 
-    init(viewModel: MarketPricesViewModel) {
+    init(viewModel: InvestmentPortfolioViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -20,24 +24,33 @@ final class MarketPricesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindActions()
         bindViewModel()
         configureRefreshControl()
+        enableInteractivePopGesture()
     }
 
+    // yenileme !!! 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
-        loadPrices()
+        loadPortfolio()
     }
 }
 
-private extension MarketPricesViewController {
-    func configureRefreshControl() {
+extension InvestmentPortfolioViewController {
+    private func bindActions() {
+        contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
+        contentView.tradeButton.addTarget(self, action: #selector(handleTradeTap), for: .touchUpInside)
+    }
+
+    private func configureRefreshControl() {
         refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
         contentView.setRefreshControl(refreshControl)
     }
 
-    func bindViewModel() {
+    private func bindViewModel() {
+        // viewmodelde içine veri verilmişti burada kullanılıyor 
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }
 
@@ -49,10 +62,11 @@ private extension MarketPricesViewController {
                 if !self.refreshControl.isRefreshing {
                     self.setCenteredLoading(true)
                 }
+                // state’i dinler
             case .loaded(let data):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
-                self.contentView.apply(data)
+                self.contentView.apply(data)  //UI’a basar
             case .failure(let message):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
@@ -61,20 +75,28 @@ private extension MarketPricesViewController {
         }
     }
 
-    func loadPrices() {
+    // task içinde kullandık
+    private func loadPortfolio() {
         Task {
             await viewModel.load()
         }
     }
 
-    // çıkarılacak 
-    func showAlert(message: String) {
+    private func showAlert(message: String) {
         let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Tamam", style: .default))
         present(alert, animated: true)
     }
 
-    @objc func handlePullToRefresh() {
-        loadPrices()
+    @objc private func handleBackTap() {
+        onBack?()
+    }
+
+    @objc private func handlePullToRefresh() {
+        loadPortfolio()
+    }
+
+    @objc private func handleTradeTap() {
+        onTradeTap?()
     }
 }
