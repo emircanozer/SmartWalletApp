@@ -4,6 +4,7 @@ final class InvestmentTradingContentView: UIView {
     let backButton = UIButton(type: .system)
     let actionButton = UIButton(type: .system)
     let amountTextField = UITextField()
+    let amountUnitButton = UIButton(type: .system)
     let assetChipsView = InvestmentTradingAssetChipsView()
     let directionSegmentView = InvestmentTradingDirectionSegmentView()
     let quickAmountChipsView = InvestmentTradingQuickAmountChipsView()
@@ -19,7 +20,6 @@ final class InvestmentTradingContentView: UIView {
     private let emptyStateLabel = UILabel()
     private let validationLabel = UILabel()
     private let amountTitleLabel = UILabel()
-    private let amountUnitLabel = UILabel()
     private let dividerView = UIView()
     private let summaryDividerView = UIView()
     private let estimateTitleLabel = UILabel()
@@ -70,8 +70,9 @@ extension InvestmentTradingContentView {
         holdingMetricView.configure(title: "VARLIK MİKTARI", value: data.holdingText, accentColor: AppColor.primaryText)
 
         amountTextField.text = data.amountText
+        amountTitleLabel.text = data.amountTitleText
         amountTextField.placeholder = data.amountPlaceholderText
-        amountUnitLabel.text = data.amountUnitText
+        amountUnitButton.setTitle(data.amountUnitText, for: .normal)
 
         quickAmountChipsView.configure(with: data.quickAmountItems)
 
@@ -152,9 +153,14 @@ extension InvestmentTradingContentView {
         amountTextField.keyboardType = .decimalPad
         amountTextField.borderStyle = .none
 
-        amountUnitLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        amountUnitLabel.textColor = AppColor.accentOlive
-        amountUnitLabel.textAlignment = .right
+        var amountUnitConfiguration = UIButton.Configuration.plain()
+        amountUnitConfiguration.image = UIImage(systemName: "chevron.down")
+        amountUnitConfiguration.imagePlacement = .trailing
+        amountUnitConfiguration.imagePadding = 6
+        amountUnitButton.configuration = amountUnitConfiguration
+        amountUnitButton.setTitleColor(AppColor.accentOlive, for: .normal)
+        amountUnitButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        amountUnitButton.contentHorizontalAlignment = .trailing
 
         dividerView.backgroundColor = AppColor.divider
         summaryDividerView.backgroundColor = AppColor.divider
@@ -168,6 +174,9 @@ extension InvestmentTradingContentView {
         estimateValueLabel.font = .systemFont(ofSize: 18, weight: .bold)
         estimateValueLabel.textColor = AppColor.accentOlive
         estimateValueLabel.textAlignment = .right
+        estimateValueLabel.adjustsFontSizeToFitWidth = true
+        estimateValueLabel.minimumScaleFactor = 0.75
+        estimateValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         var actionConfiguration = UIButton.Configuration.filled()
         actionConfiguration.baseBackgroundColor = AppColor.primaryYellow
@@ -211,7 +220,7 @@ extension InvestmentTradingContentView {
 
         [buyPriceMetricView, sellPriceMetricView, balanceMetricView, holdingMetricView].forEach(priceCard.addSubview)
 
-        [amountTitleLabel, amountTextField, amountUnitLabel, dividerView].forEach(amountCard.addSubview)
+        [amountTitleLabel, amountTextField, amountUnitButton, dividerView].forEach(amountCard.addSubview)
 
         [summaryStack, summaryDividerView, estimateTitleLabel, estimateValueLabel].forEach(summaryCard.addSubview)
     }
@@ -238,7 +247,7 @@ extension InvestmentTradingContentView {
             holdingMetricView,
             amountTitleLabel,
             amountTextField,
-            amountUnitLabel,
+            amountUnitButton,
             dividerView,
             summaryStack,
             summaryDividerView,
@@ -312,11 +321,12 @@ extension InvestmentTradingContentView {
 
             amountTextField.topAnchor.constraint(equalTo: amountTitleLabel.bottomAnchor, constant: 16),
             amountTextField.leadingAnchor.constraint(equalTo: amountCard.leadingAnchor, constant: 18),
-            amountTextField.trailingAnchor.constraint(lessThanOrEqualTo: amountUnitLabel.leadingAnchor, constant: -12),
+            amountTextField.trailingAnchor.constraint(lessThanOrEqualTo: amountUnitButton.leadingAnchor, constant: -12),
             amountTextField.bottomAnchor.constraint(equalTo: amountCard.bottomAnchor, constant: -18),
 
-            amountUnitLabel.trailingAnchor.constraint(equalTo: amountCard.trailingAnchor, constant: -18),
-            amountUnitLabel.centerYAnchor.constraint(equalTo: amountTextField.centerYAnchor),
+            amountUnitButton.trailingAnchor.constraint(equalTo: amountCard.trailingAnchor, constant: -18),
+            amountUnitButton.centerYAnchor.constraint(equalTo: amountTextField.centerYAnchor),
+            amountUnitButton.leadingAnchor.constraint(greaterThanOrEqualTo: amountTextField.trailingAnchor, constant: 8),
 
             dividerView.topAnchor.constraint(equalTo: amountTitleLabel.bottomAnchor, constant: 12),
             dividerView.leadingAnchor.constraint(equalTo: amountCard.leadingAnchor, constant: 18),
@@ -362,6 +372,7 @@ extension InvestmentTradingContentView {
             emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
             emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32)
         ])
+
     }
 
     @objc func handleBackgroundTap() {
@@ -397,6 +408,8 @@ private final class TradingMetricView: UIView {
         valueLabel.font = .systemFont(ofSize: 18, weight: .bold)
         valueLabel.textColor = AppColor.primaryText
         valueLabel.numberOfLines = 2
+        valueLabel.adjustsFontSizeToFitWidth = true
+        valueLabel.minimumScaleFactor = 0.75
     }
 
     private func buildHierarchy() {
@@ -447,6 +460,10 @@ private final class SummaryRowView: UIView {
         valueLabel.font = .systemFont(ofSize: 15, weight: .bold)
         valueLabel.textColor = AppColor.primaryText
         valueLabel.textAlignment = .right
+        valueLabel.adjustsFontSizeToFitWidth = true
+        valueLabel.minimumScaleFactor = 0.75
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        valueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 
     private func buildHierarchy() {

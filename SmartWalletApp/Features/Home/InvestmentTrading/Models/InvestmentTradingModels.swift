@@ -5,7 +5,6 @@ enum InvestmentTradingViewState {
     case loading
     case loaded(InvestmentTradingViewData)
     case failure(String)
-    case success(String)
 }
 
 enum InvestmentTradeDirection {
@@ -18,6 +17,38 @@ enum InvestmentTradeDirection {
             return "Al"
         case .sell:
             return "Sat"
+        }
+    }
+
+    var confirmationTitle: String {
+        switch self {
+        case .buy:
+            return "Alım"
+        case .sell:
+            return "Satım"
+        }
+    }
+}
+
+enum InvestmentTradingInputMode {
+    case quantity
+    case fiat
+
+    var title: String {
+        switch self {
+        case .quantity:
+            return "Birim"
+        case .fiat:
+            return "TL"
+        }
+    }
+
+    var isFiatAmount: Bool {
+        switch self {
+        case .quantity:
+            return false
+        case .fiat:
+            return true
         }
     }
 }
@@ -155,6 +186,33 @@ enum InvestmentTradingAssetType: CaseIterable {
             return AppColor.iconMuted
         }
     }
+
+    var marketCode: String {
+        switch self {
+        case .gold:
+            return "XAU"
+        case .silver:
+            return "XAG"
+        case .usd:
+            return "USD"
+        case .eur:
+            return "EUR"
+        case .gbp:
+            return "GBP"
+        case .chf:
+            return "CHF"
+        case .sar:
+            return "SAR"
+        case .kwd:
+            return "KWD"
+        case .other(let value):
+            return "VARLIK-\(value)"
+        }
+    }
+
+    var supportsFiatInput: Bool {
+        true
+    }
 }
 
 // chip butonların çektiği ui verisi 
@@ -179,13 +237,16 @@ struct InvestmentTradingViewData {
     let subtitleText: String
     let assetItems: [InvestmentTradingAssetChipItem]
     let selectedDirection: InvestmentTradeDirection
+    let selectedInputMode: InvestmentTradingInputMode
     let buyPriceText: String
     let sellPriceText: String
     let balanceText: String
     let holdingText: String
     let amountText: String
+    let amountTitleText: String
     let amountPlaceholderText: String
     let amountUnitText: String
+    let quantityOptionTitle: String
     let quickAmountItems: [InvestmentTradingQuickAmountItem]
     let summaryRows: [InvestmentTradingSummaryRowItem]
     let estimateTitleText: String
@@ -194,4 +255,17 @@ struct InvestmentTradingViewData {
     let isActionEnabled: Bool
     let validationMessageText: String?
     let emptyMessageText: String?
+}
+
+struct InvestmentTradeContext {
+    let request: PortfolioTradeRequest
+    let assetType: InvestmentTradingAssetType
+    let direction: InvestmentTradeDirection
+    let inputMode: InvestmentTradingInputMode
+    let unitPrice: Decimal
+    let enteredAmount: Decimal
+    let assetAmount: Decimal
+    let totalAmount: Decimal
+    let currentBalance: Decimal
+    let resultingBalance: Decimal
 }

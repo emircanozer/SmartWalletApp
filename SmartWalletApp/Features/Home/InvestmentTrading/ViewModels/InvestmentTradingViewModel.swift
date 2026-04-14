@@ -11,9 +11,10 @@ final class InvestmentTradingViewModel {
     private var wallet: MyWalletResponse?
     private var prices: [PortfolioPriceResponse] = []
     private var summary: PortfolioSummaryResponse?
-    // 3 önemli state 
+    // 4 önemli state hangi varlık seçili al mı sat mı amount ne kadar ve tl ile mi birim ile mi trade olacak input mode !!!
     private var selectedAsset: InvestmentTradingAssetType?
     private var selectedDirection: InvestmentTradeDirection = .buy
+    private var selectedInputMode: InvestmentTradingInputMode = .quantity
     private var enteredAmountText = ""
 
     init(walletService: WalletService) {
@@ -47,6 +48,7 @@ final class InvestmentTradingViewModel {
     func load() async {
         onStateChange?(.loading)
 
+        // burada ViewModel önce ekranı kurmak için gerekli tüm kaynak verileri topluyor bakiye fiyatlar gibi
         do {
             async let walletTask = walletService.fetchMyWallet()
             async let pricesTask = walletService.fetchPortfolioPrices()
@@ -58,29 +60,40 @@ final class InvestmentTradingViewModel {
             self.summary = summary
 
          
+            // özelleştirilmiş asseti selected ilk yükleme
             let availableAssets = makeAvailableAssets(from: prices)
             if selectedAsset == nil || !availableAssets.contains(where: { $0.backendValue == selectedAsset?.backendValue }) {
                 selectedAsset = availableAssets.first
             }
-
             emitLoadedState()
         } catch {
             onStateChange?(.failure("Yatırım verileri alınamadı. Lütfen tekrar deneyin."))
         }
     }
-    // Kullanıcının seçimlerini state olarak tutuyor
-
+    
     /*  artık seçili asset değişti
     sonra emitLoadedState() çağrılıyor */
     @MainActor
+    // varlık  butonu seçiyor kullanıcı
     func selectAsset(_ asset: InvestmentTradingAssetType) {
         selectedAsset = asset
+        // emit etmeden önce elimizdeki bu: Şu an elimde ham veriler de var, seçili asset de belli, artık ekrana basılacak hazır veriyi üret ve controller’a gönder.
         emitLoadedState()
     }
 
     @MainActor
+    // al sat segmentedi seçecek kullanıcı işleyiş aynı
     func selectDirection(_ direction: InvestmentTradeDirection) {
         selectedDirection = direction
+        emitLoadedState()
+    }
+
+    @MainActor
+    func selectInputMode(_ mode: InvestmentTradingInputMode) {
+        guard let selectedAsset, selectedAsset.supportsFiatInput else { return }
+        guard selectedInputMode != mode else { return }
+        selectedInputMode = mode
+        enteredAmountText = ""
         emitLoadedState()
     }
 
@@ -97,31 +110,50 @@ final class InvestmentTradingViewModel {
     }
 
     @MainActor
-    func submit() async {
-        guard let request = makeTradeRequest() else { return }
-
-        onStateChange?(.loading)
-
-        do {
-            let response: PortfolioTradeResponse
-            switch selectedDirection {
-            case .buy:
-                response = try await walletService.buyPortfolioAsset(request: request)
-            case .sell:
-                response = try await walletService.sellPortfolioAsset(request: request)
-            }
-
-            if response.success {
-                enteredAmountText = ""
-                onStateChange?(.success(response.message))
-            } else {
-                onStateChange?(.failure(response.message))
-                emitLoadedState()
-            }
-        } catch {
-            onStateChange?(.failure(error.localizedDescription))
-            emitLoadedState()
+    func makeTradeContext() -> InvestmentTradeContext? {
+        guard let selectedAsset,
+              let wallet,
+              let summary,
+              let price = prices.first(where: { $0.assetType == selectedAsset.backendValue }),
+              let request = makeTradeRequest()
+        else {
+            return nil
         }
+
+        let holding = summary.assets.first(where: { $0.assetType == selectedAsset.backendValue })?.amount ?? .zero
+        let unitPrice = selectedDirection == .buy ? price.buyPrice : price.sellPrice
+        let assetAmount = request.isFiatAmount ? safeDivision(request.amount, by: unitPrice) : request.amount
+        let totalAmount = request.isFiatAmount ? request.amount : request.amount * unitPrice
+        let resultingBalance: Decimal
+
+        switch selectedDirection {
+        case .buy:
+            resultingBalance = wallet.balance - totalAmount
+        case .sell:
+            resultingBalance = wallet.balance + totalAmount
+        }
+
+        guard validateAction(
+            enteredAmount: request.amount,
+            unitPrice: unitPrice,
+            balance: wallet.balance,
+            holding: holding
+        ) else {
+            return nil
+        }
+
+        return InvestmentTradeContext(
+            request: request,
+            assetType: selectedAsset,
+            direction: selectedDirection,
+            inputMode: selectedInputMode,
+            unitPrice: unitPrice,
+            enteredAmount: request.amount,
+            assetAmount: assetAmount,
+            totalAmount: totalAmount,
+            currentBalance: wallet.balance,
+            resultingBalance: resultingBalance
+        )
     }
 }
 
@@ -133,13 +165,16 @@ final class InvestmentTradingViewModel {
  */
 extension InvestmentTradingViewModel {
     func emitLoadedState() {
+        // state göre olacak yeni ekran datasını üret
         guard let data = makeViewData() else {
             onStateChange?(.loaded(.empty))
             return
         }
+        // oluşturulmuş bu veriyi closure a koyup controllera gönderiyor !!
         onStateChange?(.loaded(data))
     }
 
+    // burada üretiliyor seçili assete göre yeni veri önemli fonksiyon !!!
     func makeViewData() -> InvestmentTradingViewData? {
         guard let wallet, let summary else { return nil }
 
@@ -150,13 +185,16 @@ extension InvestmentTradingViewModel {
                 subtitleText: "İşlem yapabileceğiniz yatırım aracı bulunamadı.",
                 assetItems: [],
                 selectedDirection: selectedDirection,
+                selectedInputMode: .quantity,
                 buyPriceText: "₺0,00",
                 sellPriceText: "₺0,00",
                 balanceText: "₺0,00",
                 holdingText: "0",
                 amountText: enteredAmountText,
+                amountTitleText: "MİKTAR GİRİNİZ",
                 amountPlaceholderText: "0.00",
                 amountUnitText: "-",
+                quantityOptionTitle: "-",
                 quickAmountItems: [],
                 summaryRows: [],
                 estimateTitleText: "TAHMİNİ TUTAR",
@@ -172,7 +210,8 @@ extension InvestmentTradingViewModel {
         let ownedAmount = summary.assets.first(where: { $0.assetType == selectedAsset.backendValue })?.amount ?? .zero
         let enteredAmount = parsedEnteredAmount()
         let unitPrice = selectedDirection == .buy ? (price?.buyPrice ?? .zero) : (price?.sellPrice ?? .zero)
-        let estimatedTotal = enteredAmount * unitPrice
+        let estimatedTotal = selectedInputMode == .fiat ? enteredAmount : enteredAmount * unitPrice
+        let estimatedAssetAmount = selectedInputMode == .fiat ? safeDivision(enteredAmount, by: unitPrice) : enteredAmount
         let validationMessage = makeValidationMessage(
             enteredAmount: enteredAmount,
             requiredTotal: estimatedTotal,
@@ -187,47 +226,81 @@ extension InvestmentTradingViewModel {
             holding: ownedAmount
         )
 
-        let summaryRows = [
-            InvestmentTradingSummaryRowItem(
-                title: "İşlem Tipi",
-                value: selectedDirection == .buy ? "\(selectedAsset.title) Alımı" : "\(selectedAsset.title) Satımı"
-            ),
-            InvestmentTradingSummaryRowItem(
-                title: "Birim Fiyat",
-                value: formatCurrency(unitPrice)
-            ),
-            InvestmentTradingSummaryRowItem(
-                title: "Miktar",
-                value: enteredAmount > .zero ? "\(formatQuantity(enteredAmount)) \(selectedAsset.amountUnit)" : "0 \(selectedAsset.amountUnit)"
-            ),
-            InvestmentTradingSummaryRowItem(
-                title: "Toplam Tutar",
-                value: formatCurrency(estimatedTotal)
-            )
-        ]
+        let summaryRows: [InvestmentTradingSummaryRowItem]
+        if selectedInputMode == .fiat {
+            summaryRows = [
+                InvestmentTradingSummaryRowItem(
+                    title: "İşlem Tipi",
+                    value: selectedDirection == .buy ? "\(selectedAsset.title) Alımı" : "\(selectedAsset.title) Satımı"
+                ),
+                InvestmentTradingSummaryRowItem(
+                    title: "Birim Fiyat",
+                    value: formatUnitPrice(unitPrice, asset: selectedAsset)
+                ),
+                InvestmentTradingSummaryRowItem(
+                    title: "Girilen Tutar",
+                    value: formatCurrency(enteredAmount)
+                ),
+                InvestmentTradingSummaryRowItem(
+                    title: selectedDirection == .buy ? "Tahmini Alınacak" : "Tahmini Satılacak",
+                    value: "\(formatEstimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
+                )
+            ]
+        } else {
+            summaryRows = [
+                InvestmentTradingSummaryRowItem(
+                    title: "İşlem Tipi",
+                    value: selectedDirection == .buy ? "\(selectedAsset.title) Alımı" : "\(selectedAsset.title) Satımı"
+                ),
+                InvestmentTradingSummaryRowItem(
+                    title: "Birim Fiyat",
+                    value: formatUnitPrice(unitPrice, asset: selectedAsset)
+                ),
+                InvestmentTradingSummaryRowItem(
+                    title: "Girilen Miktar",
+                    value: enteredAmount > .zero ? "\(formatQuantity(enteredAmount)) \(selectedAsset.amountUnit)" : "0 \(selectedAsset.amountUnit)"
+                ),
+                InvestmentTradingSummaryRowItem(
+                    title: "Toplam Tutar",
+                    value: formatCurrency(estimatedTotal)
+                )
+            ]
+        }
 
         
         return InvestmentTradingViewData(
             titleText: "Yatırım İşlemi",
             subtitleText: "Altın, döviz ve diğer yatırım araçlarında alım-satım yap.",
-            // enumdan chip iteme dönüştürüyor 
+            // enumdan chip iteme dönüştürüyor
+            /*
+             $0 = enum case
+             $0.title = enum içindeki isim
+             isSelected = state’e göre belirleniyor
+             */
             assetItems: availableAssets.map {
                 InvestmentTradingAssetChipItem(assetType: $0, title: $0.title, isSelected: $0.backendValue == selectedAsset.backendValue)
             },
             selectedDirection: selectedDirection,
-            buyPriceText: formatCurrency(price?.buyPrice ?? .zero),
-            sellPriceText: formatCurrency(price?.sellPrice ?? .zero),
+            selectedInputMode: selectedInputMode,
+            buyPriceText: formatUnitPrice(price?.buyPrice ?? .zero, asset: selectedAsset),
+            sellPriceText: formatUnitPrice(price?.sellPrice ?? .zero, asset: selectedAsset),
             balanceText: formatCurrency(wallet.balance),
             holdingText: "\(formatQuantity(ownedAmount)) \(selectedAsset.amountUnit)",
             amountText: enteredAmountText,
+            amountTitleText: selectedInputMode == .fiat ? "TUTAR GİRİNİZ" : "MİKTAR GİRİNİZ",
             amountPlaceholderText: "0.00",
-            amountUnitText: selectedAsset.amountUnit.uppercased(),
+            amountUnitText: selectedInputMode == .fiat ? "TL" : selectedAsset.amountUnit.uppercased(),
+            quantityOptionTitle: selectedAsset.amountUnit.uppercased(),
             quickAmountItems: makeQuickAmountItems(for: selectedAsset),
             summaryRows: summaryRows,
-            estimateTitleText: selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ GELECEK",
-            estimateValueText: selectedDirection == .buy
-                ? "\(formatQuantity(enteredAmount)) \(selectedAsset.amountUnit)"
-                : formatCurrency(estimatedTotal),
+            estimateTitleText: selectedInputMode == .fiat
+                ? (selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ SATILACAK")
+                : (selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ GELECEK"),
+            estimateValueText: selectedInputMode == .fiat
+                ? "\(formatEstimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
+                : (selectedDirection == .buy
+                    ? "\(formatQuantity(estimatedAssetAmount)) \(selectedAsset.amountUnit)"
+                    : formatCurrency(estimatedTotal)),
             actionButtonTitle: selectedDirection == .buy
                 ? "\(selectedAsset.displayCode) SATIN AL"
                 : "\(selectedAsset.displayCode) SAT",
@@ -237,7 +310,7 @@ extension InvestmentTradingViewModel {
         )
     }
 
-    // // ViewModel chip item’larını üretir, custom view da onları butona çevirir
+    // enumdan gelen bilgilere göre map ediyoruz burada altın mı usd mi olacak chip buton da onu veriyor
     func makeAvailableAssets(from prices: [PortfolioPriceResponse]) -> [InvestmentTradingAssetType] {
         let availableSet = Set(prices.map(\.assetType))
         return InvestmentTradingAssetType.allCases.filter { availableSet.contains($0.backendValue) }
@@ -245,19 +318,21 @@ extension InvestmentTradingViewModel {
 
     func makeQuickAmountItems(for asset: InvestmentTradingAssetType) -> [InvestmentTradingQuickAmountItem] {
         let values: [Decimal]
-        switch asset {
-        case .gold, .silver:
+        switch (asset, selectedInputMode) {
+        case (_, .fiat):
+            values = [1000, 5000, 10000, 15000]
+        case (.gold, _), (.silver, _):
             values = [0.25, 0.5, 1, 2]
-        case .usd, .eur, .gbp, .chf, .sar, .kwd:
+        case (.usd, _), (.eur, _), (.gbp, _), (.chf, _), (.sar, _), (.kwd, _):
             values = [10, 50, 100, 250]
-        case .other:
+        case (.other, _):
             values = [1, 5, 10, 25]
         }
 
         return values.map { value in
             InvestmentTradingQuickAmountItem(
                 value: value,
-                title: "\(formatQuantity(value)) \(asset.amountUnit)"
+                title: selectedInputMode == .fiat ? "\(formatQuantity(value)) TL" : "\(formatQuantity(value)) \(asset.amountUnit)"
             )
         }
     }
@@ -267,9 +342,11 @@ extension InvestmentTradingViewModel {
 
         switch selectedDirection {
         case .buy:
-            return (enteredAmount * unitPrice) <= balance
+            let requiredTotal = selectedInputMode == .fiat ? enteredAmount : (enteredAmount * unitPrice)
+            return requiredTotal <= balance
         case .sell:
-            return enteredAmount <= holding
+            let requiredHolding = selectedInputMode == .fiat ? safeDivision(enteredAmount, by: unitPrice) : enteredAmount
+            return requiredHolding <= holding
         }
     }
 
@@ -292,7 +369,7 @@ extension InvestmentTradingViewModel {
             return nil
         }
 
-        return PortfolioTradeRequest(assetType: selectedAsset.backendValue, amount: amount)
+        return PortfolioTradeRequest(assetType: selectedAsset.backendValue, amount: amount, isFiatAmount: selectedInputMode.isFiatAmount)
     }
 
     func makeValidationMessage(
@@ -313,7 +390,8 @@ extension InvestmentTradingViewModel {
             if holding <= .zero {
                 return "Satış yapabilmek için \(assetTitle.lowercased()) varlığınız bulunmuyor."
             }
-            if enteredAmount > holding {
+            let requiredHolding = selectedInputMode == .fiat ? safeDivision(requiredTotal, by: currentUnitPrice()) : enteredAmount
+            if requiredHolding > holding {
                 return "Elinizde yeterli \(assetTitle.lowercased()) bulunmuyor."
             }
         }
@@ -350,24 +428,70 @@ extension InvestmentTradingViewModel {
         quantityFormatter.string(from: value as NSDecimalNumber) ?? "0"
     }
 
+    func formatEstimatedAssetAmount(_ value: Decimal, asset: InvestmentTradingAssetType) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale(identifier: "tr_TR")
+
+        switch asset {
+        case .gold, .silver:
+            formatter.maximumFractionDigits = 4
+        default:
+            formatter.maximumFractionDigits = 2
+        }
+
+        formatter.minimumFractionDigits = 0
+        return formatter.string(from: value as NSDecimalNumber) ?? "0"
+    }
+
+    func formatUnitPrice(_ value: Decimal, asset: InvestmentTradingAssetType) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale(identifier: "tr_TR")
+        switch asset {
+        case .gold, .silver:
+            formatter.minimumFractionDigits = 2
+            formatter.maximumFractionDigits = 2
+        default:
+            formatter.minimumFractionDigits = 4
+            formatter.maximumFractionDigits = 4
+        }
+        let text = formatter.string(from: value as NSDecimalNumber) ?? "0"
+        return "₺\(text)"
+    }
+
     func decimalInputText(_ value: Decimal) -> String {
         inputFormatter.string(from: value as NSDecimalNumber) ?? ""
     }
+
+    func currentUnitPrice() -> Decimal {
+        guard let selectedAsset else { return .zero }
+        let price = prices.first(where: { $0.assetType == selectedAsset.backendValue })
+        return selectedDirection == .buy ? (price?.buyPrice ?? .zero) : (price?.sellPrice ?? .zero)
+    }
+
+    func safeDivision(_ lhs: Decimal, by rhs: Decimal) -> Decimal {
+        guard rhs > .zero else { return .zero }
+        return lhs / rhs
+    }
 }
 
-private extension InvestmentTradingViewData {
+ extension InvestmentTradingViewData {
     static let empty = InvestmentTradingViewData(
         titleText: "Yatırım İşlemi",
         subtitleText: "Veriler yükleniyor.",
         assetItems: [],
         selectedDirection: .buy,
+        selectedInputMode: .quantity,
         buyPriceText: "₺0,00",
         sellPriceText: "₺0,00",
         balanceText: "₺0,00",
         holdingText: "0",
         amountText: "",
+        amountTitleText: "MİKTAR GİRİNİZ",
         amountPlaceholderText: "0.00",
         amountUnitText: "-",
+        quantityOptionTitle: "-",
         quickAmountItems: [],
         summaryRows: [],
         estimateTitleText: "TAHMİNİ TUTAR",

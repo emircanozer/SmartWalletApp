@@ -1,15 +1,13 @@
 import UIKit
 
-final class InvestmentPortfolioViewController: UIViewController {
-    
+final class InvestmentHistoryViewController: UIViewController {
     var onBack: (() -> Void)?
-    var onTradeTap: (() -> Void)?
 
-    private let viewModel: InvestmentPortfolioViewModel
-    private let contentView = InvestmentPortfolioContentView()
+    private let viewModel: InvestmentHistoryViewModel
+    private let contentView = InvestmentHistoryContentView()
     private let refreshControl = UIRefreshControl()
 
-    init(viewModel: InvestmentPortfolioViewModel) {
+    init(viewModel: InvestmentHistoryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -30,27 +28,19 @@ final class InvestmentPortfolioViewController: UIViewController {
         enableInteractivePopGesture()
     }
 
-    // yenileme !!! 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
-        loadPortfolio()
+        loadHistory()
     }
 }
 
-extension InvestmentPortfolioViewController {
-    private func bindActions() {
+ extension InvestmentHistoryViewController {
+    func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
-        contentView.tradeButton.addTarget(self, action: #selector(handleTradeTap), for: .touchUpInside)
     }
 
-    private func configureRefreshControl() {
-        refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
-        contentView.setRefreshControl(refreshControl)
-    }
-
-    private func bindViewModel() {
-        // viewmodelde içine veri verilmişti burada kullanılıyor 
+    func bindViewModel() {
         viewModel.onStateChange = { [weak self] state in
             guard let self else { return }
 
@@ -62,11 +52,10 @@ extension InvestmentPortfolioViewController {
                 if !self.refreshControl.isRefreshing {
                     self.setCenteredLoading(true)
                 }
-                // state’i dinler
             case .loaded(let data):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
-                self.contentView.apply(data)  //UI’a basar
+                self.contentView.apply(data)
             case .failure(let message):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
@@ -75,28 +64,28 @@ extension InvestmentPortfolioViewController {
         }
     }
 
-    // task içinde kullandık
-    private func loadPortfolio() {
+    func configureRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
+        contentView.setRefreshControl(refreshControl)
+    }
+
+    func loadHistory() {
         Task {
             await viewModel.load()
         }
     }
 
-    private func showAlert(message: String) {
+    func showAlert(message: String) {
         let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Tamam", style: .default))
         present(alert, animated: true)
     }
 
-    @objc private func handleBackTap() {
+    @objc func handleBackTap() {
         onBack?()
     }
 
-    @objc private func handlePullToRefresh() {
-        loadPortfolio()
-    }
-
-    @objc private func handleTradeTap() {
-        onTradeTap?()
+    @objc func handlePullToRefresh() {
+        loadHistory()
     }
 }

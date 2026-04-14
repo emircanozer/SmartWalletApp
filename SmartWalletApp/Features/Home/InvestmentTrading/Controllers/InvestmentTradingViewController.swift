@@ -2,11 +2,12 @@ import UIKit
 
 final class InvestmentTradingViewController: UIViewController {
     var onBack: (() -> Void)?
-    var onTradeCompleted: (() -> Void)?
+    var onReviewTrade: ((InvestmentTradeContext) -> Void)?
 
     private let viewModel: InvestmentTradingViewModel
     private let contentView = InvestmentTradingContentView()
     private let refreshControl = UIRefreshControl()
+    private var currentViewData: InvestmentTradingViewData?
 
     init(viewModel: InvestmentTradingViewModel) {
         self.viewModel = viewModel
@@ -58,6 +59,7 @@ final class InvestmentTradingViewController: UIViewController {
         contentView.quickAmountChipsView.onQuickAmountSelected = { [weak self] amount in
             self?.viewModel.applyQuickAmount(amount)
         }
+        contentView.amountUnitButton.addTarget(self, action: #selector(handleAmountUnitTap), for: .touchUpInside)
     }
 
     func bindViewModel() {
@@ -75,15 +77,12 @@ final class InvestmentTradingViewController: UIViewController {
             case .loaded(let data):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
+                self.currentViewData = data
                 self.contentView.apply(data)
             case .failure(let message):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
                 self.showAlert(message: message)
-            case .success(let message):
-                self.setCenteredLoading(false)
-                self.refreshControl.endRefreshing()
-                self.showSuccessAlert(message: message)
             }
         }
     }
@@ -121,23 +120,17 @@ final class InvestmentTradingViewController: UIViewController {
         present(alert, animated: true)
     }
 
-    func showSuccessAlert(message: String) {
-        let alert = UIAlertController(title: "İşlem Başarılı", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ana Ekrana Dön", style: .default) { [weak self] _ in
-            self?.onTradeCompleted?()
-        })
-        present(alert, animated: true)
-    }
-
     @objc func handleBackTap() {
         onBack?()
     }
 
     @objc func handleActionTap() {
         contentView.dismissKeyboard()
-        Task {
-            await viewModel.submit()
+        guard let context = viewModel.makeTradeContext() else {
+            showAlert(message: "İşlem bilgileri hazırlanamadı. Lütfen girişlerinizi kontrol edin.")
+            return
         }
+        onReviewTrade?(context)
     }
 
     @objc func handleAmountChanged() {
@@ -146,6 +139,26 @@ final class InvestmentTradingViewController: UIViewController {
 
     @objc func handlePullToRefresh() {
         loadData()
+    }
+
+    @objc func handleAmountUnitTap() {
+        guard let data = currentViewData else { return }
+
+        let alert = UIAlertController(title: "Giriş Türü", message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: data.quantityOptionTitle, style: .default) { [weak self] _ in
+            self?.viewModel.selectInputMode(.quantity)
+        })
+        alert.addAction(UIAlertAction(title: "TL", style: .default) { [weak self] _ in
+            self?.viewModel.selectInputMode(.fiat)
+        })
+        alert.addAction(UIAlertAction(title: "Vazgeç", style: .cancel))
+
+        if let popover = alert.popoverPresentationController {
+            popover.sourceView = contentView.amountUnitButton
+            popover.sourceRect = contentView.amountUnitButton.bounds
+        }
+
+        present(alert, animated: true)
     }
 
     @objc func handleKeyboardWillShow(_ notification: Notification) {
