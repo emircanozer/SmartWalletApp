@@ -5,8 +5,6 @@ final class ExpenseAnalysisViewModel {
     var onStateChange: ((ExpenseAnalysisViewState) -> Void)?
 
     private let walletService: WalletService
-    private let currencyFormatter: NumberFormatter
-    private let percentFormatter: NumberFormatter
     private let chartColors: [UIColor] = [
         UIColor(red: 0.56, green: 0.73, blue: 0.98, alpha: 1),
         UIColor(red: 0.98, green: 0.74, blue: 0.43, alpha: 1),
@@ -17,21 +15,6 @@ final class ExpenseAnalysisViewModel {
 
     init(walletService: WalletService) {
         self.walletService = walletService
-
-        let currencyFormatter = NumberFormatter()
-        currencyFormatter.numberStyle = .currency
-        currencyFormatter.currencyCode = "TRY"
-        currencyFormatter.currencySymbol = "₺"
-        currencyFormatter.maximumFractionDigits = 0
-        currencyFormatter.locale = Locale(identifier: "tr_TR")
-        self.currencyFormatter = currencyFormatter
-
-        let percentFormatter = NumberFormatter()
-        percentFormatter.numberStyle = .decimal
-        percentFormatter.maximumFractionDigits = 1
-        percentFormatter.minimumFractionDigits = 0
-        percentFormatter.locale = Locale(identifier: "tr_TR")
-        self.percentFormatter = percentFormatter
     }
 
     @MainActor
@@ -120,11 +103,19 @@ final class ExpenseAnalysisViewModel {
     }
 
     func formatCurrency(_ value: Decimal) -> String {
-        currencyFormatter.string(from: value as NSDecimalNumber) ?? "₺0"
+        AppNumberTextFormatter.currencyTRY(
+            value,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        )
     }
 
     func formatPercent(_ value: Decimal) -> String {
-        percentFormatter.string(from: value as NSDecimalNumber) ?? "0"
+        AppNumberTextFormatter.decimal(
+            value,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 1
+        )
     }
 
     func topPercentageText(from details: [WalletAnalysisCategoryResponse]) -> String {

@@ -178,60 +178,19 @@ final class TransactionsListViewModel {
     }
 
     func formatAmount(_ amount: Decimal, isPositive: Bool, showsPrefix: Bool) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.maximumFractionDigits = 0
-        formatter.minimumFractionDigits = 0
         let prefix = showsPrefix ? (isPositive ? "+" : "-") : ""
-        let value = formatter.string(for: amount) ?? "0"
-        return "\(prefix)₺\(value)"
+        return AppNumberTextFormatter.prefixedLira(amount, prefix: prefix)
     }
 
     static func formatDisplayAmount(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.maximumFractionDigits = 0
-        formatter.minimumFractionDigits = 0
-        let formatted = formatter.string(for: amount) ?? "0"
-        return "₺\(formatted)"
+        AppNumberTextFormatter.prefixedLira(amount)
     }
 
     static func parseDate(_ rawValue: String) -> Date {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-        let fallbackFormatter = ISO8601DateFormatter()
-        fallbackFormatter.formatOptions = [.withInternetDateTime]
-
-        let localFormatter = DateFormatter()
-        localFormatter.locale = Locale(identifier: "en_US_POSIX")
-        localFormatter.timeZone = TimeZone.current
-        localFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"
-
-        let shortFractionFormatter = DateFormatter()
-        shortFractionFormatter.locale = Locale(identifier: "en_US_POSIX")
-        shortFractionFormatter.timeZone = TimeZone.current
-        shortFractionFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-
-        let plainFormatter = DateFormatter()
-        plainFormatter.locale = Locale(identifier: "en_US_POSIX")
-        plainFormatter.timeZone = TimeZone.current
-        plainFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-
-        return formatter.date(from: rawValue)
-            ?? fallbackFormatter.date(from: rawValue)
-            ?? localFormatter.date(from: rawValue)
-            ?? shortFractionFormatter.date(from: rawValue)
-            ?? plainFormatter.date(from: rawValue)
-            ?? Date()
+        AppDateTextFormatter.parseServerDate(rawValue)
     }
 
     static func formatDate(_ date: Date) -> String {
-        let outputFormatter = DateFormatter()
-        outputFormatter.locale = Locale(identifier: "tr_TR")
-        outputFormatter.dateFormat = "d MMMM yyyy, HH.mm"
-        return outputFormatter.string(from: date)
+        AppDateTextFormatter.string(from: date, style: .transactionDateTime)
     }
 }

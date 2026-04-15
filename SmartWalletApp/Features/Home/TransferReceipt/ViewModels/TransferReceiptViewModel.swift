@@ -80,28 +80,11 @@ final class TransferReceiptViewModel {
     }
 
     func formatAmount(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.maximumFractionDigits = 0
-        formatter.minimumFractionDigits = 0
-        let value = formatter.string(for: amount) ?? "0"
-        return "₺\(value)"
+        AppNumberTextFormatter.prefixedLira(amount)
     }
 
     func formatDate(_ rawValue: String) -> String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-        let fallbackFormatter = ISO8601DateFormatter()
-        fallbackFormatter.formatOptions = [.withInternetDateTime]
-
-        let date = formatter.date(from: rawValue) ?? fallbackFormatter.date(from: rawValue) ?? Date()
-
-        let outputFormatter = DateFormatter()
-        outputFormatter.locale = Locale(identifier: "tr_TR")
-        outputFormatter.dateFormat = "d MMMM yyyy, HH.mm"
-        return outputFormatter.string(from: date)
+        AppDateTextFormatter.string(from: rawValue, style: .transactionDateTime)
     }
 
     func formatIBAN(_ iban: String) -> String {

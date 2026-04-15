@@ -4,9 +4,6 @@ final class InvestmentTradingViewModel {
     var onStateChange: ((InvestmentTradingViewState) -> Void)?
 
     private let walletService: WalletService
-    private let currencyFormatter: NumberFormatter
-    private let quantityFormatter: NumberFormatter
-    private let inputFormatter: NumberFormatter
 
     private var wallet: MyWalletResponse?
     private var prices: [PortfolioPriceResponse] = []
@@ -19,29 +16,6 @@ final class InvestmentTradingViewModel {
 
     init(walletService: WalletService) {
         self.walletService = walletService
-
-        let currencyFormatter = NumberFormatter()
-        currencyFormatter.numberStyle = .currency
-        currencyFormatter.currencyCode = "TRY"
-        currencyFormatter.currencySymbol = "₺"
-        currencyFormatter.maximumFractionDigits = 2
-        currencyFormatter.minimumFractionDigits = 2
-        currencyFormatter.locale = Locale(identifier: "tr_TR")
-        self.currencyFormatter = currencyFormatter
-
-        let quantityFormatter = NumberFormatter()
-        quantityFormatter.numberStyle = .decimal
-        quantityFormatter.maximumFractionDigits = 4
-        quantityFormatter.minimumFractionDigits = 0
-        quantityFormatter.locale = Locale(identifier: "tr_TR")
-        self.quantityFormatter = quantityFormatter
-
-        let inputFormatter = NumberFormatter()
-        inputFormatter.numberStyle = .decimal
-        inputFormatter.maximumFractionDigits = 4
-        inputFormatter.minimumFractionDigits = 0
-        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
-        self.inputFormatter = inputFormatter
     }
 
     @MainActor
@@ -235,7 +209,7 @@ extension InvestmentTradingViewModel {
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Birim Fiyat",
-                    value: formatUnitPrice(unitPrice, asset: selectedAsset)
+                    value: InvestmentTradingValueFormatter.unitPrice(unitPrice, asset: selectedAsset)
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Girilen Tutar",
@@ -243,7 +217,7 @@ extension InvestmentTradingViewModel {
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: selectedDirection == .buy ? "Tahmini Alınacak" : "Tahmini Satılacak",
-                    value: "\(formatEstimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
+                    value: "\(InvestmentTradingValueFormatter.estimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
                 )
             ]
         } else {
@@ -254,7 +228,7 @@ extension InvestmentTradingViewModel {
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Birim Fiyat",
-                    value: formatUnitPrice(unitPrice, asset: selectedAsset)
+                    value: InvestmentTradingValueFormatter.unitPrice(unitPrice, asset: selectedAsset)
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Girilen Miktar",
@@ -282,8 +256,8 @@ extension InvestmentTradingViewModel {
             },
             selectedDirection: selectedDirection,
             selectedInputMode: selectedInputMode,
-            buyPriceText: formatUnitPrice(price?.buyPrice ?? .zero, asset: selectedAsset),
-            sellPriceText: formatUnitPrice(price?.sellPrice ?? .zero, asset: selectedAsset),
+            buyPriceText: InvestmentTradingValueFormatter.unitPrice(price?.buyPrice ?? .zero, asset: selectedAsset),
+            sellPriceText: InvestmentTradingValueFormatter.unitPrice(price?.sellPrice ?? .zero, asset: selectedAsset),
             balanceText: formatCurrency(wallet.balance),
             holdingText: "\(formatQuantity(ownedAmount)) \(selectedAsset.amountUnit)",
             amountText: enteredAmountText,
@@ -297,7 +271,7 @@ extension InvestmentTradingViewModel {
                 ? (selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ SATILACAK")
                 : (selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ GELECEK"),
             estimateValueText: selectedInputMode == .fiat
-                ? "\(formatEstimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
+                ? "\(InvestmentTradingValueFormatter.estimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
                 : (selectedDirection == .buy
                     ? "\(formatQuantity(estimatedAssetAmount)) \(selectedAsset.amountUnit)"
                     : formatCurrency(estimatedTotal)),
@@ -421,47 +395,15 @@ extension InvestmentTradingViewModel {
     }
 
     func formatCurrency(_ value: Decimal) -> String {
-        currencyFormatter.string(from: value as NSDecimalNumber) ?? "₺0,00"
+        AppNumberTextFormatter.currencyTRY(value)
     }
 
     func formatQuantity(_ value: Decimal) -> String {
-        quantityFormatter.string(from: value as NSDecimalNumber) ?? "0"
-    }
-
-    func formatEstimatedAssetAmount(_ value: Decimal, asset: InvestmentTradingAssetType) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-
-        switch asset {
-        case .gold, .silver:
-            formatter.maximumFractionDigits = 4
-        default:
-            formatter.maximumFractionDigits = 2
-        }
-
-        formatter.minimumFractionDigits = 0
-        return formatter.string(from: value as NSDecimalNumber) ?? "0"
-    }
-
-    func formatUnitPrice(_ value: Decimal, asset: InvestmentTradingAssetType) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-        switch asset {
-        case .gold, .silver:
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 2
-        default:
-            formatter.minimumFractionDigits = 4
-            formatter.maximumFractionDigits = 4
-        }
-        let text = formatter.string(from: value as NSDecimalNumber) ?? "0"
-        return "₺\(text)"
+        InvestmentTradingValueFormatter.quantity(value)
     }
 
     func decimalInputText(_ value: Decimal) -> String {
-        inputFormatter.string(from: value as NSDecimalNumber) ?? ""
+        AppNumberTextFormatter.inputDecimal(value)
     }
 
     func currentUnitPrice() -> Decimal {

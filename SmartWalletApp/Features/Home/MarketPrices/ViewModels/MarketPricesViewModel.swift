@@ -5,25 +5,9 @@ final class MarketPricesViewModel {
     var onStateChange: ((MarketPricesViewState) -> Void)?
 
     private let walletService: WalletService
-    private let priceFormatter: NumberFormatter
-    private let percentFormatter: NumberFormatter
 
     init(walletService: WalletService) {
         self.walletService = walletService
-
-        let priceFormatter = NumberFormatter()
-        priceFormatter.numberStyle = .decimal
-        priceFormatter.maximumFractionDigits = 4
-        priceFormatter.minimumFractionDigits = 2
-        priceFormatter.locale = Locale(identifier: "tr_TR")
-        self.priceFormatter = priceFormatter
-
-        let percentFormatter = NumberFormatter()
-        percentFormatter.numberStyle = .decimal
-        percentFormatter.maximumFractionDigits = 2
-        percentFormatter.minimumFractionDigits = 0
-        percentFormatter.locale = Locale(identifier: "tr_TR")
-        self.percentFormatter = percentFormatter
     }
 
     @MainActor
@@ -66,12 +50,14 @@ extension MarketPricesViewModel {
     }
 
     func formattedPrice(_ value: Decimal) -> String {
-        priceFormatter.string(from: value as NSDecimalNumber) ?? "0"
+        AppNumberTextFormatter.decimal(
+            value,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4
+        )
     }
 
     func signedPercentText(_ value: Decimal) -> String {
-        let number = value as NSDecimalNumber
-        let formatted = percentFormatter.string(from: abs(number.doubleValue) as NSNumber) ?? "0"
-        return number.decimalValue < .zero ? "-%\(formatted)" : "+%\(formatted)"
+        AppNumberTextFormatter.signedPercent(value)
     }
 }

@@ -6,28 +6,10 @@ final class InvestmentTradeConfirmationViewModel {
 
     private let walletService: WalletService
     private let context: InvestmentTradeContext
-    private let currencyFormatter: NumberFormatter
-    private let quantityFormatter: NumberFormatter
 
     init(walletService: WalletService, context: InvestmentTradeContext) {
         self.walletService = walletService
         self.context = context
-
-        let currencyFormatter = NumberFormatter()
-        currencyFormatter.numberStyle = .currency
-        currencyFormatter.currencyCode = "TRY"
-        currencyFormatter.currencySymbol = "₺"
-        currencyFormatter.maximumFractionDigits = 2
-        currencyFormatter.minimumFractionDigits = 2
-        currencyFormatter.locale = Locale(identifier: "tr_TR")
-        self.currencyFormatter = currencyFormatter
-
-        let quantityFormatter = NumberFormatter()
-        quantityFormatter.numberStyle = .decimal
-        quantityFormatter.maximumFractionDigits = 4
-        quantityFormatter.minimumFractionDigits = 0
-        quantityFormatter.locale = Locale(identifier: "tr_TR")
-        self.quantityFormatter = quantityFormatter
     }
 
     func load() {
@@ -81,7 +63,7 @@ final class InvestmentTradeConfirmationViewModel {
             detailItems = [
                 InvestmentTradeConfirmationDetailItem(
                     title: "BİRİM FİYAT",
-                    value: formatUnitPrice(context.unitPrice, asset: context.assetType),
+                    value: InvestmentTradingValueFormatter.unitPrice(context.unitPrice, asset: context.assetType),
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
@@ -91,7 +73,7 @@ final class InvestmentTradeConfirmationViewModel {
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: context.direction == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ SATILACAK",
-                    value: "\(formatEstimatedAssetAmount(context.assetAmount, asset: context.assetType)) \(context.assetType.amountUnit)",
+                    value: "\(InvestmentTradingValueFormatter.estimatedAssetAmount(context.assetAmount, asset: context.assetType)) \(context.assetType.amountUnit)",
                     valueColor: AppColor.accentOlive
                 ),
                 InvestmentTradeConfirmationDetailItem(
@@ -109,7 +91,7 @@ final class InvestmentTradeConfirmationViewModel {
             detailItems = [
                 InvestmentTradeConfirmationDetailItem(
                     title: "BİRİM FİYAT",
-                    value: formatUnitPrice(context.unitPrice, asset: context.assetType),
+                    value: InvestmentTradingValueFormatter.unitPrice(context.unitPrice, asset: context.assetType),
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
@@ -166,42 +148,10 @@ final class InvestmentTradeConfirmationViewModel {
     }
 
     func formatCurrency(_ value: Decimal) -> String {
-        currencyFormatter.string(from: value as NSDecimalNumber) ?? "₺0,00"
+        AppNumberTextFormatter.currencyTRY(value)
     }
 
     func formatQuantity(_ value: Decimal) -> String {
-        quantityFormatter.string(from: value as NSDecimalNumber) ?? "0"
-    }
-
-    func formatEstimatedAssetAmount(_ value: Decimal, asset: InvestmentTradingAssetType) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-
-        switch asset {
-        case .gold, .silver:
-            formatter.maximumFractionDigits = 4
-        default:
-            formatter.maximumFractionDigits = 2
-        }
-
-        formatter.minimumFractionDigits = 0
-        return formatter.string(from: value as NSDecimalNumber) ?? "0"
-    }
-
-    func formatUnitPrice(_ value: Decimal, asset: InvestmentTradingAssetType) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-        switch asset {
-        case .gold, .silver:
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 2
-        default:
-            formatter.minimumFractionDigits = 4
-            formatter.maximumFractionDigits = 4
-        }
-        let text = formatter.string(from: value as NSDecimalNumber) ?? "0"
-        return "₺\(text)"
+        InvestmentTradingValueFormatter.quantity(value)
     }
 }

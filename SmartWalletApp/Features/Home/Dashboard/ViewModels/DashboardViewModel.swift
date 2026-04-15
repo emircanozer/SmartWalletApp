@@ -78,54 +78,23 @@ final class DashboardViewModel {
     }
 
     func formatBalance(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.maximumFractionDigits = 0
-        formatter.minimumFractionDigits = 0
-        return formatter.string(for: amount) ?? "0"
+        AppNumberTextFormatter.decimal(
+            amount,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        )
     }
 
     func formatAmount(_ amount: Decimal) -> String {
-        let formatted = formatBalance(amount)
-        return "₺\(formatted)"
+        AppNumberTextFormatter.prefixedLira(amount)
     }
 
     func parseDate(_ rawValue: String) -> Date {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-        let fallbackFormatter = ISO8601DateFormatter()
-        fallbackFormatter.formatOptions = [.withInternetDateTime]
-
-        let localFormatter = DateFormatter()
-        localFormatter.locale = Locale(identifier: "en_US_POSIX")
-        localFormatter.timeZone = TimeZone.current
-        localFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS"
-
-        let shortFractionFormatter = DateFormatter()
-        shortFractionFormatter.locale = Locale(identifier: "en_US_POSIX")
-        shortFractionFormatter.timeZone = TimeZone.current
-        shortFractionFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-
-        let plainFormatter = DateFormatter()
-        plainFormatter.locale = Locale(identifier: "en_US_POSIX")
-        plainFormatter.timeZone = TimeZone.current
-        plainFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-
-        return formatter.date(from: rawValue)
-            ?? fallbackFormatter.date(from: rawValue)
-            ?? localFormatter.date(from: rawValue)
-            ?? shortFractionFormatter.date(from: rawValue)
-            ?? plainFormatter.date(from: rawValue)
-            ?? Date()
+        AppDateTextFormatter.parseServerDate(rawValue)
     }
 
     func formatDate(_ date: Date) -> String {
-        let outputFormatter = DateFormatter()
-        outputFormatter.locale = Locale(identifier: "tr_TR")
-        outputFormatter.dateFormat = "d MMMM yyyy, HH.mm"
-        return outputFormatter.string(from: date)
+        AppDateTextFormatter.string(from: date, style: .transactionDateTime)
     }
 
     func formatDisplayName(_ fullName: String) -> String {
