@@ -85,11 +85,18 @@ extension DashboardContentView {
         balanceTitleLabel.textColor = AppColor.white62
         balanceTitleLabel.numberOfLines = 1
 
-        balanceValueLabel.font = .systemFont(ofSize: 52, weight: .bold)
+        balanceValueLabel.font = .systemFont(ofSize: 46, weight: .bold)
         balanceValueLabel.textColor = AppColor.balanceDisplay
+        balanceValueLabel.adjustsFontSizeToFitWidth = true
+        balanceValueLabel.minimumScaleFactor = 0.72
+        balanceValueLabel.lineBreakMode = .byClipping
+        balanceValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        balanceValueLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
-        balanceCurrencyLabel.font = .systemFont(ofSize: 28, weight: .bold)
+        balanceCurrencyLabel.font = .systemFont(ofSize: 24, weight: .bold)
         balanceCurrencyLabel.textColor = AppColor.accentGold
+        balanceCurrencyLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        balanceCurrencyLabel.setContentHuggingPriority(.required, for: .horizontal)
 
         quickActionsStack.axis = .horizontal
         quickActionsStack.alignment = .top
@@ -201,9 +208,11 @@ extension DashboardContentView {
             balanceTitleLabel.trailingAnchor.constraint(equalTo: balanceCard.trailingAnchor, constant: -22),
 
             balanceValueLabel.topAnchor.constraint(equalTo: balanceTitleLabel.bottomAnchor, constant: 28),
-            balanceValueLabel.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 28),
+            balanceValueLabel.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 22),
+            balanceValueLabel.trailingAnchor.constraint(lessThanOrEqualTo: balanceCurrencyLabel.leadingAnchor, constant: -10),
 
             balanceCurrencyLabel.leadingAnchor.constraint(equalTo: balanceValueLabel.trailingAnchor, constant: 8),
+            balanceCurrencyLabel.trailingAnchor.constraint(lessThanOrEqualTo: balanceCard.trailingAnchor, constant: -22),
             balanceCurrencyLabel.bottomAnchor.constraint(equalTo: balanceValueLabel.bottomAnchor, constant: -6),
 
             quickActionsStack.topAnchor.constraint(equalTo: balanceCard.bottomAnchor, constant: 26),

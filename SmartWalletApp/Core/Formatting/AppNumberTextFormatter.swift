@@ -33,8 +33,8 @@ enum AppNumberTextFormatter {
     static func prefixedLira(
         _ value: Decimal,
         prefix: String = "",
-        minimumFractionDigits: Int = 0,
-        maximumFractionDigits: Int = 0
+        minimumFractionDigits: Int = 2,
+        maximumFractionDigits: Int = 2
     ) -> String {
         let formattedValue = decimal(
             value,
@@ -78,6 +78,15 @@ enum AppNumberTextFormatter {
             minimumFractionDigits: 0,
             maximumFractionDigits: maximumFractionDigits,
             locale: Locale(identifier: "en_US_POSIX")
+        )
+    }
+
+    static func inputDecimalTRY(_ value: Decimal, maximumFractionDigits: Int = 2) -> String {
+        decimal(
+            value,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: maximumFractionDigits,
+            locale: Locale(identifier: "tr_TR")
         )
     }
 }

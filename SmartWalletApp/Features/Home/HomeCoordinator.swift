@@ -211,6 +211,10 @@ class HomeCoordinator: Coordinator {
 
         let viewModel = TransferReceiptViewModel(walletService: walletService, response: response)
         let viewController = TransferReceiptViewController(viewModel: viewModel)
+        viewController.onReturnHome = { [weak self, weak sendMoneyNavigationController] in
+            sendMoneyNavigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
+        }
         sendMoneyNavigationController.pushViewController(viewController, animated: true)
     }
 

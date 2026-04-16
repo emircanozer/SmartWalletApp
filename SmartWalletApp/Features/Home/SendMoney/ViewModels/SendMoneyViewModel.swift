@@ -24,6 +24,8 @@ final class SendMoneyViewModel {
     private var lookupRecipient: SendMoneyLookupRecipient?
     private var selectedCategory: SendMoneyTransferCategory?
     private var ibanLookupTask: Task<Void, Never>?
+    private var locallyAddedRecipientsByIBAN: [String: SendMoneyRecipient] = [:]
+    private var locallyRemovedRecipientIBANs: Set<String> = []
 
     init(walletService: WalletService) {
         self.walletService = walletService
@@ -41,17 +43,7 @@ final class SendMoneyViewModel {
         }
 
         do {
-            let recipientResponses = try await walletService.fetchRecipients()
-            recipients = recipientResponses.enumerated().map { index, recipient in
-                SendMoneyRecipient(
-                    id: "\(index)-\(recipient.iban)",
-                    name: recipient.contactName ?? recipient.fullName,
-                    ownerMaskedName: maskName(recipient.fullName),
-                    subtitle: "",
-                    iban: recipient.iban,
-                    isSaved: true
-                )
-            }
+            try await refreshRecipients()
             onStateChange?(.loaded(makeViewData()))
         } catch {
             recipients = []
@@ -60,9 +52,9 @@ final class SendMoneyViewModel {
     }
 
     func updateAmount(_ rawValue: String) {
-        let filtered = rawValue.filter { $0.isNumber || $0 == "," || $0 == "." }
-        amountText = filtered.isEmpty ? "" : filtered
-        selectedAmount = parseAmount(filtered)
+        let normalized = sanitizeAmountInput(rawValue)
+        amountText = normalized
+        selectedAmount = parseAmount(normalized)
         emitLoadedState()
     }
 
@@ -128,6 +120,7 @@ final class SendMoneyViewModel {
         return !recipient.isSaved
     }
 
+    @MainActor
     func saveLookupRecipient(contactName: String) async {
         guard let recipient = lookupRecipient, !recipient.isSaved else { return }
         let trimmedName = contactName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -147,26 +140,26 @@ final class SendMoneyViewModel {
                 )
             )
 
-            let recipientResponses = try await walletService.fetchRecipients()
-            recipients = recipientResponses.enumerated().map { index, recipient in
-                SendMoneyRecipient(
-                    id: "\(index)-\(recipient.iban)",
-                    name: recipient.contactName ?? recipient.fullName,
-                    ownerMaskedName: maskName(recipient.fullName),
-                    subtitle: "",
-                    iban: recipient.iban,
-                    isSaved: true
-                )
-            }
-            selectedRecipientID = recipients.first(where: { $0.iban == recipient.iban })?.id
-            if let savedRecipient = recipients.first(where: { $0.iban == recipient.iban }) {
-                await loadLookupRecipient(
-                    iban: savedRecipient.iban,
-                    isSaved: true
-                )
-            } else {
-                lookupRecipient = nil
-            }
+            let savedRecipient = SendMoneyRecipient(
+                id: recipient.iban,
+                name: trimmedName,
+                ownerMaskedName: recipient.ownerMaskedName,
+                subtitle: "",
+                iban: recipient.iban,
+                isSaved: true
+            )
+
+            recipients.removeAll { $0.iban == recipient.iban }
+            recipients.append(savedRecipient)
+            locallyRemovedRecipientIBANs.remove(recipient.iban)
+            locallyAddedRecipientsByIBAN[recipient.iban] = savedRecipient
+            selectedRecipientID = savedRecipient.id
+            lookupRecipient = SendMoneyLookupRecipient(
+                ownerMaskedName: recipient.ownerMaskedName,
+                maskedIban: recipient.maskedIban,
+                iban: recipient.iban,
+                isSaved: true
+            )
             emitLoadedState()
         } catch {
             onStateChange?(.failure(error.localizedDescription))
@@ -227,9 +220,66 @@ final class SendMoneyViewModel {
             onStateChange?(.failure(error.localizedDescription))
         }
     }
+
+    @MainActor
+    func deleteRecipient(id: String) async {
+        guard let recipient = recipients.first(where: { $0.id == id }) else { return }
+
+        onStateChange?(.loading)
+
+        do {
+            _ = try await walletService.removeContact(iban: recipient.iban)
+            recipients.removeAll { $0.id == id }
+            locallyAddedRecipientsByIBAN.removeValue(forKey: recipient.iban)
+            locallyRemovedRecipientIBANs.insert(recipient.iban)
+
+            if selectedRecipientID == id {
+                selectedRecipientID = nil
+            }
+
+            if enteredIBAN == recipient.iban {
+                if let currentLookupRecipient = lookupRecipient {
+                    lookupRecipient = SendMoneyLookupRecipient(
+                        ownerMaskedName: currentLookupRecipient.ownerMaskedName,
+                        maskedIban: currentLookupRecipient.maskedIban,
+                        iban: currentLookupRecipient.iban,
+                        isSaved: false
+                    )
+                }
+                emitLoadedState()
+            } else {
+                emitLoadedState()
+            }
+        } catch {
+            onStateChange?(.failure(error.localizedDescription))
+        }
+    }
 }
 
  extension SendMoneyViewModel {
+    func refreshRecipients() async throws {
+        let recipientResponses = try await walletService.fetchRecipients()
+        var mergedRecipients = recipientResponses.map { recipient in
+            SendMoneyRecipient(
+                id: recipient.iban,
+                name: recipient.contactName ?? recipient.fullName,
+                ownerMaskedName: maskName(recipient.fullName),
+                subtitle: "",
+                iban: recipient.iban,
+                isSaved: true
+            )
+        }
+
+        mergedRecipients.removeAll { locallyRemovedRecipientIBANs.contains($0.iban) }
+
+        for localRecipient in locallyAddedRecipientsByIBAN.values {
+            mergedRecipients.removeAll { $0.iban == localRecipient.iban }
+            mergedRecipients.append(localRecipient)
+        }
+
+        recipients = mergedRecipients
+    }
+
     func emitLoadedState() {
         // ekrana basılacak veri hazır
         //al bunu UI’da göster
@@ -271,20 +321,31 @@ final class SendMoneyViewModel {
     }
 
     func parseAmount(_ rawValue: String) -> Decimal {
-        Decimal(string: rawValue.replacingOccurrences(of: ",", with: ".")) ?? 0
-    }
+        let normalized = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalized.isEmpty else { return 0 }
 
-    func formatCurrency(_ amount: Decimal) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.locale = Locale(identifier: "tr_TR")
-        formatter.maximumFractionDigits = 0
-        let value = formatter.string(for: amount) ?? "0"
-        return "₺\(value)"
+        formatter.generatesDecimalNumbers = true
+
+        if let number = formatter.number(from: normalized) as? NSDecimalNumber {
+            return number.decimalValue
+        }
+
+        return Decimal(string: normalized.replacingOccurrences(of: ",", with: ".")) ?? 0
+    }
+
+    func formatCurrency(_ amount: Decimal) -> String {
+        AppNumberTextFormatter.prefixedLira(
+            amount,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        )
     }
 
     func formatPlainAmount(_ amount: Decimal) -> String {
-        NSDecimalNumber(decimal: amount).stringValue
+        AppNumberTextFormatter.inputDecimalTRY(amount, maximumFractionDigits: 2)
     }
 
     func resetForm() {
@@ -323,5 +384,32 @@ final class SendMoneyViewModel {
         let suffix = trimmed.suffix(1)
         let starCount = max(trimmed.count - 2, 5)
         return "\(first)\(String(repeating: "*", count: starCount))\(suffix)"
+    }
+
+    func sanitizeAmountInput(_ rawValue: String) -> String {
+        var result = ""
+        var hasSeparator = false
+        var fractionDigits = 0
+
+        for character in rawValue {
+            if character.isWholeNumber {
+                if hasSeparator {
+                    guard fractionDigits < 2 else { continue }
+                    fractionDigits += 1
+                }
+                result.append(character)
+                continue
+            }
+
+            if (character == "," || character == ".") && !hasSeparator {
+                hasSeparator = true
+                if result.isEmpty {
+                    result = "0"
+                }
+                result.append(",")
+            }
+        }
+
+        return result
     }
 }

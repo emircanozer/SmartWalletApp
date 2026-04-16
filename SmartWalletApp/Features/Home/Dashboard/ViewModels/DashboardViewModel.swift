@@ -80,8 +80,8 @@ final class DashboardViewModel {
     func formatBalance(_ amount: Decimal) -> String {
         AppNumberTextFormatter.decimal(
             amount,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
         )
     }
 

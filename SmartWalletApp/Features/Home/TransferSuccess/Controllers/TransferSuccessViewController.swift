@@ -11,6 +11,7 @@ final class TransferSuccessViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         title = "TRANSFER"
+        
     }
 
     required init?(coder: NSCoder) {
@@ -23,7 +24,8 @@ final class TransferSuccessViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        enableInteractivePopGesture()
+        navigationItem.hidesBackButton = true
+        disableInteractivePopGesture()
         bindViewModel()
         bindActions()
         viewModel.load()

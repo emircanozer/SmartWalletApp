@@ -6,7 +6,6 @@ final class SendMoneyViewController: UIViewController {
     private let viewModel: SendMoneyViewModel
     private let contentView = SendMoneyContentView()
     private let refreshControl = UIRefreshControl()
-    private var isSubmittingTransfer = false
 
     init(viewModel: SendMoneyViewModel) {
         self.viewModel = viewModel
@@ -28,6 +27,7 @@ final class SendMoneyViewController: UIViewController {
         bindViewModel()
         bindDismissKeyboard()
         configureRefreshControl()
+        configureRecipientsTableView()
         observeKeyboard()
     }
 
@@ -62,7 +62,6 @@ final class SendMoneyViewController: UIViewController {
             switch state {
             case .idle:
                 self.setCenteredLoading(false)
-                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
             case .loading:
                 if !self.refreshControl.isRefreshing {
@@ -71,19 +70,15 @@ final class SendMoneyViewController: UIViewController {
                 // gelen veriyi ekrana basacak 
             case .loaded(let data):
                 self.setCenteredLoading(false)
-                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
                 self.contentView.applyData(data) // **
-                self.bindRecipientRows()
                 self.bindAmountChips()
             case .transferSucceeded(let response):
                 self.setCenteredLoading(false)
-                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
                 self.onTransferSucceeded?(response)
             case .failure(let message):
                 self.setCenteredLoading(false)
-                self.isSubmittingTransfer = false
                 self.refreshControl.endRefreshing()
                 self.showAlert(message: message)
             }
@@ -95,6 +90,11 @@ final class SendMoneyViewController: UIViewController {
         contentView.setRefreshControl(refreshControl)
     }
 
+    func configureRecipientsTableView() {
+        contentView.recipientsTableView.dataSource = self
+        contentView.recipientsTableView.delegate = self
+    }
+
     func bindDismissKeyboard() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap))
         tapGesture.cancelsTouchesInView = false
@@ -104,13 +104,6 @@ final class SendMoneyViewController: UIViewController {
     func loadScreen() {
         Task {
             await viewModel.load()
-        }
-    }
-
-    func bindRecipientRows() {
-        contentView.subviewsRecursive.compactMap { $0 as? SendMoneyRecipientRowView }.forEach { view in
-            view.removeTarget(nil, action: nil, for: .allEvents)
-            view.addTarget(self, action: #selector(handleRecipientTap(_:)), for: .touchUpInside)
         }
     }
 
@@ -164,14 +157,9 @@ final class SendMoneyViewController: UIViewController {
     }
 
     @objc func handleConfirmTap() {
-        isSubmittingTransfer = true
         Task {
             await viewModel.confirmTransfer()
         }
-    }
-
-    @objc func handleRecipientTap(_ sender: SendMoneyRecipientRowView) {
-        viewModel.selectRecipient(id: sender.recipient.id)
     }
 
     @objc func handleAmountChipTap(_ sender: SendMoneyAmountChipButton) {
@@ -217,6 +205,55 @@ final class SendMoneyViewController: UIViewController {
         contentView.setKeyboardBottomInset(0)
     }
 
+}
+
+extension SendMoneyViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        contentView.currentRecipients.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: SendMoneyRecipientCell.reuseIdentifier,
+            for: indexPath
+        ) as? SendMoneyRecipientCell else {
+            return UITableViewCell()
+        }
+
+        let recipient = contentView.currentRecipients[indexPath.row]
+        let isSelected = recipient.id == contentView.currentSelectedRecipientID
+        cell.configure(with: recipient, isSelected: isSelected)
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let recipient = contentView.currentRecipients[indexPath.row]
+        viewModel.selectRecipient(id: recipient.id)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let recipient = contentView.currentRecipients[indexPath.row]
+        let deleteAction = UIContextualAction(style: .destructive, title: "Sil") { [weak self] _, _, completion in
+            guard let self else {
+                completion(false)
+                return
+            }
+
+            Task {
+                await self.viewModel.deleteRecipient(id: recipient.id)
+            }
+            completion(true)
+        }
+
+        deleteAction.backgroundColor = AppColor.dangerStrong
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = true
+        return configuration
+    }
 }
 
 extension SendMoneyViewController: UITextViewDelegate {

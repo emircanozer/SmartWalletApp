@@ -57,6 +57,10 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.contacts(body: body))
     }
 
+    func removeContact(iban: String) async throws -> Bool {
+        try await apiClient.send(WalletEndpoint.removeContact(iban: iban), as: Bool.self)
+    }
+
     // request modeli gönderiyoruz
     func transfer(request: WalletTransferRequest) async throws -> WalletTransferResponse {
         let body = try encoder.encode(request) //ilk encode
@@ -77,6 +81,7 @@ final class WalletService {
     case portfolioBuy(body: Data)
     case portfolioSell(body: Data)
     case contacts(body: Data)
+    case removeContact(iban: String)
     case transfer(body: Data)
 
     var path: String {
@@ -103,6 +108,8 @@ final class WalletService {
             return "/api/Portfolios/sell"
         case .contacts:
             return "/api/Wallets/contacts"
+        case .removeContact(let iban):
+            return "/api/Wallets/remove-contact/\(iban)"
         case .transfer:
             return "/api/Wallets/transfer"
         }
@@ -112,6 +119,8 @@ final class WalletService {
         switch self {
         case .portfolioBuy, .portfolioSell, .contacts, .transfer:
             return .post
+        case .removeContact:
+            return .delete
         default:
             return .get
         }
@@ -129,6 +138,8 @@ final class WalletService {
             return body
         case .contacts(let body):
             return body
+        case .removeContact:
+            return nil
         case .transfer(let body):
             return body
         default:
