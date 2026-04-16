@@ -51,7 +51,7 @@ class WelcomeContentView: UIView {
     private let tabItems: [TabItem] = [
         .init(title: "Anasayfa", iconName: "house", isHighlighted: false),
         .init(title: "Piyasalar", iconName: "chart.bar.xaxis.ascending", isHighlighted: false),
-        .init(title: "", iconName: "cpu", isHighlighted: true),
+        .init(title: "", iconName: "apple.intelligence", isHighlighted: true),
         .init(title: "Transfer", iconName: "arrow.left.arrow.right", isHighlighted: false),
         .init(title: "Profil", iconName: "person", isHighlighted: false)
     ]

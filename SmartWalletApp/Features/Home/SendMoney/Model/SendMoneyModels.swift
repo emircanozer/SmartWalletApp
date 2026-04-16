@@ -9,6 +9,7 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
     case education
     case health
     case transfer
+    case rentPayment
     
     // backendden döner değerler int bir şey ifade etmediği için bir kez daha burada çevirme yapıyoruz 
 
@@ -30,6 +31,8 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
             return 6
         case .transfer:
             return 7
+        case .rentPayment:
+            return 8
         }
     }
 
@@ -51,6 +54,8 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
             return "Sağlık"
         case .transfer:
             return "Bireysel Ödeme"
+        case .rentPayment:
+            return "Kira Ödemesi"
         }
     }
 
@@ -72,6 +77,8 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
             return "Sağlık harcamaları"
         case .transfer:
             return "Bireysel para transferi"
+        case .rentPayment:
+            return "Kira ödemeleri için"
         }
     }
 }
@@ -79,6 +86,7 @@ enum SendMoneyTransferCategory: CaseIterable, Equatable {
 struct SendMoneyRecipient: Equatable {
     let id: String
     let name: String
+    let ownerMaskedName: String
     let subtitle: String
     let iban: String
     let isSaved: Bool
@@ -86,7 +94,7 @@ struct SendMoneyRecipient: Equatable {
 
 // alt taraftaki model
 struct SendMoneyLookupRecipient: Equatable {
-    let name: String
+    let ownerMaskedName: String
     let maskedIban: String
     let iban: String
     let isSaved: Bool

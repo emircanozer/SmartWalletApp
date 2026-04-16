@@ -84,7 +84,7 @@ enum InvestmentAssetType {
         case .kwd:
             return "creditcard.fill"
         case .other:
-            return "briefcase.fill"
+            return "apple.intelligence"
         }
     }
 

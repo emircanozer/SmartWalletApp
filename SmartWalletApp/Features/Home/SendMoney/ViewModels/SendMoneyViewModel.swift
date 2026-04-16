@@ -46,6 +46,7 @@ final class SendMoneyViewModel {
                 SendMoneyRecipient(
                     id: "\(index)-\(recipient.iban)",
                     name: recipient.contactName ?? recipient.fullName,
+                    ownerMaskedName: maskName(recipient.fullName),
                     subtitle: "",
                     iban: recipient.iban,
                     isSaved: true
@@ -151,6 +152,7 @@ final class SendMoneyViewModel {
                 SendMoneyRecipient(
                     id: "\(index)-\(recipient.iban)",
                     name: recipient.contactName ?? recipient.fullName,
+                    ownerMaskedName: maskName(recipient.fullName),
                     subtitle: "",
                     iban: recipient.iban,
                     isSaved: true
@@ -302,7 +304,7 @@ final class SendMoneyViewModel {
             let response = try await walletService.fetchOwnerName(iban: iban)
             guard !Task.isCancelled else { return }
             lookupRecipient = SendMoneyLookupRecipient(
-                name: response.maskedName,
+                ownerMaskedName: response.maskedName,
                 maskedIban: response.maskedName,
                 iban: iban,
                 isSaved: isSaved
@@ -313,5 +315,13 @@ final class SendMoneyViewModel {
             lookupRecipient = nil
             emitLoadedState()
         }
+    }
+
+    func maskName(_ fullName: String) -> String {
+        let trimmed = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let first = trimmed.first else { return "" }
+        let suffix = trimmed.suffix(1)
+        let starCount = max(trimmed.count - 2, 5)
+        return "\(first)\(String(repeating: "*", count: starCount))\(suffix)"
     }
 }

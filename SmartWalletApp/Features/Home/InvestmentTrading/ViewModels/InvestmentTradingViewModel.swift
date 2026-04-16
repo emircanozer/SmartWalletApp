@@ -4,6 +4,8 @@ final class InvestmentTradingViewModel {
     var onStateChange: ((InvestmentTradingViewState) -> Void)?
 
     private let walletService: WalletService
+    private let initialAsset: InvestmentTradingAssetType?
+    private let initialDirection: InvestmentTradeDirection?
 
     private var wallet: MyWalletResponse?
     private var prices: [PortfolioPriceResponse] = []
@@ -14,8 +16,15 @@ final class InvestmentTradingViewModel {
     private var selectedInputMode: InvestmentTradingInputMode = .quantity
     private var enteredAmountText = ""
 
-    init(walletService: WalletService) {
+    init(
+        walletService: WalletService,
+        initialAsset: InvestmentTradingAssetType? = nil,
+        initialDirection: InvestmentTradeDirection? = nil
+    ) {
         self.walletService = walletService
+        self.initialAsset = initialAsset
+        self.initialDirection = initialDirection
+        self.selectedDirection = initialDirection ?? .buy
     }
 
     @MainActor
@@ -37,7 +46,11 @@ final class InvestmentTradingViewModel {
             // özelleştirilmiş asseti selected ilk yükleme
             let availableAssets = makeAvailableAssets(from: prices)
             if selectedAsset == nil || !availableAssets.contains(where: { $0.backendValue == selectedAsset?.backendValue }) {
-                selectedAsset = availableAssets.first
+                if let initialAsset, availableAssets.contains(where: { $0.backendValue == initialAsset.backendValue }) {
+                    selectedAsset = initialAsset
+                } else {
+                    selectedAsset = availableAssets.first
+                }
             }
             emitLoadedState()
         } catch {

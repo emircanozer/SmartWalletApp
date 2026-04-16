@@ -5,6 +5,15 @@ class MainTabBarController: UITabBarController { // tabbar tanımlanması için 
         super.viewDidLoad()
         configureTabBar()
     }
+
+    func configureAssistantItem(_ item: UITabBarItem) {
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let image = UIImage(systemName: "apple.intelligence", withConfiguration: config)?
+            .withRenderingMode(.alwaysTemplate)
+        item.image = image
+        item.selectedImage = image
+        item.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 4)
+    }
 }
 
 extension MainTabBarController {
