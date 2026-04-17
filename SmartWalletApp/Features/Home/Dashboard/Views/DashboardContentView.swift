@@ -9,7 +9,6 @@ class DashboardContentView: UIView {
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let headerTitleLabel = UILabel()
-    private let profileButton = UIButton(type: .system)
     private let greetingLabel = UILabel()
     private let balanceCard = UIView()
     private let ibanLabel = UILabel()
@@ -61,10 +60,6 @@ extension DashboardContentView {
         headerTitleLabel.textAlignment = .center
         headerTitleLabel.font = .systemFont(ofSize: 22, weight: .bold)
         headerTitleLabel.textColor = AppColor.titleDark
-
-        profileButton.backgroundColor = AppColor.primaryYellow
-        profileButton.setImage(UIImage(systemName: "wallet.pass"), for: .normal)
-        profileButton.tintColor = .white
 
         greetingLabel.font = .systemFont(ofSize: 32, weight: .bold)
         greetingLabel.textColor = AppColor.titleDark
@@ -125,7 +120,6 @@ extension DashboardContentView {
         scrollView.addSubview(contentContainer)
 
         contentContainer.addSubview(headerTitleLabel)
-        contentContainer.addSubview(profileButton)
         contentContainer.addSubview(greetingLabel)
         contentContainer.addSubview(balanceCard)
         balanceCard.addSubview(ibanLabel)
@@ -145,7 +139,6 @@ extension DashboardContentView {
             scrollView,
             contentContainer,
             headerTitleLabel,
-            profileButton,
             greetingLabel,
             balanceCard,
             ibanLabel,
@@ -178,12 +171,6 @@ extension DashboardContentView {
 
             headerTitleLabel.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 12),
             headerTitleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
-            headerTitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: profileButton.leadingAnchor, constant: -16),
-
-            profileButton.centerYAnchor.constraint(equalTo: headerTitleLabel.centerYAnchor),
-            profileButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
-            profileButton.widthAnchor.constraint(equalToConstant: 42),
-            profileButton.heightAnchor.constraint(equalToConstant: 42),
 
             greetingLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 36),
             greetingLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
@@ -280,7 +267,6 @@ extension DashboardContentView {
     }
 
     func applyCornerRadius() {
-        profileButton.layer.cornerRadius = 12
         balanceCard.layer.cornerRadius = 28
     }
 }

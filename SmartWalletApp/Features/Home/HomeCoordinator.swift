@@ -17,8 +17,10 @@ class HomeCoordinator: Coordinator {
     func start() {
         let dashboardViewModel = DashboardViewModel(walletService: walletService)
         let dashboardViewController = DashboardViewController(viewModel: dashboardViewModel)
-        let sendMoneyViewModel = SendMoneyViewModel(walletService: walletService)
-        let sendMoneyViewController = SendMoneyViewController(viewModel: sendMoneyViewModel)
+        let sendMoneyViewController = makeSendMoneyViewController(
+            presentationStyle: .tabRoot,
+            navigationController: nil
+        )
         let marketPricesViewModel = MarketPricesViewModel(walletService: walletService)
         let marketPricesViewController = MarketPricesViewController(viewModel: marketPricesViewModel)
         let assistantViewModel = AIAssistantViewModel(assistantService: assistantService)
@@ -37,8 +39,9 @@ class HomeCoordinator: Coordinator {
         dashboardViewController.onSeeAllTransactions = { [weak self] transactions in
             self?.showAllTransactions(transactions)
         }
-        dashboardViewController.onSendMoneyTap = { [weak self] in
-            self?.showSendMoneyTab()
+        dashboardViewController.onSendMoneyTap = { [weak self, weak dashboardNavigationController] in
+            guard let self, let dashboardNavigationController else { return }
+            self.showSendMoney(in: dashboardNavigationController, presentationStyle: .pushedFromDashboard)
         }
         dashboardViewController.onInvestmentTradingTap = { [weak self] in
             self?.showInvestmentTrading()
@@ -48,9 +51,6 @@ class HomeCoordinator: Coordinator {
         }
         dashboardViewController.onAnalysisTap = { [weak self] in
             self?.showExpenseAnalysis()
-        }
-        sendMoneyViewController.onTransferSucceeded = { [weak self] response in
-            self?.showTransferSuccess(response)
         }
         assistantViewModel.onNavigationRequested = { [weak self] target in
             self?.handleAssistantNavigation(target)
@@ -94,6 +94,33 @@ class HomeCoordinator: Coordinator {
     private func showSendMoneyTab() {
         guard let sendMoneyNavigationController else { return }
         rootViewController.selectedViewController = sendMoneyNavigationController
+    }
+
+    private func showSendMoney(
+        in navigationController: UINavigationController,
+        presentationStyle: SendMoneyPresentationStyle
+    ) {
+        let viewController = makeSendMoneyViewController(
+            presentationStyle: presentationStyle,
+            navigationController: navigationController
+        )
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func makeSendMoneyViewController(
+        presentationStyle: SendMoneyPresentationStyle,
+        navigationController: UINavigationController?
+    ) -> SendMoneyViewController {
+        let sendMoneyViewModel = SendMoneyViewModel(walletService: walletService)
+        let sendMoneyViewController = SendMoneyViewController(
+            viewModel: sendMoneyViewModel,
+            presentationStyle: presentationStyle
+        )
+        sendMoneyViewController.onTransferSucceeded = { [weak self, weak navigationController] response in
+            let targetNavigationController = navigationController ?? self?.sendMoneyNavigationController
+            self?.showTransferSuccess(response, in: targetNavigationController)
+        }
+        return sendMoneyViewController
     }
 
     private func showExpenseAnalysis() {
@@ -191,31 +218,37 @@ class HomeCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showTransferSuccess(_ response: WalletTransferResponse) {
-        guard let sendMoneyNavigationController else { return }
+    private func showTransferSuccess(
+        _ response: WalletTransferResponse,
+        in navigationController: UINavigationController?
+    ) {
+        guard let navigationController else { return }
 
         let viewModel = TransferSuccessViewModel(response: response)
         let viewController = TransferSuccessViewController(viewModel: viewModel)
-        viewController.onReturnHome = { [weak self, weak sendMoneyNavigationController] in
-            sendMoneyNavigationController?.popToRootViewController(animated: false)
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
             self?.rootViewController.selectedIndex = 0
         }
-        viewController.onViewReceipt = { [weak self] in
-            self?.showTransferReceipt(response)
+        viewController.onViewReceipt = { [weak self, weak navigationController] in
+            self?.showTransferReceipt(response, in: navigationController)
         }
-        sendMoneyNavigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showTransferReceipt(_ response: WalletTransferResponse) {
-        guard let sendMoneyNavigationController else { return }
+    private func showTransferReceipt(
+        _ response: WalletTransferResponse,
+        in navigationController: UINavigationController?
+    ) {
+        guard let navigationController else { return }
 
         let viewModel = TransferReceiptViewModel(walletService: walletService, response: response)
         let viewController = TransferReceiptViewController(viewModel: viewModel)
-        viewController.onReturnHome = { [weak self, weak sendMoneyNavigationController] in
-            sendMoneyNavigationController?.popToRootViewController(animated: false)
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
             self?.rootViewController.selectedIndex = 0
         }
-        sendMoneyNavigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(viewController, animated: true)
     }
 
     private func handleAssistantNavigation(_ target: AIAssistantNavigationTarget) {

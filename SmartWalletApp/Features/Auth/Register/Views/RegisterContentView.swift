@@ -11,7 +11,6 @@ class RegisterContentView: UIView {
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
-    private let iconWrapper = UIView()
     private let iconView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
@@ -84,14 +83,7 @@ extension RegisterContentView {
 
         contentContainer.backgroundColor = .white
 
-        iconWrapper.backgroundColor = AppColor.primaryYellow
-        iconWrapper.layer.shadowColor = AppColor.primaryYellow.cgColor
-        iconWrapper.layer.shadowOpacity = 0.18
-        iconWrapper.layer.shadowRadius = 16
-        iconWrapper.layer.shadowOffset = CGSize(width: 0, height: 10)
-
-        iconView.image = UIImage(systemName: "globe")
-        iconView.tintColor = AppColor.authHeadingText
+        iconView.image = UIImage(named: "logo")
         iconView.contentMode = .scaleAspectFit
 
         titleLabel.textAlignment = .center
@@ -147,8 +139,7 @@ extension RegisterContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        contentContainer.addSubview(iconWrapper)
-        iconWrapper.addSubview(iconView)
+        contentContainer.addSubview(iconView)
         contentContainer.addSubview(titleLabel)
         contentContainer.addSubview(subtitleLabel)
         contentContainer.addSubview(fullNameField)
@@ -170,7 +161,6 @@ extension RegisterContentView {
         [
             scrollView,
             contentContainer,
-            iconWrapper,
             iconView,
             titleLabel,
             subtitleLabel,
@@ -200,17 +190,12 @@ extension RegisterContentView {
             contentContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
             contentContainer.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
 
-            iconWrapper.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 34),
-            iconWrapper.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            iconWrapper.widthAnchor.constraint(equalToConstant: 54),
-            iconWrapper.heightAnchor.constraint(equalToConstant: 54),
+            iconView.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 34),
+            iconView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 72),
+            iconView.heightAnchor.constraint(equalToConstant: 72),
 
-            iconView.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: iconWrapper.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 26),
-            iconView.heightAnchor.constraint(equalToConstant: 26),
-
-            titleLabel.topAnchor.constraint(equalTo: iconWrapper.bottomAnchor, constant: 24),
+            titleLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
             titleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 
@@ -279,8 +264,11 @@ extension RegisterContentView {
     }
 
     func applyCornerRadius() {
-        iconWrapper.layer.cornerRadius = 15
         registerButton.layer.cornerRadius = 12
+        // radiıusun işe yaraması için  
+        iconView.clipsToBounds = true
+        iconView.layer.cornerRadius = 15
+        
     }
 
     func setKeyboardBottomInset(_ inset: CGFloat) {

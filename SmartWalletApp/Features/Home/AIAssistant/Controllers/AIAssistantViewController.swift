@@ -9,6 +9,7 @@ final class AIAssistantViewController: UIViewController {
     private let contentView = AIAssistantContentView()
     private var currentMessages: [AIAssistantMessageItem] = []
     private var lastRenderedMessageIDs: [UUID] = []
+    private var lastKnownTableWidth: CGFloat = 0
 
     init(viewModel: AIAssistantViewModel) {
         self.viewModel = viewModel
@@ -29,6 +30,18 @@ final class AIAssistantViewController: UIViewController {
         bindActions()
         bindViewModel()
         viewModel.load()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        let tableWidth = contentView.tableView.bounds.width
+        guard tableWidth > 0, abs(tableWidth - lastKnownTableWidth) > 1 else { return }
+
+        lastKnownTableWidth = tableWidth
+        contentView.tableView.reloadData()
+        contentView.tableView.layoutIfNeeded()
+        scrollToBottomIfNeeded()
     }
 }
 

@@ -36,7 +36,12 @@ extension AIAssistantContentView {
     func apply(_ data: AIAssistantViewData) {
         headerTitleLabel.text = data.titleText
         headerSubtitleLabel.text = data.subtitleText
-        messageTextField.placeholder = data.placeholderText
+        messageTextField.attributedPlaceholder = NSAttributedString(
+            string: data.placeholderText,
+            attributes: [
+                .foregroundColor: AppColor.secondaryText
+            ]
+        )
         if messageTextField.text != data.draftText {
             messageTextField.text = data.draftText
         }
@@ -50,6 +55,7 @@ extension AIAssistantContentView {
     func configureView() {
         backgroundColor = AppColor.appBackground
 
+        keyboardTapGesture.delegate = self
         keyboardTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
         keyboardTapGesture.cancelsTouchesInView = false
         addGestureRecognizer(keyboardTapGesture)
@@ -183,5 +189,17 @@ extension AIAssistantContentView {
 
     @objc func handleBackgroundTap() {
         endEditing(true)
+    }
+}
+
+extension AIAssistantContentView: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        guard let touchedView = touch.view else { return true }
+
+        if touchedView.isDescendant(of: inputContainer) || touchedView.isDescendant(of: sendButton) {
+            return false
+        }
+
+        return true
     }
 }

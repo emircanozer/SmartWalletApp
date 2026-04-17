@@ -10,7 +10,6 @@ class VerificationCodeContentView: UIView {
 
     private let contentContainer = UIView()
     private let keyboardTapGesture = UITapGestureRecognizer()
-    private let logoWrapper = UIView()
     private let logoImageView = UIImageView()
     private let brandLabel = UILabel()
     private let titleLabel = UILabel()
@@ -41,14 +40,7 @@ extension VerificationCodeContentView {
         backgroundColor = .white
         contentContainer.backgroundColor = .white
 
-        logoWrapper.backgroundColor = AppColor.primaryYellow
-        logoWrapper.layer.shadowColor = AppColor.primaryYellow.cgColor
-        logoWrapper.layer.shadowOpacity = 0.18
-        logoWrapper.layer.shadowRadius = 18
-        logoWrapper.layer.shadowOffset = CGSize(width: 0, height: 10)
-
-        logoImageView.image = UIImage(systemName: "wallet.pass.fill")
-        logoImageView.tintColor = .white
+        logoImageView.image = UIImage(named: "logo")
         logoImageView.contentMode = .scaleAspectFit
 
         brandLabel.textAlignment = .center
@@ -98,8 +90,7 @@ extension VerificationCodeContentView {
     func buildHierarchy() {
         addSubview(contentContainer)
 
-        contentContainer.addSubview(logoWrapper)
-        logoWrapper.addSubview(logoImageView)
+        contentContainer.addSubview(logoImageView)
         contentContainer.addSubview(brandLabel)
         contentContainer.addSubview(titleLabel)
         contentContainer.addSubview(subtitleLabel)
@@ -116,7 +107,6 @@ extension VerificationCodeContentView {
     func setupLayout() {
         [
             contentContainer,
-            logoWrapper,
             logoImageView,
             brandLabel,
             titleLabel,
@@ -137,17 +127,12 @@ extension VerificationCodeContentView {
             contentContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
 
-            logoWrapper.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 84),
-            logoWrapper.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            logoWrapper.widthAnchor.constraint(equalToConstant: 56),
-            logoWrapper.heightAnchor.constraint(equalToConstant: 56),
+            logoImageView.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 84),
+            logoImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            logoImageView.widthAnchor.constraint(equalToConstant: 72),
+            logoImageView.heightAnchor.constraint(equalToConstant: 72),
 
-            logoImageView.centerXAnchor.constraint(equalTo: logoWrapper.centerXAnchor),
-            logoImageView.centerYAnchor.constraint(equalTo: logoWrapper.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 22),
-            logoImageView.heightAnchor.constraint(equalToConstant: 22),
-
-            brandLabel.topAnchor.constraint(equalTo: logoWrapper.bottomAnchor, constant: 14),
+            brandLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 14),
             brandLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             brandLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 
@@ -192,8 +177,10 @@ extension VerificationCodeContentView {
     }
 
     func applyCornerRadius() {
-        logoWrapper.layer.cornerRadius = 18
         verifyButton.layer.cornerRadius = verifyButton.bounds.height / 2
+        logoImageView.clipsToBounds = true
+        logoImageView.layer.cornerRadius = 15
+        
     }
 
     func moveForKeyboard(y: CGFloat) {

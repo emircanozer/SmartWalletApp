@@ -8,8 +8,6 @@ class WelcomeContentView: UIView {
     private let contentContainer = UIView()
     private let headerStack = UIStackView()
     private let brandStack = UIStackView()
-    private let logoWrapper = UIView()
-    private let logoImageView = UIImageView()
     private let titleLabel = UILabel()
     private let headerActionsStack = UIStackView()
     private let languageButton = UIButton(type: .system)
@@ -87,11 +85,6 @@ extension WelcomeContentView {
         brandStack.axis = .horizontal
         brandStack.alignment = .center
         brandStack.spacing = 10
-
-        logoWrapper.backgroundColor = AppColor.primaryYellow
-        logoImageView.image = UIImage(systemName: "wallet.pass.fill")
-        logoImageView.tintColor = .black
-        logoImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 21, weight: .bold)
         titleLabel.textColor = AppColor.titleDark
@@ -179,11 +172,7 @@ extension WelcomeContentView {
 
         headerStack.addArrangedSubview(brandStack)
         headerStack.addArrangedSubview(headerActionsStack)
-
-        brandStack.addArrangedSubview(logoWrapper)
         brandStack.addArrangedSubview(titleLabel)
-
-        logoWrapper.addSubview(logoImageView)
 
         headerActionsStack.addArrangedSubview(languageButton)
         headerActionsStack.addArrangedSubview(notificationButton)
@@ -200,8 +189,6 @@ extension WelcomeContentView {
             scrollView,
             contentContainer,
             headerStack,
-            logoWrapper,
-            logoImageView,
             heroContainer,
             avatarOrbitView,
             avatarCircleView,
@@ -232,14 +219,6 @@ extension WelcomeContentView {
             headerStack.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 14),
             headerStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             headerStack.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
-
-            logoWrapper.widthAnchor.constraint(equalToConstant: 32),
-            logoWrapper.heightAnchor.constraint(equalToConstant: 32),
-
-            logoImageView.centerXAnchor.constraint(equalTo: logoWrapper.centerXAnchor),
-            logoImageView.centerYAnchor.constraint(equalTo: logoWrapper.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 18),
-            logoImageView.heightAnchor.constraint(equalToConstant: 18),
 
             notificationButton.widthAnchor.constraint(equalToConstant: 22),
             notificationButton.heightAnchor.constraint(equalToConstant: 22),
@@ -323,7 +302,6 @@ extension WelcomeContentView {
         primaryButton.layer.cornerRadius = primaryButton.bounds.height / 2
         secondaryButton.layer.cornerRadius = secondaryButton.bounds.height / 2
         bottomBar.layer.cornerRadius = 30
-        logoWrapper.layer.cornerRadius = 11
         avatarOrbitView.layer.cornerRadius = avatarOrbitView.bounds.width / 2
         avatarCircleView.layer.cornerRadius = avatarCircleView.bounds.width / 2
     }

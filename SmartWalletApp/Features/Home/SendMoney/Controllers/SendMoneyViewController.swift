@@ -1,15 +1,23 @@
 import UIKit
 
+enum SendMoneyPresentationStyle {
+    case tabRoot
+    case pushedFromDashboard
+}
+
 final class SendMoneyViewController: UIViewController {
     var onTransferSucceeded: ((WalletTransferResponse) -> Void)?
 
     private let viewModel: SendMoneyViewModel
+    private let presentationStyle: SendMoneyPresentationStyle
     private let contentView = SendMoneyContentView()
     private let refreshControl = UIRefreshControl()
 
-    init(viewModel: SendMoneyViewModel) {
+    init(viewModel: SendMoneyViewModel, presentationStyle: SendMoneyPresentationStyle) {
         self.viewModel = viewModel
+        self.presentationStyle = presentationStyle
         super.init(nibName: nil, bundle: nil)
+        title = "Para Gönder"
     }
 
     required init?(coder: NSCoder) {
@@ -22,7 +30,7 @@ final class SendMoneyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        enableInteractivePopGesture()
+        configureNavigationBehavior()
         bindActions()
         bindViewModel()
         bindDismissKeyboard()
@@ -33,7 +41,12 @@ final class SendMoneyViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        switch presentationStyle {
+        case .tabRoot:
+            navigationController?.setNavigationBarHidden(true, animated: false)
+        case .pushedFromDashboard:
+            navigationController?.setNavigationBarHidden(false, animated: false)
+        }
         loadScreen()
     }
 
@@ -43,6 +56,17 @@ final class SendMoneyViewController: UIViewController {
 }
 
  extension SendMoneyViewController {
+    func configureNavigationBehavior() {
+        switch presentationStyle {
+        case .tabRoot:
+            navigationItem.hidesBackButton = true
+            disableInteractivePopGesture()
+        case .pushedFromDashboard:
+            navigationItem.hidesBackButton = false
+            enableInteractivePopGesture()
+        }
+    }
+
     func bindActions() {
         contentView.ibanTextField.addTarget(self, action: #selector(handleIBANChanged), for: .editingChanged)
         contentView.amountTextField.addTarget(self, action: #selector(handleAmountChanged), for: .editingChanged)

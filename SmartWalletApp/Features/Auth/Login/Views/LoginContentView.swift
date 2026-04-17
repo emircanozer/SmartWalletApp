@@ -11,8 +11,6 @@ class LoginContentView: UIView {
     private let contentContainer = UIView()
     private let headerStack = UIStackView()
     private let brandStack = UIStackView()
-    private let logoWrapper = UIView()
-    private let logoImageView = UIImageView()
     private let brandLabel = UILabel()
     private let heroWrapper = UIView()
     private let heroIconWrapper = UIView()
@@ -78,11 +76,6 @@ extension LoginContentView {
         brandStack.alignment = .center
         brandStack.spacing = 10
 
-        logoWrapper.backgroundColor = AppColor.primaryYellow
-        logoImageView.image = UIImage(systemName: "wallet.pass.fill")
-        logoImageView.tintColor = .black
-        logoImageView.contentMode = .scaleAspectFit
-
         brandLabel.font = .systemFont(ofSize: 20, weight: .bold)
         brandLabel.textColor = AppColor.brandTextStrong
 
@@ -145,11 +138,7 @@ extension LoginContentView {
 
         headerStack.addArrangedSubview(backButton)
         headerStack.addArrangedSubview(brandStack)
-
-        brandStack.addArrangedSubview(logoWrapper)
         brandStack.addArrangedSubview(brandLabel)
-
-        logoWrapper.addSubview(logoImageView)
 
         heroWrapper.addSubview(heroIconWrapper)
         heroIconWrapper.addSubview(heroIconView)
@@ -170,8 +159,6 @@ extension LoginContentView {
             headerStack,
             backButton,
             brandStack,
-            logoWrapper,
-            logoImageView,
             brandLabel,
             heroWrapper,
             heroIconWrapper,
@@ -205,15 +192,6 @@ extension LoginContentView {
 
             backButton.widthAnchor.constraint(equalToConstant: 24),
             backButton.heightAnchor.constraint(equalToConstant: 24),
-
-            logoWrapper.widthAnchor.constraint(equalToConstant: 28),
-            logoWrapper.heightAnchor.constraint(equalToConstant: 28),
-
-            logoImageView.centerXAnchor.constraint(equalTo: logoWrapper.centerXAnchor),
-            logoImageView.centerYAnchor.constraint(equalTo: logoWrapper.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 16),
-            logoImageView.heightAnchor.constraint(equalToConstant: 16),
-
             heroWrapper.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 40),
             heroWrapper.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             heroWrapper.widthAnchor.constraint(equalToConstant: 180),
@@ -267,7 +245,6 @@ extension LoginContentView {
     }
 
     func applyCornerRadius() {
-        logoWrapper.layer.cornerRadius = 9
         heroIconWrapper.layer.cornerRadius = 16
         cardView.layer.cornerRadius = 18
         loginButton.layer.cornerRadius = 12
