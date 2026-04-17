@@ -6,7 +6,7 @@ final class TransferSuccessContentView: UIView {
 
     private let scrollView = UIScrollView()
     private let containerView = UIView()
-    private let statusView = TransferSuccessIndicatorView()
+    private let successImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let detailCard = UIView()
@@ -50,6 +50,9 @@ extension TransferSuccessContentView {
 
         scrollView.showsVerticalScrollIndicator = false
 
+        successImageView.image = UIImage(named: "success")
+        successImageView.contentMode = .scaleAspectFit
+
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
         titleLabel.textAlignment = .center
@@ -90,7 +93,7 @@ extension TransferSuccessContentView {
         addSubview(scrollView)
         scrollView.addSubview(containerView)
 
-        [statusView, titleLabel, subtitleLabel, detailCard, returnHomeButton, receiptButton].forEach {
+        [successImageView, titleLabel, subtitleLabel, detailCard, returnHomeButton, receiptButton].forEach {
             containerView.addSubview($0)
         }
 
@@ -103,7 +106,7 @@ extension TransferSuccessContentView {
         [
             scrollView,
             containerView,
-            statusView,
+            successImageView,
             titleLabel,
             subtitleLabel,
             detailCard,
@@ -130,20 +133,20 @@ extension TransferSuccessContentView {
             containerView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             containerView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            statusView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 36),
-            statusView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            statusView.widthAnchor.constraint(equalToConstant: 132),
-            statusView.heightAnchor.constraint(equalToConstant: 132),
+            successImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            successImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            successImageView.widthAnchor.constraint(equalToConstant: 250),
+            successImageView.heightAnchor.constraint(equalToConstant: 250),
 
-            titleLabel.topAnchor.constraint(equalTo: statusView.bottomAnchor, constant: 28),
+            titleLabel.topAnchor.constraint(equalTo: successImageView.bottomAnchor, constant: 12),
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 24),
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -24),
 
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             subtitleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 36),
             subtitleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -36),
 
-            detailCard.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 28),
+            detailCard.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
             detailCard.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 24),
             detailCard.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -24),
 

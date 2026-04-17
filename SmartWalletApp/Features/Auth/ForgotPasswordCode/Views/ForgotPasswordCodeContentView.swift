@@ -11,7 +11,6 @@ final class ForgotPasswordCodeContentView: UIView {
 
     private let contentContainer = UIView()
     private let brandLabel = UILabel()
-    private let iconWrapper = UIView()
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
@@ -32,7 +31,6 @@ final class ForgotPasswordCodeContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        iconWrapper.layer.cornerRadius = 18
         verifyButton.layer.cornerRadius = verifyButton.bounds.height / 2
     }
 }
@@ -55,14 +53,8 @@ extension ForgotPasswordCodeContentView {
         brandLabel.textColor = AppColor.brandTextSoft
         brandLabel.textAlignment = .center
 
-        iconWrapper.backgroundColor = .white
-        iconWrapper.layer.shadowColor = AppColor.primaryYellow.cgColor
-        iconWrapper.layer.shadowOpacity = 0.12
-        iconWrapper.layer.shadowRadius = 20
-        iconWrapper.layer.shadowOffset = CGSize(width: 0, height: 10)
 
-        iconImageView.image = UIImage(systemName: "lock.fill")
-        iconImageView.tintColor = AppColor.warmActionText
+        iconImageView.image = UIImage(named: "lock")
         iconImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
@@ -91,17 +83,16 @@ extension ForgotPasswordCodeContentView {
 
     func buildHierarchy() {
         addSubview(contentContainer)
-        [backButton, brandLabel, iconWrapper, titleLabel, subtitleLabel, codeInputView, verifyButton, footerStackView].forEach {
+        [backButton, brandLabel, iconImageView, titleLabel, subtitleLabel, codeInputView, verifyButton, footerStackView].forEach {
             contentContainer.addSubview($0)
         }
-        iconWrapper.addSubview(iconImageView)
         [footerLabel, resendButton].forEach {
             footerStackView.addArrangedSubview($0)
         }
     }
 
     func setupLayout() {
-        [contentContainer, backButton, brandLabel, iconWrapper, iconImageView, titleLabel, subtitleLabel, codeInputView, verifyButton, footerStackView, footerLabel, resendButton].forEach {
+        [contentContainer, backButton, brandLabel, iconImageView, titleLabel, subtitleLabel, codeInputView, verifyButton, footerStackView, footerLabel, resendButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -119,17 +110,12 @@ extension ForgotPasswordCodeContentView {
             brandLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             brandLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
 
-            iconWrapper.topAnchor.constraint(equalTo: brandLabel.bottomAnchor, constant: 72),
-            iconWrapper.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            iconWrapper.widthAnchor.constraint(equalToConstant: 68),
-            iconWrapper.heightAnchor.constraint(equalToConstant: 68),
+            iconImageView.topAnchor.constraint(equalTo: brandLabel.bottomAnchor, constant: 28),
+            iconImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 200),
+            iconImageView.heightAnchor.constraint(equalToConstant: 200),
 
-            iconImageView.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor),
-            iconImageView.centerYAnchor.constraint(equalTo: iconWrapper.centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 26),
-            iconImageView.heightAnchor.constraint(equalToConstant: 26),
-
-            titleLabel.topAnchor.constraint(equalTo: iconWrapper.bottomAnchor, constant: 36),
+            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 

@@ -8,8 +8,7 @@ final class InvestmentTradeSuccessContentView: UIView {
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let headerTitleLabel = UILabel()
-    private let iconContainerView = UIView()
-    private let iconView = UIImageView()
+    private let successImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let detailCard = UIView()
@@ -42,8 +41,6 @@ final class InvestmentTradeSuccessContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        iconContainerView.layer.cornerRadius = 34
-        iconView.layer.cornerRadius = iconView.bounds.height / 2
         detailCard.layer.cornerRadius = 24
         balanceContainerView.layer.cornerRadius = 16
         statusPillView.layer.cornerRadius = 16
@@ -81,15 +78,8 @@ extension InvestmentTradeSuccessContentView {
         headerTitleLabel.textColor = AppColor.primaryText
         headerTitleLabel.textAlignment = .center
 
-        iconContainerView.backgroundColor = .white
-        iconContainerView.layer.borderWidth = 1
-        iconContainerView.layer.borderColor = AppColor.borderSoft.cgColor
-
-        iconView.backgroundColor = AppColor.successStrong
-        iconView.image = UIImage(systemName: "checkmark")
-        iconView.tintColor = .white
-        iconView.contentMode = .center
-        iconView.clipsToBounds = true
+        successImageView.image = UIImage(named: "success2")
+        successImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
@@ -165,8 +155,7 @@ extension InvestmentTradeSuccessContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [closeButton, headerTitleLabel, iconContainerView, titleLabel, subtitleLabel, detailCard, statusPillView, primaryButton, secondaryButton].forEach(contentContainer.addSubview)
-        iconContainerView.addSubview(iconView)
+        [closeButton, headerTitleLabel, successImageView, titleLabel, subtitleLabel, detailCard, statusPillView, primaryButton, secondaryButton].forEach(contentContainer.addSubview)
         [assetTitleLabel, assetValueLabel, directionTitleLabel, directionValueLabel, topDividerView, amountTitleLabel, amountValueLabel, totalTitleLabel, totalValueLabel, balanceContainerView].forEach(detailCard.addSubview)
         [balanceTitleLabel, balanceValueLabel].forEach(balanceContainerView.addSubview)
         [statusDotView, statusLabel].forEach(statusPillView.addSubview)
@@ -174,7 +163,7 @@ extension InvestmentTradeSuccessContentView {
 
     func setupLayout() {
         [
-            scrollView, contentContainer, closeButton, headerTitleLabel, iconContainerView, iconView,
+            scrollView, contentContainer, closeButton, headerTitleLabel, successImageView,
             titleLabel, subtitleLabel, detailCard, assetTitleLabel, assetValueLabel, directionTitleLabel,
             directionValueLabel, topDividerView, amountTitleLabel, amountValueLabel, totalTitleLabel,
             totalValueLabel, balanceContainerView, balanceTitleLabel, balanceValueLabel, statusPillView,
@@ -201,17 +190,12 @@ extension InvestmentTradeSuccessContentView {
             headerTitleLabel.centerYAnchor.constraint(equalTo: closeButton.centerYAnchor),
             headerTitleLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
 
-            iconContainerView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 28),
-            iconContainerView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            iconContainerView.widthAnchor.constraint(equalToConstant: 68),
-            iconContainerView.heightAnchor.constraint(equalToConstant: 68),
+            successImageView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 20),
+            successImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            successImageView.widthAnchor.constraint(equalToConstant: 100),
+            successImageView.heightAnchor.constraint(equalToConstant: 140),
 
-            iconView.centerXAnchor.constraint(equalTo: iconContainerView.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: iconContainerView.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 42),
-            iconView.heightAnchor.constraint(equalToConstant: 42),
-
-            titleLabel.topAnchor.constraint(equalTo: iconContainerView.bottomAnchor, constant: 28),
+            titleLabel.topAnchor.constraint(equalTo: successImageView.bottomAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 28),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -28),
 

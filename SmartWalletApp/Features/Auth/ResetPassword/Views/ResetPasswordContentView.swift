@@ -21,8 +21,7 @@ final class ResetPasswordContentView: UIView {
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let brandLabel = UILabel()
-    private let iconWrapper = UIView()
-    private let iconImageView = UIImageView()
+    private let heroImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
 
@@ -40,7 +39,6 @@ final class ResetPasswordContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        iconWrapper.layer.cornerRadius = iconWrapper.bounds.height / 2
         updateButton.layer.cornerRadius = updateButton.bounds.height / 2
     }
 }
@@ -78,15 +76,8 @@ extension ResetPasswordContentView {
         brandLabel.textColor = AppColor.brandTextSoft
         brandLabel.textAlignment = .center
 
-        iconWrapper.backgroundColor = .white
-        iconWrapper.layer.shadowColor = AppColor.primaryYellow.cgColor
-        iconWrapper.layer.shadowOpacity = 0.12
-        iconWrapper.layer.shadowRadius = 20
-        iconWrapper.layer.shadowOffset = CGSize(width: 0, height: 10)
-
-        iconImageView.image = UIImage(systemName: "arrow.clockwise.circle.fill")
-        iconImageView.tintColor = AppColor.noteAccent
-        iconImageView.contentMode = .scaleAspectFit
+        heroImageView.image = UIImage(named: "passwordPage")
+        heroImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
@@ -108,14 +99,13 @@ extension ResetPasswordContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [backButton, brandLabel, iconWrapper, titleLabel, subtitleLabel, passwordField, confirmPasswordField, updateButton].forEach {
+        [backButton, brandLabel, heroImageView, titleLabel, subtitleLabel, passwordField, confirmPasswordField, updateButton].forEach {
             contentContainer.addSubview($0)
         }
-        iconWrapper.addSubview(iconImageView)
     }
 
     func setupLayout() {
-        [scrollView, contentContainer, backButton, brandLabel, iconWrapper, iconImageView, titleLabel, subtitleLabel, passwordField, confirmPasswordField, updateButton].forEach {
+        [scrollView, contentContainer, backButton, brandLabel, heroImageView, titleLabel, subtitleLabel, passwordField, confirmPasswordField, updateButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -139,17 +129,12 @@ extension ResetPasswordContentView {
             brandLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             brandLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
 
-            iconWrapper.topAnchor.constraint(equalTo: brandLabel.bottomAnchor, constant: 56),
-            iconWrapper.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            iconWrapper.widthAnchor.constraint(equalToConstant: 72),
-            iconWrapper.heightAnchor.constraint(equalToConstant: 72),
+            heroImageView.topAnchor.constraint(equalTo: brandLabel.bottomAnchor, constant: 40),
+            heroImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
+            heroImageView.widthAnchor.constraint(equalToConstant: 330),
+            heroImageView.heightAnchor.constraint(equalToConstant: 192),
 
-            iconImageView.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor),
-            iconImageView.centerYAnchor.constraint(equalTo: iconWrapper.centerYAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 28),
-            iconImageView.heightAnchor.constraint(equalToConstant: 28),
-
-            titleLabel.topAnchor.constraint(equalTo: iconWrapper.bottomAnchor, constant: 34),
+            titleLabel.topAnchor.constraint(equalTo: heroImageView.bottomAnchor, constant: 28),
             titleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 

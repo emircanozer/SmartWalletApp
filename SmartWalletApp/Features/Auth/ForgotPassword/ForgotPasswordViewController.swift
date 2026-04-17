@@ -9,8 +9,6 @@ class ForgotPasswordViewController: UIViewController {
     private let headerStack = UIStackView()
     private let backButton = UIButton(type: .system)
     private let brandStack = UIStackView()
-    private let logoWrapper = UIView()
-    private let logoImageView = UIImageView()
     private let brandLabel = UILabel()
     private let heroCard = UIView()
     private let heroIconView = UIImageView()
@@ -51,7 +49,6 @@ class ForgotPasswordViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        logoWrapper.layer.cornerRadius = 9
         heroCard.layer.cornerRadius = 18
         sendButton.layer.cornerRadius = 12
     }
@@ -78,12 +75,6 @@ extension ForgotPasswordViewController {
         brandStack.axis = .horizontal
         brandStack.alignment = .center
         brandStack.spacing = 10
-
-        logoWrapper.backgroundColor = AppColor.primaryYellow
-
-        logoImageView.image = UIImage(systemName: "wallet.pass.fill")
-        logoImageView.tintColor = .white
-        logoImageView.contentMode = .scaleAspectFit
 
         brandLabel.font = .systemFont(ofSize: 20, weight: .bold)
         brandLabel.textColor = AppColor.brandTextStrong
@@ -123,10 +114,10 @@ extension ForgotPasswordViewController {
         headerStack.addArrangedSubview(backButton)
         headerStack.addArrangedSubview(brandStack)
 
-        brandStack.addArrangedSubview(logoWrapper)
+    
         brandStack.addArrangedSubview(brandLabel)
 
-        logoWrapper.addSubview(logoImageView)
+     
         heroCard.addSubview(heroIconView)
     }
 }
@@ -138,8 +129,6 @@ extension ForgotPasswordViewController {
             headerStack,
             backButton,
             brandStack,
-            logoWrapper,
-            logoImageView,
             heroCard,
             heroIconView,
             titleLabel,
@@ -161,14 +150,6 @@ extension ForgotPasswordViewController {
 
             backButton.widthAnchor.constraint(equalToConstant: 24),
             backButton.heightAnchor.constraint(equalToConstant: 24),
-
-            logoWrapper.widthAnchor.constraint(equalToConstant: 28),
-            logoWrapper.heightAnchor.constraint(equalToConstant: 28),
-
-            logoImageView.centerXAnchor.constraint(equalTo: logoWrapper.centerXAnchor),
-            logoImageView.centerYAnchor.constraint(equalTo: logoWrapper.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 14),
-            logoImageView.heightAnchor.constraint(equalToConstant: 14),
 
             heroCard.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 112),
             heroCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 22),
