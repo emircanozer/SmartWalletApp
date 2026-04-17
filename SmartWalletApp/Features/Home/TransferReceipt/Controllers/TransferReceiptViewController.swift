@@ -1,6 +1,8 @@
 import UIKit
 
 final class TransferReceiptViewController: UIViewController {
+    var onReturnHome: (() -> Void)?
+
     private let viewModel: TransferReceiptViewModel
     private let contentView = TransferReceiptContentView()
     private var currentData: TransferReceiptViewData?
@@ -21,7 +23,15 @@ final class TransferReceiptViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        enableInteractivePopGesture()
+        navigationItem.hidesBackButton = true
+        disableInteractivePopGesture()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "house.fill"),
+            style: .plain,
+            target: self,
+            action: #selector(handleReturnHomeTap)
+        )
+        navigationItem.rightBarButtonItem?.tintColor = AppColor.accentGold
         bindViewModel()
         bindActions()
         loadReceipt()
@@ -103,5 +113,9 @@ final class TransferReceiptViewController: UIViewController {
         } catch {
             showAlert(message: error.localizedDescription)
         }
+    }
+
+    @objc func handleReturnHomeTap() {
+        onReturnHome?()
     }
 }

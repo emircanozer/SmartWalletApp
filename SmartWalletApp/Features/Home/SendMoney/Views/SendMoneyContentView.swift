@@ -7,6 +7,7 @@ final class SendMoneyContentView: UIView {
     let confirmButton = UIButton(type: .system)
     let lookupView = SendMoneyLookupView()
     let categoryButton = UIButton(type: .system)
+    let recipientsTableView = UITableView(frame: .zero, style: .plain)
 
     private let scrollView = UIScrollView()
     private let containerView = UIView()
@@ -21,8 +22,6 @@ final class SendMoneyContentView: UIView {
     private let amountErrorLabel = UILabel()
     private let amountChipsStack = UIStackView()
     private let recipientsTitleLabel = UILabel()
-    private let allRecipientsButton = UIButton(type: .system)
-    private let recipientsStack = UIStackView()
     private let ibanSectionLabel = UILabel()
     private let ibanFieldContainer = UIView()
     private let ibanIconView = UIImageView()
@@ -34,8 +33,10 @@ final class SendMoneyContentView: UIView {
     private let notePlaceholderLabel = UILabel()
 
     private var amountChipButtons: [SendMoneyAmountChipButton] = []
-    private var recipientViews: [SendMoneyRecipientRowView] = []
+    private var recipientsTableHeightConstraint: NSLayoutConstraint?
     private var lookupHeightConstraint: NSLayoutConstraint?
+    private(set) var currentRecipients: [SendMoneyRecipient] = []
+    private(set) var currentSelectedRecipientID: String?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -124,11 +125,14 @@ extension SendMoneyContentView {
         recipientsTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
         recipientsTitleLabel.textColor = AppColor.primaryText
 
-        allRecipientsButton.setTitleColor(AppColor.accentOlive, for: .normal)
-        allRecipientsButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
-
-        recipientsStack.axis = .vertical
-        recipientsStack.spacing = 10
+        recipientsTableView.backgroundColor = .clear
+        recipientsTableView.separatorStyle = .none
+        recipientsTableView.isScrollEnabled = false
+        recipientsTableView.allowsSelection = true
+        recipientsTableView.showsVerticalScrollIndicator = false
+        recipientsTableView.rowHeight = 82
+        recipientsTableView.estimatedRowHeight = 82
+        recipientsTableView.register(SendMoneyRecipientCell.self, forCellReuseIdentifier: SendMoneyRecipientCell.reuseIdentifier)
 
         ibanSectionLabel.font = .systemFont(ofSize: 16, weight: .bold)
         ibanSectionLabel.textColor = AppColor.primaryText
@@ -192,8 +196,7 @@ extension SendMoneyContentView {
             amountCard,
             amountErrorLabel,
             recipientsTitleLabel,
-            allRecipientsButton,
-            recipientsStack,
+            recipientsTableView,
             ibanSectionLabel,
             ibanFieldContainer,
             lookupView,
@@ -238,8 +241,7 @@ extension SendMoneyContentView {
             amountErrorLabel,
             amountChipsStack,
             recipientsTitleLabel,
-            allRecipientsButton,
-            recipientsStack,
+            recipientsTableView,
             ibanSectionLabel,
             ibanFieldContainer,
             ibanTextField,
@@ -314,14 +316,11 @@ extension SendMoneyContentView {
             recipientsTitleLabel.topAnchor.constraint(equalTo: amountErrorLabel.bottomAnchor, constant: 18),
             recipientsTitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
 
-            allRecipientsButton.centerYAnchor.constraint(equalTo: recipientsTitleLabel.centerYAnchor),
-            allRecipientsButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            recipientsTableView.topAnchor.constraint(equalTo: recipientsTitleLabel.bottomAnchor, constant: 12),
+            recipientsTableView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            recipientsTableView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            recipientsStack.topAnchor.constraint(equalTo: recipientsTitleLabel.bottomAnchor, constant: 12),
-            recipientsStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            recipientsStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
-
-            ibanSectionLabel.topAnchor.constraint(equalTo: recipientsStack.bottomAnchor, constant: 18),
+            ibanSectionLabel.topAnchor.constraint(equalTo: recipientsTableView.bottomAnchor, constant: 18),
             ibanSectionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             ibanSectionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
@@ -385,6 +384,8 @@ extension SendMoneyContentView {
 
         lookupHeightConstraint = lookupView.heightAnchor.constraint(equalToConstant: 0)
         lookupHeightConstraint?.isActive = true
+        recipientsTableHeightConstraint = recipientsTableView.heightAnchor.constraint(equalToConstant: 0)
+        recipientsTableHeightConstraint?.isActive = true
     }
 
     func applyContent() {
@@ -394,7 +395,6 @@ extension SendMoneyContentView {
         amountCurrencyLabel.text = "₺"
         amountTitleLabel.text = "TUTAR"
         recipientsTitleLabel.text = "Alıcı Seç"
-        allRecipientsButton.setTitle("Tümü", for: .normal)
         ibanSectionLabel.text = "Yeni Kullanıcı / IBAN"
         ibanTextField.placeholder = "TR..."
         categorySectionLabel.text = "Kategori"
@@ -432,12 +432,12 @@ extension SendMoneyContentView {
     }
 
     func updateRecipients(_ recipients: [SendMoneyRecipient], selectedRecipientID: String?) {
-        recipientViews.forEach { $0.removeFromSuperview() }
-        recipientViews = recipients.map { recipient in
-            let view = SendMoneyRecipientRowView(recipient: recipient)
-            view.applySelected(recipient.id == selectedRecipientID)
-            recipientsStack.addArrangedSubview(view)
-            return view
-        }
+        currentRecipients = recipients
+        currentSelectedRecipientID = selectedRecipientID
+        recipientsTableHeightConstraint?.constant = recipients.isEmpty ? 0 : CGFloat(recipients.count) * 82
+        recipientsTableView.isHidden = recipients.isEmpty
+        recipientsTableView.reloadData()
+        setNeedsLayout()
+        layoutIfNeeded()
     }
 }

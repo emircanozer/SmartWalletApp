@@ -31,7 +31,7 @@ final class SendMoneyLookupView: UIView {
         }
 
         isHidden = false
-        nameLabel.text = recipient.name
+        nameLabel.text = recipient.ownerMaskedName
         ibanLabel.isHidden = true
         let iconName = recipient.isSaved ? "star.fill" : "star"
         starButton.setImage(UIImage(systemName: iconName), for: .normal)

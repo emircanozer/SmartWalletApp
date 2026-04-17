@@ -47,8 +47,7 @@ enum AppDateTextFormatter {
         return formatter.string(from: date)
     }
 }
-
-private extension AppDateOutputStyle {
+extension AppDateOutputStyle {
     var formatString: String {
         switch self {
         case .transactionDateTime:

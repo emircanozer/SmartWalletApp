@@ -9,6 +9,10 @@ extension UIViewController {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         navigationController?.interactivePopGestureRecognizer?.delegate = nil
     }
+
+    func disableInteractivePopGesture() {
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    }
 }
 
 private var loadingOverlayKey: UInt8 = 0

@@ -9,7 +9,6 @@ class DashboardContentView: UIView {
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let headerTitleLabel = UILabel()
-    private let profileButton = UIButton(type: .system)
     private let greetingLabel = UILabel()
     private let balanceCard = UIView()
     private let ibanLabel = UILabel()
@@ -62,10 +61,6 @@ extension DashboardContentView {
         headerTitleLabel.font = .systemFont(ofSize: 22, weight: .bold)
         headerTitleLabel.textColor = AppColor.titleDark
 
-        profileButton.backgroundColor = AppColor.primaryYellow
-        profileButton.setImage(UIImage(systemName: "wallet.pass"), for: .normal)
-        profileButton.tintColor = .white
-
         greetingLabel.font = .systemFont(ofSize: 32, weight: .bold)
         greetingLabel.textColor = AppColor.titleDark
 
@@ -85,11 +80,18 @@ extension DashboardContentView {
         balanceTitleLabel.textColor = AppColor.white62
         balanceTitleLabel.numberOfLines = 1
 
-        balanceValueLabel.font = .systemFont(ofSize: 52, weight: .bold)
+        balanceValueLabel.font = .systemFont(ofSize: 46, weight: .bold)
         balanceValueLabel.textColor = AppColor.balanceDisplay
+        balanceValueLabel.adjustsFontSizeToFitWidth = true
+        balanceValueLabel.minimumScaleFactor = 0.72
+        balanceValueLabel.lineBreakMode = .byClipping
+        balanceValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        balanceValueLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
-        balanceCurrencyLabel.font = .systemFont(ofSize: 28, weight: .bold)
+        balanceCurrencyLabel.font = .systemFont(ofSize: 24, weight: .bold)
         balanceCurrencyLabel.textColor = AppColor.accentGold
+        balanceCurrencyLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        balanceCurrencyLabel.setContentHuggingPriority(.required, for: .horizontal)
 
         quickActionsStack.axis = .horizontal
         quickActionsStack.alignment = .top
@@ -118,7 +120,6 @@ extension DashboardContentView {
         scrollView.addSubview(contentContainer)
 
         contentContainer.addSubview(headerTitleLabel)
-        contentContainer.addSubview(profileButton)
         contentContainer.addSubview(greetingLabel)
         contentContainer.addSubview(balanceCard)
         balanceCard.addSubview(ibanLabel)
@@ -138,7 +139,6 @@ extension DashboardContentView {
             scrollView,
             contentContainer,
             headerTitleLabel,
-            profileButton,
             greetingLabel,
             balanceCard,
             ibanLabel,
@@ -171,12 +171,6 @@ extension DashboardContentView {
 
             headerTitleLabel.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 12),
             headerTitleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
-            headerTitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: profileButton.leadingAnchor, constant: -16),
-
-            profileButton.centerYAnchor.constraint(equalTo: headerTitleLabel.centerYAnchor),
-            profileButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
-            profileButton.widthAnchor.constraint(equalToConstant: 42),
-            profileButton.heightAnchor.constraint(equalToConstant: 42),
 
             greetingLabel.topAnchor.constraint(equalTo: headerTitleLabel.bottomAnchor, constant: 36),
             greetingLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
@@ -201,9 +195,11 @@ extension DashboardContentView {
             balanceTitleLabel.trailingAnchor.constraint(equalTo: balanceCard.trailingAnchor, constant: -22),
 
             balanceValueLabel.topAnchor.constraint(equalTo: balanceTitleLabel.bottomAnchor, constant: 28),
-            balanceValueLabel.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 28),
+            balanceValueLabel.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 22),
+            balanceValueLabel.trailingAnchor.constraint(lessThanOrEqualTo: balanceCurrencyLabel.leadingAnchor, constant: -10),
 
             balanceCurrencyLabel.leadingAnchor.constraint(equalTo: balanceValueLabel.trailingAnchor, constant: 8),
+            balanceCurrencyLabel.trailingAnchor.constraint(lessThanOrEqualTo: balanceCard.trailingAnchor, constant: -22),
             balanceCurrencyLabel.bottomAnchor.constraint(equalTo: balanceValueLabel.bottomAnchor, constant: -6),
 
             quickActionsStack.topAnchor.constraint(equalTo: balanceCard.bottomAnchor, constant: 26),
@@ -271,7 +267,6 @@ extension DashboardContentView {
     }
 
     func applyCornerRadius() {
-        profileButton.layer.cornerRadius = 12
         balanceCard.layer.cornerRadius = 28
     }
 }

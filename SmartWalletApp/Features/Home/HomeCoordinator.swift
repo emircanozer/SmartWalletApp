@@ -6,36 +6,42 @@ class HomeCoordinator: Coordinator {
     let rootViewController = MainTabBarController()
 
     private let walletService: WalletService
+    private let assistantService: AssistantService
     private weak var sendMoneyNavigationController: UINavigationController?
 
-    init(walletService: WalletService) {
+    init(walletService: WalletService, assistantService: AssistantService) {
         self.walletService = walletService
+        self.assistantService = assistantService
     }
 
     func start() {
         let dashboardViewModel = DashboardViewModel(walletService: walletService)
         let dashboardViewController = DashboardViewController(viewModel: dashboardViewModel)
-        let sendMoneyViewModel = SendMoneyViewModel(walletService: walletService)
-        let sendMoneyViewController = SendMoneyViewController(viewModel: sendMoneyViewModel)
+        let sendMoneyViewController = makeSendMoneyViewController(
+            presentationStyle: .tabRoot,
+            navigationController: nil
+        )
         let marketPricesViewModel = MarketPricesViewModel(walletService: walletService)
         let marketPricesViewController = MarketPricesViewController(viewModel: marketPricesViewModel)
-
-        let assistantViewController = PlaceholderViewController(titleText: "AI Asistan")
+        let assistantViewModel = AIAssistantViewModel(assistantService: assistantService)
+        let assistantViewController = AIAssistantViewController(viewModel: assistantViewModel)
         let profileViewController = PlaceholderViewController(titleText: "Profil")
 
         let dashboardNavigationController = makeNavigationController(root: dashboardViewController, title: "Ana Sayfa", imageName: "house")
         let walletNavigationController = makeNavigationController(root: marketPricesViewController, title: "Piyasalar", imageName: "chart.bar.xaxis.ascending")
-        let assistantNavigationController = makeNavigationController(root: assistantViewController, title: "AI Asistan", imageName: "cpu")
+        let assistantNavigationController = makeNavigationController(root: assistantViewController, title: "SWAY", imageName: "apple.intelligence")
         let sendMoneyNavigationController = makeNavigationController(root: sendMoneyViewController, title: "Transfer", imageName: "arrow.left.arrow.right")
         let profileNavigationController = makeNavigationController(root: profileViewController, title: "Profil", imageName: "person")
 
         self.sendMoneyNavigationController = sendMoneyNavigationController
+        rootViewController.configureAssistantItem(assistantNavigationController.tabBarItem)
 
         dashboardViewController.onSeeAllTransactions = { [weak self] transactions in
             self?.showAllTransactions(transactions)
         }
-        dashboardViewController.onSendMoneyTap = { [weak self] in
-            self?.showSendMoneyTab()
+        dashboardViewController.onSendMoneyTap = { [weak self, weak dashboardNavigationController] in
+            guard let self, let dashboardNavigationController else { return }
+            self.showSendMoney(in: dashboardNavigationController, presentationStyle: .pushedFromDashboard)
         }
         dashboardViewController.onInvestmentTradingTap = { [weak self] in
             self?.showInvestmentTrading()
@@ -46,8 +52,8 @@ class HomeCoordinator: Coordinator {
         dashboardViewController.onAnalysisTap = { [weak self] in
             self?.showExpenseAnalysis()
         }
-        sendMoneyViewController.onTransferSucceeded = { [weak self] response in
-            self?.showTransferSuccess(response)
+        assistantViewModel.onNavigationRequested = { [weak self] target in
+            self?.handleAssistantNavigation(target)
         }
 
         let controllers = [
@@ -90,6 +96,33 @@ class HomeCoordinator: Coordinator {
         rootViewController.selectedViewController = sendMoneyNavigationController
     }
 
+    private func showSendMoney(
+        in navigationController: UINavigationController,
+        presentationStyle: SendMoneyPresentationStyle
+    ) {
+        let viewController = makeSendMoneyViewController(
+            presentationStyle: presentationStyle,
+            navigationController: navigationController
+        )
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func makeSendMoneyViewController(
+        presentationStyle: SendMoneyPresentationStyle,
+        navigationController: UINavigationController?
+    ) -> SendMoneyViewController {
+        let sendMoneyViewModel = SendMoneyViewModel(walletService: walletService)
+        let sendMoneyViewController = SendMoneyViewController(
+            viewModel: sendMoneyViewModel,
+            presentationStyle: presentationStyle
+        )
+        sendMoneyViewController.onTransferSucceeded = { [weak self, weak navigationController] response in
+            let targetNavigationController = navigationController ?? self?.sendMoneyNavigationController
+            self?.showTransferSuccess(response, in: targetNavigationController)
+        }
+        return sendMoneyViewController
+    }
+
     private func showExpenseAnalysis() {
         guard let controllers = rootViewController.viewControllers,
               let navigationController = controllers.first as? UINavigationController else { return }
@@ -117,11 +150,18 @@ class HomeCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showInvestmentTrading() {
+    private func showInvestmentTrading(
+        initialAsset: InvestmentTradingAssetType? = nil,
+        initialDirection: InvestmentTradeDirection? = nil
+    ) {
         guard let controllers = rootViewController.viewControllers,
               let navigationController = controllers.first as? UINavigationController else { return }
 
-        let viewModel = InvestmentTradingViewModel(walletService: walletService)
+        let viewModel = InvestmentTradingViewModel(
+            walletService: walletService,
+            initialAsset: initialAsset,
+            initialDirection: initialDirection
+        )
         let viewController = InvestmentTradingViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
@@ -178,26 +218,54 @@ class HomeCoordinator: Coordinator {
         navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showTransferSuccess(_ response: WalletTransferResponse) {
-        guard let sendMoneyNavigationController else { return }
+    private func showTransferSuccess(
+        _ response: WalletTransferResponse,
+        in navigationController: UINavigationController?
+    ) {
+        guard let navigationController else { return }
 
         let viewModel = TransferSuccessViewModel(response: response)
         let viewController = TransferSuccessViewController(viewModel: viewModel)
-        viewController.onReturnHome = { [weak self, weak sendMoneyNavigationController] in
-            sendMoneyNavigationController?.popToRootViewController(animated: false)
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
             self?.rootViewController.selectedIndex = 0
         }
-        viewController.onViewReceipt = { [weak self] in
-            self?.showTransferReceipt(response)
+        viewController.onViewReceipt = { [weak self, weak navigationController] in
+            self?.showTransferReceipt(response, in: navigationController)
         }
-        sendMoneyNavigationController.pushViewController(viewController, animated: true)
+        navigationController.pushViewController(viewController, animated: true)
     }
 
-    private func showTransferReceipt(_ response: WalletTransferResponse) {
-        guard let sendMoneyNavigationController else { return }
+    private func showTransferReceipt(
+        _ response: WalletTransferResponse,
+        in navigationController: UINavigationController?
+    ) {
+        guard let navigationController else { return }
 
         let viewModel = TransferReceiptViewModel(walletService: walletService, response: response)
         let viewController = TransferReceiptViewController(viewModel: viewModel)
-        sendMoneyNavigationController.pushViewController(viewController, animated: true)
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func handleAssistantNavigation(_ target: AIAssistantNavigationTarget) {
+        switch target {
+        case .investmentTrading(let asset, let direction):
+            rootViewController.selectedIndex = 0
+            showInvestmentTrading(initialAsset: asset, initialDirection: direction)
+        case .expenseAnalysis:
+            rootViewController.selectedIndex = 0
+            showExpenseAnalysis()
+        case .sendMoney:
+            showSendMoneyTab()
+        case .investmentPortfolio:
+            rootViewController.selectedIndex = 0
+            showInvestmentPortfolio()
+        case .marketPrices:
+            rootViewController.selectedIndex = 1
+        }
     }
 }

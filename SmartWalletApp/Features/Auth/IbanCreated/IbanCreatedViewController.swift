@@ -4,7 +4,6 @@ class IbanCreatedViewController: UIViewController {
     var onContinue: (() -> Void)?
 
     private let ibanValueText: String
-
     private let contentView = UIView()
     private let cardView = UIView()
     private let iconWrapper = UIView()

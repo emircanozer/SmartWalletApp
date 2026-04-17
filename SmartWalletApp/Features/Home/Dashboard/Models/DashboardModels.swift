@@ -10,6 +10,7 @@ enum TransactionCategory {
     case education
     case health
     case transfer
+    case rentPayment
 
     // backende sayı olarak döndüğü için bu enumlar biz de burada böyle eşitliyoruz
     init(backendValue: Int) {
@@ -30,6 +31,8 @@ enum TransactionCategory {
             self = .health
         case 7:
             self = .transfer
+        case 8:
+            self = .rentPayment
         default:
             self = .other
         }
@@ -53,6 +56,8 @@ enum TransactionCategory {
             return "Sağlık"
         case .transfer:
             return "Para Transferi"
+        case .rentPayment:
+            return "Kira Ödemesi"
         }
     }
 
@@ -74,6 +79,8 @@ enum TransactionCategory {
             return "Sağlık"
         case .transfer:
             return "Transfer"
+        case .rentPayment:
+            return "Kira"
         }
     }
 
@@ -95,6 +102,8 @@ enum TransactionCategory {
             return "cross.case"
         case .transfer:
             return "arrow.left.arrow.right"
+        case .rentPayment:
+            return "house"
         }
     }
 
@@ -116,6 +125,8 @@ enum TransactionCategory {
             return UIColor(red: 0.25, green: 0.66, blue: 0.53, alpha: 1.0)
         case .transfer:
             return UIColor(red: 0.29, green: 0.49, blue: 0.9, alpha: 1.0)
+        case .rentPayment:
+            return UIColor(red: 0.66, green: 0.52, blue: 0.22, alpha: 1.0)
         }
     }
 
@@ -137,6 +148,8 @@ enum TransactionCategory {
             return UIColor(red: 0.93, green: 0.99, blue: 0.96, alpha: 1.0)
         case .transfer:
             return UIColor(red: 0.94, green: 0.96, blue: 1.0, alpha: 1.0)
+        case .rentPayment:
+            return UIColor(red: 1.0, green: 0.98, blue: 0.92, alpha: 1.0)
         }
     }
 }

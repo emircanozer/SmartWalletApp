@@ -69,6 +69,8 @@ final class TransferReceiptViewModel {
             return "Sağlık"
         case 7:
             return "Para Transferi"
+        case 8:
+            return "Kira Ödemesi"
         default:
             return "Diğer"
         }
