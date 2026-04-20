@@ -47,6 +47,14 @@ final class AuthService {
         let body = try encode(request)
         return try await apiClient.send(AuthEndpoint.resetPassword(body: body), as: ResetPasswordResponse.self)
     }
+
+    func fetchProfile() async throws -> ProfileResponse {
+        try await apiClient.send(AuthEndpoint.profile, as: ProfileResponse.self)
+    }
+
+    func logout() async throws -> LogoutResponse {
+        try await apiClient.send(AuthEndpoint.logout, as: LogoutResponse.self)
+    }
 }
 
  enum AuthEndpoint: Endpoint {
@@ -58,6 +66,8 @@ final class AuthService {
     case forgotPassword(body: Data)
     case verifyPasswordResetCode(body: Data)
     case resetPassword(body: Data)
+    case profile
+    case logout
 
     var path: String {
         switch self {
@@ -75,17 +85,39 @@ final class AuthService {
             return "/api/Auth/verify-code"
         case .resetPassword:
             return "/api/Auth/reset-password"
+        case .profile:
+            return "/api/Auth/profile"
+        case .logout:
+            return "/api/Auth/logout"
         }
     }
 
     var method: HTTPMethod {
-        .post
+        switch self {
+        case .profile:
+            return .get
+        case .logout:
+            return .post
+        default:
+            return .post
+        }
     }
 
     var body: Data? {
         switch self {
         case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body):
             return body
+        case .profile, .logout:
+            return nil
+        }
+    }
+
+    var requiresAuthorization: Bool {
+        switch self {
+        case .profile, .logout:
+            return true
+        default:
+            return false
         }
     }
 }

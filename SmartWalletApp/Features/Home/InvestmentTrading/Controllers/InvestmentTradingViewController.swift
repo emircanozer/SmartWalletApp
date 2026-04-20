@@ -47,6 +47,7 @@ final class InvestmentTradingViewController: UIViewController {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.actionButton.addTarget(self, action: #selector(handleActionTap), for: .touchUpInside)
         contentView.amountTextField.addTarget(self, action: #selector(handleAmountChanged), for: .editingChanged)
+        contentView.amountUnitButton.showsMenuAsPrimaryAction = true
 
         contentView.assetChipsView.onSelectionChanged = { [weak self] asset in // viewin seçtiği chip butonu view modele gönderir
             self?.viewModel.selectAsset(asset)
@@ -59,7 +60,6 @@ final class InvestmentTradingViewController: UIViewController {
         contentView.quickAmountChipsView.onQuickAmountSelected = { [weak self] amount in
             self?.viewModel.applyQuickAmount(amount)
         }
-        contentView.amountUnitButton.addTarget(self, action: #selector(handleAmountUnitTap), for: .touchUpInside)
     }
 
     func bindViewModel() {
@@ -79,6 +79,7 @@ final class InvestmentTradingViewController: UIViewController {
                 self.refreshControl.endRefreshing()
                 self.currentViewData = data
                 self.contentView.apply(data)
+                self.configureAmountUnitMenu(with: data)
             case .failure(let message):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
@@ -141,26 +142,6 @@ final class InvestmentTradingViewController: UIViewController {
         loadData()
     }
 
-    @objc func handleAmountUnitTap() {
-        guard let data = currentViewData else { return }
-
-        let alert = UIAlertController(title: "Giriş Türü", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: data.quantityOptionTitle, style: .default) { [weak self] _ in
-            self?.viewModel.selectInputMode(.quantity)
-        })
-        alert.addAction(UIAlertAction(title: "TL", style: .default) { [weak self] _ in
-            self?.viewModel.selectInputMode(.fiat)
-        })
-        alert.addAction(UIAlertAction(title: "Vazgeç", style: .cancel))
-
-        if let popover = alert.popoverPresentationController {
-            popover.sourceView = contentView.amountUnitButton
-            popover.sourceRect = contentView.amountUnitButton.bounds
-        }
-
-        present(alert, animated: true)
-    }
-
     @objc func handleKeyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
@@ -169,5 +150,27 @@ final class InvestmentTradingViewController: UIViewController {
 
     @objc func handleKeyboardWillHide(_ notification: Notification) {
         contentView.setBottomInset(0)
+    }
+
+    func configureAmountUnitMenu(with data: InvestmentTradingViewData) {
+        let quantityAction = UIAction(
+            title: data.quantityOptionTitle,
+            state: data.selectedInputMode == .quantity ? .on : .off
+        ) { [weak self] _ in
+            self?.viewModel.selectInputMode(.quantity)
+        }
+
+        let fiatAction = UIAction(
+            title: "TL",
+            state: data.selectedInputMode == .fiat ? .on : .off
+        ) { [weak self] _ in
+            self?.viewModel.selectInputMode(.fiat)
+        }
+
+        contentView.amountUnitButton.menu = UIMenu(
+            title: "",
+            options: .displayInline,
+            children: [quantityAction, fiatAction]
+        )
     }
 }

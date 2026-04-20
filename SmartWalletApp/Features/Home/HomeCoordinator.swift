@@ -2,16 +2,21 @@ import UIKit
 
 class HomeCoordinator: Coordinator {
     var children: [Coordinator] = []
+    var onLogoutRequested: (() -> Void)?
 
     let rootViewController = MainTabBarController()
 
     private let walletService: WalletService
     private let assistantService: AssistantService
+    private let authService: AuthService
+    private let tokenStore: TokenStore
     private weak var sendMoneyNavigationController: UINavigationController?
 
-    init(walletService: WalletService, assistantService: AssistantService) {
+    init(walletService: WalletService, assistantService: AssistantService, authService: AuthService, tokenStore: TokenStore) {
         self.walletService = walletService
         self.assistantService = assistantService
+        self.authService = authService
+        self.tokenStore = tokenStore
     }
 
     func start() {
@@ -25,7 +30,8 @@ class HomeCoordinator: Coordinator {
         let marketPricesViewController = MarketPricesViewController(viewModel: marketPricesViewModel)
         let assistantViewModel = AIAssistantViewModel(assistantService: assistantService)
         let assistantViewController = AIAssistantViewController(viewModel: assistantViewModel)
-        let profileViewController = PlaceholderViewController(titleText: "Profil")
+        let profileViewModel = ProfileViewModel(authService: authService, tokenStore: tokenStore)
+        let profileViewController = ProfileViewController(viewModel: profileViewModel)
 
         let dashboardNavigationController = makeNavigationController(root: dashboardViewController, title: "Ana Sayfa", imageName: "house")
         let walletNavigationController = makeNavigationController(root: marketPricesViewController, title: "Piyasalar", imageName: "chart.bar.xaxis.ascending")
@@ -54,6 +60,12 @@ class HomeCoordinator: Coordinator {
         }
         assistantViewModel.onNavigationRequested = { [weak self] target in
             self?.handleAssistantNavigation(target)
+        }
+        profileViewController.onActionSelected = { [weak self] action in
+            self?.handleProfileAction(action)
+        }
+        profileViewController.onLogout = { [weak self] in
+            self?.onLogoutRequested?()
         }
 
         let controllers = [
@@ -267,5 +279,15 @@ class HomeCoordinator: Coordinator {
         case .marketPrices:
             rootViewController.selectedIndex = 1
         }
+    }
+
+    private func handleProfileAction(_ action: ProfileRowAction) {
+        let alert = UIAlertController(
+            title: "Bilgi",
+            message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
+        rootViewController.present(alert, animated: true)
     }
 }
