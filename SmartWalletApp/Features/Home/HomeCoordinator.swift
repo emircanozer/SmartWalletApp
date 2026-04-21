@@ -282,6 +282,11 @@ class HomeCoordinator: Coordinator {
     }
 
     private func handleProfileAction(_ action: ProfileRowAction) {
+        if action == .deleteAccount {
+            showDeleteAccount()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -289,5 +294,19 @@ class HomeCoordinator: Coordinator {
         )
         alert.addAction(UIAlertAction(title: "Tamam", style: .default))
         rootViewController.present(alert, animated: true)
+    }
+
+    private func showDeleteAccount() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = DeleteAccountViewModel(authService: authService, tokenStore: tokenStore)
+        let viewController = DeleteAccountViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onDeleted = { [weak self] in
+            self?.onLogoutRequested?()
+        }
+        navigationController.pushViewController(viewController, animated: true)
     }
 }

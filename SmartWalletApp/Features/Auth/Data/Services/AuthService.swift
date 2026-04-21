@@ -55,6 +55,11 @@ final class AuthService {
     func logout() async throws -> LogoutResponse {
         try await apiClient.send(AuthEndpoint.logout, as: LogoutResponse.self)
     }
+
+    func deleteAccount(request: DeleteAccountRequest) async throws -> DeleteAccountResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.deleteAccount(body: body), as: DeleteAccountResponse.self)
+    }
 }
 
  enum AuthEndpoint: Endpoint {
@@ -68,6 +73,7 @@ final class AuthService {
     case resetPassword(body: Data)
     case profile
     case logout
+    case deleteAccount(body: Data)
 
     var path: String {
         switch self {
@@ -89,6 +95,8 @@ final class AuthService {
             return "/api/Auth/profile"
         case .logout:
             return "/api/Auth/logout"
+        case .deleteAccount:
+            return "/api/Auth/delete-account"
         }
     }
 
@@ -98,6 +106,8 @@ final class AuthService {
             return .get
         case .logout:
             return .post
+        case .deleteAccount:
+            return .post
         default:
             return .post
         }
@@ -105,7 +115,7 @@ final class AuthService {
 
     var body: Data? {
         switch self {
-        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body):
+        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body):
             return body
         case .profile, .logout:
             return nil
@@ -114,7 +124,7 @@ final class AuthService {
 
     var requiresAuthorization: Bool {
         switch self {
-        case .profile, .logout:
+        case .profile, .logout, .deleteAccount:
             return true
         default:
             return false
