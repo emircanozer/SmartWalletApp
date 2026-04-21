@@ -19,7 +19,8 @@ final class ProfileViewModel {
 
         do {
             let response = try await authService.fetchProfile()
-            onStateChange?(.loaded(makeViewData(from: response)))
+            let lastFailedLogin = try? await authService.fetchLastFailedLogin()
+            onStateChange?(.loaded(makeViewData(from: response, lastFailedLogin: lastFailedLogin)))
         } catch {
             onStateChange?(.failure("Profil bilgileri alınamadı. Lütfen tekrar deneyin."))
         }
@@ -46,7 +47,7 @@ final class ProfileViewModel {
 }
 
  extension ProfileViewModel {
-    func makeViewData(from response: ProfileResponse) -> ProfileViewData {
+    func makeViewData(from response: ProfileResponse, lastFailedLogin: LastFailedLoginResponse?) -> ProfileViewData {
         ProfileViewData(
             titleText: "Profil",
             isDarkModeEnabled: isDarkModeEnabled,
@@ -78,12 +79,27 @@ final class ProfileViewModel {
                     ProfileRowItem(titleText: "Hesabımı Sil", iconName: "trash", accessory: .chevron, action: .deleteAccount, isDestructive: true)
                 ]
             ),
-            lastFailedLoginCard: ProfileInfoCardViewData(
-                titleText: "Son Hatalı Giriş",
-                valueText: "15 Nisan 09:58",
-                accentText: "Başarısız deneme"
-            ),
+            lastFailedLoginCard: makeLastFailedLoginCard(from: lastFailedLogin),
             logoutTitleText: "ÇIKIŞ YAP"
+        )
+    }
+
+    func makeLastFailedLoginCard(from response: LastFailedLoginResponse?) -> ProfileInfoCardViewData {
+        guard let response else {
+            return ProfileInfoCardViewData(
+                titleText: "Son Hatalı Giriş",
+                valueText: "Kayıt bulunamadı",
+                accentText: nil
+            )
+        }
+
+        return ProfileInfoCardViewData(
+            titleText: "Son Hatalı Giriş",
+            valueText: response.message,
+            accentText: AppDateTextFormatter.string(
+                from: response.lastFailedLoginDate,
+                style: .profileFailedLoginDateTime
+            )
         )
     }
 }

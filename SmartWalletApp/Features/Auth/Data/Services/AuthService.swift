@@ -52,6 +52,10 @@ final class AuthService {
         try await apiClient.send(AuthEndpoint.profile, as: ProfileResponse.self)
     }
 
+    func fetchLastFailedLogin() async throws -> LastFailedLoginResponse {
+        try await apiClient.send(AuthEndpoint.lastFailedLogin, as: LastFailedLoginResponse.self)
+    }
+
     func logout() async throws -> LogoutResponse {
         try await apiClient.send(AuthEndpoint.logout, as: LogoutResponse.self)
     }
@@ -72,6 +76,7 @@ final class AuthService {
     case verifyPasswordResetCode(body: Data)
     case resetPassword(body: Data)
     case profile
+    case lastFailedLogin
     case logout
     case deleteAccount(body: Data)
 
@@ -93,6 +98,8 @@ final class AuthService {
             return "/api/Auth/reset-password"
         case .profile:
             return "/api/Auth/profile"
+        case .lastFailedLogin:
+            return "/api/Auth/last-failed-login"
         case .logout:
             return "/api/Auth/logout"
         case .deleteAccount:
@@ -102,7 +109,7 @@ final class AuthService {
 
     var method: HTTPMethod {
         switch self {
-        case .profile:
+        case .profile, .lastFailedLogin:
             return .get
         case .logout:
             return .post
@@ -117,14 +124,14 @@ final class AuthService {
         switch self {
         case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body):
             return body
-        case .profile, .logout:
+        case .profile, .lastFailedLogin, .logout:
             return nil
         }
     }
 
     var requiresAuthorization: Bool {
         switch self {
-        case .profile, .logout, .deleteAccount:
+        case .profile, .lastFailedLogin, .logout, .deleteAccount:
             return true
         default:
             return false
