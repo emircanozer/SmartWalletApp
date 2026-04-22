@@ -68,7 +68,6 @@ final class ProfileViewModel {
             ),
             historySection: ProfileSectionViewData(
                 items: [
-                    ProfileRowItem(titleText: "Güvenlik Ayarları", iconName: "lock", accessory: .chevron, action: .security, isDestructive: false),
                     ProfileRowItem(titleText: "Şifre Değiştir", iconName: "key", accessory: .chevron, action: .changePassword, isDestructive: false),
                     ProfileRowItem(titleText: "Veri & Gizlilik", iconName: "shield", accessory: .chevron, action: .privacy, isDestructive: false)
                 ]

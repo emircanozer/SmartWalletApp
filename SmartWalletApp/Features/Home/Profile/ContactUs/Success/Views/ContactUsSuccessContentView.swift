@@ -54,7 +54,7 @@ extension ContactUsSuccessContentView {
     }
 }
 
-private extension ContactUsSuccessContentView {
+ extension ContactUsSuccessContentView {
     func configureView() {
         backgroundColor = AppColor.appBackground
 

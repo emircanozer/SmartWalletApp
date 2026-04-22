@@ -28,7 +28,7 @@ final class ContactUsSuccessViewController: UIViewController {
     }
 }
 
-private extension ContactUsSuccessViewController {
+ extension ContactUsSuccessViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.homeButton.addTarget(self, action: #selector(handleReturnHomeTap), for: .touchUpInside)

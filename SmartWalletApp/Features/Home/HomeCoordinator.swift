@@ -292,6 +292,11 @@ class HomeCoordinator: Coordinator {
             return
         }
 
+        if action == .changePassword {
+            showChangePassword()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -356,6 +361,87 @@ class HomeCoordinator: Coordinator {
             }
             stack.append(self.makeContactUsViewController(in: navigationController))
             navigationController.setViewControllers(stack, animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showChangePassword() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = ChangePasswordViewModel(authService: authService)
+        let viewController = ChangePasswordViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onForgotPassword = { [weak self, weak navigationController] in
+            guard let navigationController else { return }
+            self?.showForgotPassword(in: navigationController)
+        }
+        viewController.onPasswordChanged = { [weak self, weak navigationController] in
+            guard let navigationController else { return }
+            self?.showChangePasswordSuccess(in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showChangePasswordSuccess(in navigationController: UINavigationController) {
+        let viewModel = ChangePasswordSuccessViewModel()
+        let viewController = ChangePasswordSuccessViewController(viewModel: viewModel)
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showForgotPassword(in navigationController: UINavigationController) {
+        let viewModel = ForgotPasswordViewModel(authService: authService)
+        let viewController = ForgotPasswordViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onCodeVerificationRequired = { [weak self, weak navigationController] email in
+            guard let navigationController else { return }
+            self?.showForgotPasswordCode(email: email, in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showForgotPasswordCode(email: String, in navigationController: UINavigationController) {
+        let viewModel = ForgotPasswordCodeViewModel(email: email, authService: authService)
+        let viewController = ForgotPasswordCodeViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onVerified = { [weak self, weak navigationController] context in
+            guard let navigationController else { return }
+            self?.showResetPassword(context: context, in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showResetPassword(context: PendingPasswordResetContext, in navigationController: UINavigationController) {
+        let viewModel = ResetPasswordViewModel(context: context, authService: authService)
+        let viewController = ResetPasswordViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onResetCompleted = { [weak self, weak navigationController] in
+            guard let navigationController else { return }
+            self?.showResetPasswordSuccess(in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showResetPasswordSuccess(in navigationController: UINavigationController) {
+        let viewModel = ResetPasswordSuccessViewModel()
+        let viewController = ResetPasswordSuccessViewController(viewModel: viewModel)
+        viewController.onLoginTap = { [weak self] in
+            self?.onLogoutRequested?()
+        }
+        viewController.onHomeTap = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
         }
         navigationController.pushViewController(viewController, animated: true)
     }

@@ -64,6 +64,11 @@ final class AuthService {
         let body = try encode(request)
         return try await apiClient.send(AuthEndpoint.deleteAccount(body: body), as: DeleteAccountResponse.self)
     }
+
+    func changePassword(request: ChangePasswordRequest) async throws -> ChangePasswordResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.changePassword(body: body), as: ChangePasswordResponse.self)
+    }
 }
 
  enum AuthEndpoint: Endpoint {
@@ -79,6 +84,7 @@ final class AuthService {
     case lastFailedLogin
     case logout
     case deleteAccount(body: Data)
+    case changePassword(body: Data)
 
     var path: String {
         switch self {
@@ -104,6 +110,8 @@ final class AuthService {
             return "/api/Auth/logout"
         case .deleteAccount:
             return "/api/Auth/delete-account"
+        case .changePassword:
+            return "/api/Auth/change-password-profile"
         }
     }
 
@@ -113,7 +121,7 @@ final class AuthService {
             return .get
         case .logout:
             return .post
-        case .deleteAccount:
+        case .deleteAccount, .changePassword:
             return .post
         default:
             return .post
@@ -122,7 +130,7 @@ final class AuthService {
 
     var body: Data? {
         switch self {
-        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body):
+        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body), .changePassword(let body):
             return body
         case .profile, .lastFailedLogin, .logout:
             return nil
@@ -131,7 +139,7 @@ final class AuthService {
 
     var requiresAuthorization: Bool {
         switch self {
-        case .profile, .lastFailedLogin, .logout, .deleteAccount:
+        case .profile, .lastFailedLogin, .logout, .deleteAccount, .changePassword:
             return true
         default:
             return false
