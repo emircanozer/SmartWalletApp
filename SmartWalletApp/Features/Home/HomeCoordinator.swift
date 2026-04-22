@@ -287,6 +287,11 @@ class HomeCoordinator: Coordinator {
             return
         }
 
+        if action == .contactUs {
+            showContactUs()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -306,6 +311,51 @@ class HomeCoordinator: Coordinator {
         }
         viewController.onDeleted = { [weak self] in
             self?.onLogoutRequested?()
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showContactUs() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewController = makeContactUsViewController(in: navigationController)
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func makeContactUsViewController(in navigationController: UINavigationController) -> ContactUsViewController {
+        let viewModel = ContactUsViewModel()
+        let viewController = ContactUsViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onMailSent = { [weak self, weak navigationController] in
+            guard let navigationController else { return }
+            self?.showContactUsSuccess(in: navigationController)
+        }
+        return viewController
+    }
+
+    private func showContactUsSuccess(in navigationController: UINavigationController) {
+        let viewModel = ContactUsSuccessViewModel()
+        let viewController = ContactUsSuccessViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
+        }
+        viewController.onCreateNewMessage = { [weak self, weak navigationController] in
+            guard let self, let navigationController else { return }
+            var stack = navigationController.viewControllers
+            if stack.last is ContactUsSuccessViewController {
+                stack.removeLast()
+            }
+            if stack.last is ContactUsViewController {
+                stack.removeLast()
+            }
+            stack.append(self.makeContactUsViewController(in: navigationController))
+            navigationController.setViewControllers(stack, animated: true)
         }
         navigationController.pushViewController(viewController, animated: true)
     }

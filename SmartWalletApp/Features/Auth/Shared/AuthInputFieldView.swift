@@ -81,6 +81,16 @@ class AuthInputFieldView: UIView {
         textField.text = text
     }
 
+    func setPlaceholder(_ placeholder: String) {
+        textField.attributedPlaceholder = NSAttributedString(
+            string: placeholder,
+            attributes: [
+                .foregroundColor: AppColor.placeholderText,
+                .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+            ]
+        )
+    }
+
     private func setupView(placeholder: String, iconName: String, trailingIconName: String?, isSecure: Bool) {
         titleRow.axis = .horizontal
         titleRow.alignment = .center
