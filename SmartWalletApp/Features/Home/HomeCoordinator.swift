@@ -64,6 +64,9 @@ class HomeCoordinator: Coordinator {
         profileViewController.onActionSelected = { [weak self] action in
             self?.handleProfileAction(action)
         }
+        profileViewController.onEmailSelected = { [weak self] email in
+            self?.showUpdateEmail(currentEmail: email)
+        }
         profileViewController.onLogout = { [weak self] in
             self?.onLogoutRequested?()
         }
@@ -380,6 +383,44 @@ class HomeCoordinator: Coordinator {
         viewController.onPasswordChanged = { [weak self, weak navigationController] in
             guard let navigationController else { return }
             self?.showChangePasswordSuccess(in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showUpdateEmail(currentEmail: String) {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = UpdateEmailViewModel(currentEmail: currentEmail, authService: authService)
+        let viewController = UpdateEmailViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onVerificationSent = { [weak self, weak navigationController] context in
+            guard let navigationController else { return }
+            self?.showUpdateEmailCode(context: context, in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showUpdateEmailCode(context: UpdateEmailVerificationContext, in navigationController: UINavigationController) {
+        let viewModel = UpdateEmailCodeViewModel(context: context, authService: authService)
+        let viewController = UpdateEmailCodeViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onVerified = { [weak self, weak navigationController] in
+            guard let navigationController else { return }
+            self?.showUpdateEmailSuccess(in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showUpdateEmailSuccess(in navigationController: UINavigationController) {
+        let viewModel = UpdateEmailSuccessViewModel()
+        let viewController = UpdateEmailSuccessViewController(viewModel: viewModel)
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
         }
         navigationController.pushViewController(viewController, animated: true)
     }

@@ -2,6 +2,7 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     var onActionSelected: ((ProfileRowAction) -> Void)?
+    var onEmailSelected: ((String) -> Void)?
     var onLogout: (() -> Void)?
 
     private let viewModel: ProfileViewModel
@@ -39,6 +40,9 @@ extension ProfileViewController {
     func bindActions() {
         contentView.onRowSelected = { [weak self] action in
             self?.onActionSelected?(action)
+        }
+        contentView.onEmailSelected = { [weak self] email in
+            self?.onEmailSelected?(email)
         }
         contentView.darkModeButton.addTarget(self, action: #selector(handleDarkModeTap), for: .touchUpInside)
         contentView.logoutButton.addTarget(self, action: #selector(handleLogoutTap), for: .touchUpInside)

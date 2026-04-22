@@ -69,6 +69,16 @@ final class AuthService {
         let body = try encode(request)
         return try await apiClient.send(AuthEndpoint.changePassword(body: body), as: ChangePasswordResponse.self)
     }
+
+    func updateEmail(request: UpdateEmailRequest) async throws -> UpdateEmailResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.updateEmail(body: body), as: UpdateEmailResponse.self)
+    }
+
+    func confirmEmailUpdate(request: ConfirmEmailUpdateRequest) async throws -> ConfirmEmailUpdateResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.confirmEmailUpdate(body: body), as: ConfirmEmailUpdateResponse.self)
+    }
 }
 
  enum AuthEndpoint: Endpoint {
@@ -85,6 +95,8 @@ final class AuthService {
     case logout
     case deleteAccount(body: Data)
     case changePassword(body: Data)
+    case updateEmail(body: Data)
+    case confirmEmailUpdate(body: Data)
 
     var path: String {
         switch self {
@@ -112,6 +124,10 @@ final class AuthService {
             return "/api/Auth/delete-account"
         case .changePassword:
             return "/api/Auth/change-password-profile"
+        case .updateEmail:
+            return "/api/Auth/update-email"
+        case .confirmEmailUpdate:
+            return "/api/Auth/confirm-email-update"
         }
     }
 
@@ -121,7 +137,7 @@ final class AuthService {
             return .get
         case .logout:
             return .post
-        case .deleteAccount, .changePassword:
+        case .deleteAccount, .changePassword, .updateEmail, .confirmEmailUpdate:
             return .post
         default:
             return .post
@@ -130,7 +146,7 @@ final class AuthService {
 
     var body: Data? {
         switch self {
-        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body), .changePassword(let body):
+        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body), .changePassword(let body), .updateEmail(let body), .confirmEmailUpdate(let body):
             return body
         case .profile, .lastFailedLogin, .logout:
             return nil
@@ -139,7 +155,7 @@ final class AuthService {
 
     var requiresAuthorization: Bool {
         switch self {
-        case .profile, .lastFailedLogin, .logout, .deleteAccount, .changePassword:
+        case .profile, .lastFailedLogin, .logout, .deleteAccount, .changePassword, .updateEmail, .confirmEmailUpdate:
             return true
         default:
             return false

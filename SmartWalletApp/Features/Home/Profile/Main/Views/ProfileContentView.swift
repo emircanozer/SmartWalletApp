@@ -4,6 +4,7 @@ final class ProfileContentView: UIView {
     let logoutButton = UIButton(type: .system)
     let darkModeButton = UIButton(type: .system)
     var onRowSelected: ((ProfileRowAction) -> Void)?
+    var onEmailSelected: ((String) -> Void)?
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
@@ -19,6 +20,7 @@ final class ProfileContentView: UIView {
     private let emailTitleLabel = UILabel()
     private let emailValueLabel = UILabel()
     private let emailEditIconView = UIImageView()
+    private var currentEmailText = ""
     private let accountCardView = UIView()
     private let accountStackView = UIStackView()
     private let lastLoginCardView = UIView()
@@ -67,6 +69,7 @@ extension ProfileContentView {
         nameLabel.text = data.header.nameText
         emailTitleLabel.text = data.email.titleText
         emailValueLabel.text = data.email.valueText
+        currentEmailText = data.email.valueText
 
         lastLoginTitleLabel.text = data.lastFailedLoginCard.titleText
         lastLoginValueLabel.text = data.lastFailedLoginCard.valueText
@@ -139,6 +142,10 @@ extension ProfileContentView {
         emailEditIconView.image = UIImage(systemName: "pencil")
         emailEditIconView.tintColor = AppColor.accentOlive
         emailEditIconView.contentMode = .scaleAspectFit
+
+        emailCardView.isUserInteractionEnabled = true
+        let emailTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleEmailCardTap))
+        emailCardView.addGestureRecognizer(emailTapGesture)
 
         [accountStackView, historyStackView, supportStackView].forEach {
             $0.axis = .vertical
@@ -355,5 +362,9 @@ extension ProfileContentView {
             }
             stackView.addArrangedSubview(row)
         }
+    }
+
+    @objc func handleEmailCardTap() {
+        onEmailSelected?(currentEmailText)
     }
 }

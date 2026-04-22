@@ -1,15 +1,14 @@
 import UIKit
 
-final class ChangePasswordViewController: UIViewController {
+final class UpdateEmailViewController: UIViewController {
     var onBack: (() -> Void)?
-    var onForgotPassword: (() -> Void)?
-    var onPasswordChanged: (() -> Void)?
+    var onVerificationSent: ((UpdateEmailVerificationContext) -> Void)?
 
-    private let viewModel: ChangePasswordViewModel
-    private let contentView = ChangePasswordContentView()
+    private let viewModel: UpdateEmailViewModel
+    private let contentView = UpdateEmailContentView()
     private let backgroundTapGesture = UITapGestureRecognizer()
 
-    init(viewModel: ChangePasswordViewModel) {
+    init(viewModel: UpdateEmailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,27 +37,15 @@ final class ChangePasswordViewController: UIViewController {
     }
 }
 
- extension ChangePasswordViewController {
+extension UpdateEmailViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
-        contentView.updateButton.addTarget(self, action: #selector(handleUpdateTap), for: .touchUpInside)
-        contentView.forgotPasswordButton.addTarget(self, action: #selector(handleForgotPasswordTap), for: .touchUpInside)
-
-        [
-            contentView.currentPasswordField,
-            contentView.newPasswordField,
-            contentView.confirmPasswordField
-        ].forEach {
-            $0.addEditingChangedTarget(self, action: #selector(handleFormChanged))
-        }
-
-        contentView.currentPasswordField.addEditingDidBeginTarget(self, action: #selector(handleCurrentPasswordFocus))
-        contentView.newPasswordField.addEditingDidBeginTarget(self, action: #selector(handleNewPasswordFocus))
-        contentView.confirmPasswordField.addEditingDidBeginTarget(self, action: #selector(handleConfirmPasswordFocus))
-
-        contentView.currentPasswordField.addVisibilityTarget(self, action: #selector(handleCurrentPasswordVisibility))
-        contentView.newPasswordField.addVisibilityTarget(self, action: #selector(handleNewPasswordVisibility))
-        contentView.confirmPasswordField.addVisibilityTarget(self, action: #selector(handleConfirmPasswordVisibility))
+        contentView.cancelButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
+        contentView.sendButton.addTarget(self, action: #selector(handleSendTap), for: .touchUpInside)
+        contentView.newEmailField.setEditingChangedTarget(self, action: #selector(handleFormChanged))
+        contentView.confirmEmailField.setEditingChangedTarget(self, action: #selector(handleFormChanged))
+        contentView.newEmailField.setEditingDidBeginTarget(self, action: #selector(handleNewEmailFocus))
+        contentView.confirmEmailField.setEditingDidBeginTarget(self, action: #selector(handleConfirmEmailFocus))
     }
 
     func bindViewModel() {
@@ -74,14 +61,13 @@ final class ChangePasswordViewController: UIViewController {
             case .loading:
                 self.contentView.setLoading(true)
                 self.setCenteredLoading(true)
-            case .success:
+            case .success(_, let context):
                 self.contentView.setLoading(false)
                 self.setCenteredLoading(false)
-                self.onPasswordChanged?()
+                self.onVerificationSent?(context)
             case .failure(let message):
                 self.contentView.setLoading(false)
                 self.setCenteredLoading(false)
-                self.updateForm()
                 self.showAlert(message: message)
             }
         }
@@ -110,9 +96,8 @@ final class ChangePasswordViewController: UIViewController {
 
     func updateForm() {
         viewModel.updateForm(
-            currentPassword: contentView.currentPasswordField.trimmedText,
-            newPassword: contentView.newPasswordField.trimmedText,
-            confirmPassword: contentView.confirmPasswordField.trimmedText
+            newEmail: contentView.newEmailField.trimmedText,
+            confirmEmail: contentView.confirmEmailField.trimmedText
         )
     }
 
@@ -126,46 +111,25 @@ final class ChangePasswordViewController: UIViewController {
         onBack?()
     }
 
-    @objc func handleUpdateTap() {
+    @objc func handleSendTap() {
         Task {
-            await viewModel.changePassword(
-                currentPassword: contentView.currentPasswordField.trimmedText,
-                newPassword: contentView.newPasswordField.trimmedText,
-                confirmPassword: contentView.confirmPasswordField.trimmedText
+            await viewModel.sendVerificationCode(
+                newEmail: contentView.newEmailField.trimmedText,
+                confirmEmail: contentView.confirmEmailField.trimmedText
             )
         }
-    }
-
-    @objc func handleForgotPasswordTap() {
-        onForgotPassword?()
     }
 
     @objc func handleFormChanged() {
         updateForm()
     }
 
-    @objc func handleCurrentPasswordFocus() {
-        contentView.scrollToVisible(contentView.currentPasswordField)
+    @objc func handleNewEmailFocus() {
+        contentView.scrollToVisible(contentView.newEmailField)
     }
 
-    @objc func handleNewPasswordFocus() {
-        contentView.scrollToVisible(contentView.newPasswordField)
-    }
-
-    @objc func handleConfirmPasswordFocus() {
-        contentView.scrollToVisible(contentView.confirmPasswordField)
-    }
-
-    @objc func handleCurrentPasswordVisibility() {
-        contentView.currentPasswordField.toggleSecureEntry()
-    }
-
-    @objc func handleNewPasswordVisibility() {
-        contentView.newPasswordField.toggleSecureEntry()
-    }
-
-    @objc func handleConfirmPasswordVisibility() {
-        contentView.confirmPasswordField.toggleSecureEntry()
+    @objc func handleConfirmEmailFocus() {
+        contentView.scrollToVisible(contentView.confirmEmailField)
     }
 
     @objc func handleBackgroundTap() {
@@ -176,11 +140,6 @@ final class ChangePasswordViewController: UIViewController {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
         contentView.setKeyboardBottomInset(bottomInset)
-
-        if let firstResponder = view.currentFirstResponder {
-            let targetView = firstResponder.nearestSuperview(of: ChangePasswordSecureFieldView.self) ?? firstResponder
-            contentView.scrollToVisible(targetView)
-        }
     }
 
     @objc func handleKeyboardWillHide() {
