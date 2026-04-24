@@ -18,6 +18,10 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.transactions(walletId: walletId), as: [WalletTransactionResponse].self)
     }
 
+    func fetchReceiptDetail(transactionId: String) async throws -> WalletTransactionReceiptResponse {
+        try await apiClient.send(WalletEndpoint.receipt(transactionId: transactionId), as: WalletTransactionReceiptResponse.self)
+    }
+
     func fetchRecipients() async throws -> [WalletRecipientResponse] {
         try await apiClient.send(WalletEndpoint.recipients, as: [WalletRecipientResponse].self)
     }
@@ -72,6 +76,7 @@ final class WalletService {
  enum WalletEndpoint: Endpoint {
     case myWallet
     case transactions(walletId: String)
+    case receipt(transactionId: String)
     case recipients
     case ownerName(iban: String)
     case analysis
@@ -90,6 +95,8 @@ final class WalletService {
             return "/api/Wallets/mywallet"
         case .transactions(let walletId):
             return "/api/Wallets/\(walletId)/transactions"
+        case .receipt(let transactionId):
+            return "/api/Wallets/\(transactionId)/receipt"
         case .recipients:
             return "/api/Wallets/recipients"
         case .ownerName(let iban):

@@ -300,6 +300,11 @@ class HomeCoordinator: Coordinator {
             return
         }
 
+        if action == .transferReceipts {
+            showTransferReceipts()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -383,6 +388,34 @@ class HomeCoordinator: Coordinator {
         viewController.onPasswordChanged = { [weak self, weak navigationController] in
             guard let navigationController else { return }
             self?.showChangePasswordSuccess(in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showTransferReceipts() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = TransferReceiptsViewModel(walletService: walletService)
+        let viewController = TransferReceiptsViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onReceiptDetailSelected = { [weak self, weak navigationController] transactionId in
+            guard let navigationController else { return }
+            self?.showTransferReceiptDetail(transactionId: transactionId, in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showTransferReceiptDetail(transactionId: String, in navigationController: UINavigationController) {
+        let viewModel = TransferReceiptDetailViewModel(walletService: walletService, transactionId: transactionId)
+        let viewController = TransferReceiptDetailViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onReturnHome = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 0
         }
         navigationController.pushViewController(viewController, animated: true)
     }

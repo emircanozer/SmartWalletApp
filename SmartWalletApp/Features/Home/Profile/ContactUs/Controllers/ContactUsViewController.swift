@@ -2,6 +2,10 @@ import MessageUI
 import UIKit
 
 final class ContactUsViewController: UIViewController {
+    private enum Constants {
+        static let messageCharacterLimit = 300
+    }
+
     var onBack: (() -> Void)?
     var onMailSent: (() -> Void)?
 
@@ -174,6 +178,17 @@ extension ContactUsViewController {
 extension ContactUsViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         contentView.scrollToVisible(textView)
+    }
+
+    func textView(
+        _ textView: UITextView,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool {
+        let currentText = textView.text ?? ""
+        guard let textRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: textRange, with: text)
+        return updatedText.count <= Constants.messageCharacterLimit
     }
 
     func textViewDidChange(_ textView: UITextView) {
