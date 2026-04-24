@@ -18,8 +18,10 @@ class DashboardContentView: UIView {
     private let balanceCurrencyLabel = UILabel()
     private let quickActionsStack = UIStackView()
     private let sectionTitleLabel = UILabel()
+    private let emptyStateTextLabel = UILabel()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private var tableHeightConstraint: NSLayoutConstraint?
+    private var emptyStateTextHeightConstraint: NSLayoutConstraint?
 
     private let headerTitleText = "SmartWallet AI"
     private let balanceTitleText = "TOPLAM BAKİYE"
@@ -121,6 +123,13 @@ extension DashboardContentView {
         tableView.isScrollEnabled = false
         tableView.rowHeight = 122
         tableView.register(DashboardTransactionCell.self, forCellReuseIdentifier: DashboardTransactionCell.reuseIdentifier)
+
+        emptyStateTextLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        emptyStateTextLabel.textColor = AppColor.secondaryText
+        emptyStateTextLabel.textAlignment = .center
+        emptyStateTextLabel.numberOfLines = 0
+        emptyStateTextLabel.text = "Henüz yapılmış bir işleminiz yok"
+        emptyStateTextLabel.isHidden = true
     }
 
     func buildHierarchy() {
@@ -140,6 +149,7 @@ extension DashboardContentView {
         contentContainer.addSubview(sectionTitleLabel)
         contentContainer.addSubview(seeAllButton)
         contentContainer.addSubview(tableView)
+        contentContainer.addSubview(emptyStateTextLabel)
         contentContainer.addSubview(loadingIndicator)
     }
 
@@ -160,12 +170,14 @@ extension DashboardContentView {
             sectionTitleLabel,
             seeAllButton,
             tableView,
+            emptyStateTextLabel,
             loadingIndicator
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         tableHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: 288)
+        emptyStateTextHeightConstraint = emptyStateTextLabel.heightAnchor.constraint(equalToConstant: 0)
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
@@ -224,11 +236,17 @@ extension DashboardContentView {
             tableView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: 0),
             tableView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -20),
 
+            emptyStateTextLabel.topAnchor.constraint(equalTo: sectionTitleLabel.bottomAnchor, constant: 40),
+            emptyStateTextLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
+            emptyStateTextLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
+            emptyStateTextLabel.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -20),
+
             loadingIndicator.centerXAnchor.constraint(equalTo: balanceCard.centerXAnchor),
             loadingIndicator.centerYAnchor.constraint(equalTo: balanceCard.centerYAnchor)
         ])
 
         tableHeightConstraint?.isActive = true
+        emptyStateTextHeightConstraint?.isActive = true
     }
 
     func applyContent() {
@@ -270,7 +288,12 @@ extension DashboardContentView {
     }
 
     func updateTransactionsHeight(count: Int) {
-        tableHeightConstraint?.constant = count == 0 ? 0 : CGFloat(count) * 122
+        let isEmpty = count == 0
+        tableHeightConstraint?.constant = isEmpty ? 0 : CGFloat(count) * 122
+        emptyStateTextHeightConstraint?.constant = isEmpty ? 56 : 0
+        tableView.isHidden = isEmpty
+        emptyStateTextLabel.isHidden = !isEmpty
+        seeAllButton.isHidden = isEmpty
     }
 
     func applyCornerRadius() {
