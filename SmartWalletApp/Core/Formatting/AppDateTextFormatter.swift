@@ -3,6 +3,7 @@ import Foundation
 enum AppDateOutputStyle {
     case transactionDateTime
     case investmentHistoryDateTime
+    case profileFailedLoginDateTime
 }
 
 enum AppDateTextFormatter {
@@ -54,6 +55,8 @@ extension AppDateOutputStyle {
             return "d MMMM yyyy, HH.mm"
         case .investmentHistoryDateTime:
             return "dd MMMM yyyy • HH:mm"
+        case .profileFailedLoginDateTime:
+            return "d MMMM yyyy, HH:mm"
         }
     }
 }

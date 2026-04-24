@@ -57,6 +57,10 @@ class AuthInputFieldView: UIView {
         textField.addTarget(target, action: action, for: .editingDidBegin)
     }
 
+    func setEditingChangedTarget(_ target: Any?, action: Selector) {
+        textField.addTarget(target, action: action, for: .editingChanged)
+    }
+
     func toggleSecureEntry() {
         textField.isSecureTextEntry.toggle()
     }
@@ -77,6 +81,16 @@ class AuthInputFieldView: UIView {
         textField.text = text
     }
 
+    func setPlaceholder(_ placeholder: String) {
+        textField.attributedPlaceholder = NSAttributedString(
+            string: placeholder,
+            attributes: [
+                .foregroundColor: AppColor.placeholderText,
+                .font: UIFont.systemFont(ofSize: 16, weight: .medium)
+            ]
+        )
+    }
+
     private func setupView(placeholder: String, iconName: String, trailingIconName: String?, isSecure: Bool) {
         titleRow.axis = .horizontal
         titleRow.alignment = .center
@@ -84,6 +98,7 @@ class AuthInputFieldView: UIView {
 
         titleLabel.font = .systemFont(ofSize: 14, weight: .bold)
         titleLabel.textColor = AppColor.fieldTitleText
+        titleRow.isHidden = titleLabel.text?.isEmpty == true && topActionButton.title(for: .normal) == nil
 
         topActionButton.setTitleColor(AppColor.primaryYellow, for: .normal)
         topActionButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)

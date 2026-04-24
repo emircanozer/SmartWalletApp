@@ -47,6 +47,38 @@ final class AuthService {
         let body = try encode(request)
         return try await apiClient.send(AuthEndpoint.resetPassword(body: body), as: ResetPasswordResponse.self)
     }
+
+    func fetchProfile() async throws -> ProfileResponse {
+        try await apiClient.send(AuthEndpoint.profile, as: ProfileResponse.self)
+    }
+
+    func fetchLastFailedLogin() async throws -> LastFailedLoginResponse {
+        try await apiClient.send(AuthEndpoint.lastFailedLogin, as: LastFailedLoginResponse.self)
+    }
+
+    func logout() async throws -> LogoutResponse {
+        try await apiClient.send(AuthEndpoint.logout, as: LogoutResponse.self)
+    }
+
+    func deleteAccount(request: DeleteAccountRequest) async throws -> DeleteAccountResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.deleteAccount(body: body), as: DeleteAccountResponse.self)
+    }
+
+    func changePassword(request: ChangePasswordRequest) async throws -> ChangePasswordResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.changePassword(body: body), as: ChangePasswordResponse.self)
+    }
+
+    func updateEmail(request: UpdateEmailRequest) async throws -> UpdateEmailResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.updateEmail(body: body), as: UpdateEmailResponse.self)
+    }
+
+    func confirmEmailUpdate(request: ConfirmEmailUpdateRequest) async throws -> ConfirmEmailUpdateResponse {
+        let body = try encode(request)
+        return try await apiClient.send(AuthEndpoint.confirmEmailUpdate(body: body), as: ConfirmEmailUpdateResponse.self)
+    }
 }
 
  enum AuthEndpoint: Endpoint {
@@ -58,6 +90,13 @@ final class AuthService {
     case forgotPassword(body: Data)
     case verifyPasswordResetCode(body: Data)
     case resetPassword(body: Data)
+    case profile
+    case lastFailedLogin
+    case logout
+    case deleteAccount(body: Data)
+    case changePassword(body: Data)
+    case updateEmail(body: Data)
+    case confirmEmailUpdate(body: Data)
 
     var path: String {
         switch self {
@@ -75,17 +114,51 @@ final class AuthService {
             return "/api/Auth/verify-code"
         case .resetPassword:
             return "/api/Auth/reset-password"
+        case .profile:
+            return "/api/Auth/profile"
+        case .lastFailedLogin:
+            return "/api/Auth/last-failed-login"
+        case .logout:
+            return "/api/Auth/logout"
+        case .deleteAccount:
+            return "/api/Auth/delete-account"
+        case .changePassword:
+            return "/api/Auth/change-password-profile"
+        case .updateEmail:
+            return "/api/Auth/update-email"
+        case .confirmEmailUpdate:
+            return "/api/Auth/confirm-email-update"
         }
     }
 
     var method: HTTPMethod {
-        .post
+        switch self {
+        case .profile, .lastFailedLogin:
+            return .get
+        case .logout:
+            return .post
+        case .deleteAccount, .changePassword, .updateEmail, .confirmEmailUpdate:
+            return .post
+        default:
+            return .post
+        }
     }
 
     var body: Data? {
         switch self {
-        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body):
+        case .register(let body), .login(let body), .verifyEmail(let body), .resendVerificationCode(let body), .forgotPassword(let body), .verifyPasswordResetCode(let body), .resetPassword(let body), .deleteAccount(let body), .changePassword(let body), .updateEmail(let body), .confirmEmailUpdate(let body):
             return body
+        case .profile, .lastFailedLogin, .logout:
+            return nil
+        }
+    }
+
+    var requiresAuthorization: Bool {
+        switch self {
+        case .profile, .lastFailedLogin, .logout, .deleteAccount, .changePassword, .updateEmail, .confirmEmailUpdate:
+            return true
+        default:
+            return false
         }
     }
 }

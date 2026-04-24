@@ -50,7 +50,15 @@ class AppCoordinator: Coordinator {
     }
 
     private func showHomeFlow() {
-        let homeCoordinator = HomeCoordinator(walletService: walletService, assistantService: assistantService)
+        let homeCoordinator = HomeCoordinator(
+            walletService: walletService,
+            assistantService: assistantService,
+            authService: authService,
+            tokenStore: tokenStore
+        )
+        homeCoordinator.onLogoutRequested = { [weak self] in
+            self?.showAuthFlow()
+        }
         children = [homeCoordinator]
         homeCoordinator.start()
         window.backgroundColor = .white

@@ -13,6 +13,7 @@ class DashboardContentView: UIView {
     private let balanceCard = UIView()
     private let ibanLabel = UILabel()
     private let balanceTitleLabel = UILabel()
+    private let balanceAmountStack = UIStackView()
     private let balanceValueLabel = UILabel()
     private let balanceCurrencyLabel = UILabel()
     private let quickActionsStack = UIStackView()
@@ -80,16 +81,23 @@ extension DashboardContentView {
         balanceTitleLabel.textColor = AppColor.white62
         balanceTitleLabel.numberOfLines = 1
 
-        balanceValueLabel.font = .systemFont(ofSize: 46, weight: .bold)
+        balanceAmountStack.axis = .horizontal
+        balanceAmountStack.alignment = .lastBaseline
+        balanceAmountStack.spacing = 8
+        balanceAmountStack.distribution = .fill
+
+        balanceValueLabel.font = .systemFont(ofSize: 42, weight: .bold)
         balanceValueLabel.textColor = AppColor.balanceDisplay
         balanceValueLabel.adjustsFontSizeToFitWidth = true
-        balanceValueLabel.minimumScaleFactor = 0.72
+        balanceValueLabel.minimumScaleFactor = 0.55
         balanceValueLabel.lineBreakMode = .byClipping
-        balanceValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        balanceValueLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         balanceValueLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
-        balanceCurrencyLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        balanceCurrencyLabel.font = .systemFont(ofSize: 22, weight: .bold)
         balanceCurrencyLabel.textColor = AppColor.accentGold
+        balanceCurrencyLabel.adjustsFontSizeToFitWidth = true
+        balanceCurrencyLabel.minimumScaleFactor = 0.8
         balanceCurrencyLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         balanceCurrencyLabel.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -125,8 +133,9 @@ extension DashboardContentView {
         balanceCard.addSubview(ibanLabel)
         balanceCard.addSubview(copyButton)
         balanceCard.addSubview(balanceTitleLabel)
-        balanceCard.addSubview(balanceValueLabel)
-        balanceCard.addSubview(balanceCurrencyLabel)
+        balanceCard.addSubview(balanceAmountStack)
+        balanceAmountStack.addArrangedSubview(balanceValueLabel)
+        balanceAmountStack.addArrangedSubview(balanceCurrencyLabel)
         contentContainer.addSubview(quickActionsStack)
         contentContainer.addSubview(sectionTitleLabel)
         contentContainer.addSubview(seeAllButton)
@@ -144,6 +153,7 @@ extension DashboardContentView {
             ibanLabel,
             copyButton,
             balanceTitleLabel,
+            balanceAmountStack,
             balanceValueLabel,
             balanceCurrencyLabel,
             quickActionsStack,
@@ -194,13 +204,10 @@ extension DashboardContentView {
             balanceTitleLabel.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 22),
             balanceTitleLabel.trailingAnchor.constraint(equalTo: balanceCard.trailingAnchor, constant: -22),
 
-            balanceValueLabel.topAnchor.constraint(equalTo: balanceTitleLabel.bottomAnchor, constant: 28),
-            balanceValueLabel.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 22),
-            balanceValueLabel.trailingAnchor.constraint(lessThanOrEqualTo: balanceCurrencyLabel.leadingAnchor, constant: -10),
-
-            balanceCurrencyLabel.leadingAnchor.constraint(equalTo: balanceValueLabel.trailingAnchor, constant: 8),
-            balanceCurrencyLabel.trailingAnchor.constraint(lessThanOrEqualTo: balanceCard.trailingAnchor, constant: -22),
-            balanceCurrencyLabel.bottomAnchor.constraint(equalTo: balanceValueLabel.bottomAnchor, constant: -6),
+            balanceAmountStack.topAnchor.constraint(equalTo: balanceTitleLabel.bottomAnchor, constant: 28),
+            balanceAmountStack.leadingAnchor.constraint(equalTo: balanceCard.leadingAnchor, constant: 22),
+            balanceAmountStack.trailingAnchor.constraint(lessThanOrEqualTo: balanceCard.trailingAnchor, constant: -22),
+            balanceAmountStack.bottomAnchor.constraint(lessThanOrEqualTo: balanceCard.bottomAnchor, constant: -30),
 
             quickActionsStack.topAnchor.constraint(equalTo: balanceCard.bottomAnchor, constant: 26),
             quickActionsStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 14),

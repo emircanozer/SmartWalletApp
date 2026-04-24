@@ -6,6 +6,10 @@ enum SendMoneyPresentationStyle {
 }
 
 final class SendMoneyViewController: UIViewController {
+    private enum Constants {
+        static let noteCharacterLimit = 40
+    }
+
     var onTransferSucceeded: ((WalletTransferResponse) -> Void)?
 
     private let viewModel: SendMoneyViewModel
@@ -281,6 +285,17 @@ extension SendMoneyViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension SendMoneyViewController: UITextViewDelegate {
+    func textView(
+        _ textView: UITextView,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool {
+        let currentText = textView.text ?? ""
+        guard let textRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: textRange, with: text)
+        return updatedText.count <= Constants.noteCharacterLimit
+    }
+
     func textViewDidChange(_ textView: UITextView) {
         viewModel.updateNote(textView.text)
     }
