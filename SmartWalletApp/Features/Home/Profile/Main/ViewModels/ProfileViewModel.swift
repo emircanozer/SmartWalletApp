@@ -37,7 +37,7 @@ final class ProfileViewModel {
         onStateChange?(.loading)
 
         do {
-            _ = try await authService.logout()
+            try await authService.logout()
             try tokenStore.clearTokens()
             onStateChange?(.logoutSucceeded)
         } catch {

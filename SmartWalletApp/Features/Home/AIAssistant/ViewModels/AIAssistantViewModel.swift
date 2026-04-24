@@ -17,7 +17,13 @@ final class AIAssistantViewModel {
                 id: UUID(),
                 kind: .text,
                 sender: .assistant,
-                text: "Merhaba ben SmartWallet AI. Her zaman yanınızdayım, size nasıl yardımcı olabilirim?",
+                text: """
+                Merhaba ben Sway. Her zaman yanınızdayım, size nasıl yardımcı olabilirim?
+                . Para Transferi
+                . Varlık Al/Sat
+                . Güncel Kurlar
+                . Sayfa Yönlendirmesi
+                """,
                 timestampText: welcomeTimestamp,
                 action: nil
             )

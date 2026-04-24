@@ -56,8 +56,8 @@ final class AuthService {
         try await apiClient.send(AuthEndpoint.lastFailedLogin, as: LastFailedLoginResponse.self)
     }
 
-    func logout() async throws -> LogoutResponse {
-        try await apiClient.send(AuthEndpoint.logout, as: LogoutResponse.self)
+    func logout() async throws {
+        try await apiClient.send(AuthEndpoint.logout)
     }
 
     func deleteAccount(request: DeleteAccountRequest) async throws -> DeleteAccountResponse {
