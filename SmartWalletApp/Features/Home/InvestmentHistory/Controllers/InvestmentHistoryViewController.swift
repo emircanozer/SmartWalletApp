@@ -38,6 +38,9 @@ final class InvestmentHistoryViewController: UIViewController {
  extension InvestmentHistoryViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
+        contentView.allFilterButton.addTarget(self, action: #selector(handleAllFilterTap), for: .touchUpInside)
+        contentView.buyFilterButton.addTarget(self, action: #selector(handleBuyFilterTap), for: .touchUpInside)
+        contentView.sellFilterButton.addTarget(self, action: #selector(handleSellFilterTap), for: .touchUpInside)
     }
 
     func bindViewModel() {
@@ -87,5 +90,17 @@ final class InvestmentHistoryViewController: UIViewController {
 
     @objc func handlePullToRefresh() {
         loadHistory()
+    }
+
+    @objc func handleAllFilterTap() {
+        viewModel.applyFilter(.all)
+    }
+
+    @objc func handleBuyFilterTap() {
+        viewModel.applyFilter(.buy)
+    }
+
+    @objc func handleSellFilterTap() {
+        viewModel.applyFilter(.sell)
     }
 }

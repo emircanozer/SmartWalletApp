@@ -7,6 +7,23 @@ enum InvestmentHistoryViewState {
     case failure(String)
 }
 
+enum InvestmentHistoryFilter: CaseIterable {
+    case all
+    case buy
+    case sell
+
+    var title: String {
+        switch self {
+        case .all:
+            return "Tümü"
+        case .buy:
+            return "Alım"
+        case .sell:
+            return "Satım"
+        }
+    }
+}
+
 struct InvestmentHistoryTransactionItem {
     let assetName: String
     let amountText: String
@@ -14,10 +31,12 @@ struct InvestmentHistoryTransactionItem {
     let dateText: String
     let transactionTypeText: String
     let transactionTypeColor: UIColor
+    let isBuy: Bool
 }
 
 struct InvestmentHistoryViewData {
     let titleText: String
+    let selectedFilter: InvestmentHistoryFilter
     let items: [InvestmentHistoryTransactionItem]
     let monthlySummaryTitleText: String
     let monthlySummaryBodyText: String

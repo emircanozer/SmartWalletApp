@@ -222,8 +222,7 @@ class HomeCoordinator: Coordinator {
     }
 
     private func showInvestmentHistory() {
-        guard let controllers = rootViewController.viewControllers,
-              let navigationController = controllers.first as? UINavigationController else { return }
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
 
         let viewModel = InvestmentHistoryViewModel(walletService: walletService)
         let viewController = InvestmentHistoryViewController(viewModel: viewModel)
@@ -302,6 +301,11 @@ class HomeCoordinator: Coordinator {
 
         if action == .transferReceipts {
             showTransferReceipts()
+            return
+        }
+
+        if action == .tradeHistory {
+            showInvestmentHistory()
             return
         }
 

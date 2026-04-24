@@ -2,10 +2,14 @@ import UIKit
 
 final class InvestmentHistoryContentView: UIView {
     let backButton = UIButton(type: .system)
+    let allFilterButton = UIButton(type: .system)
+    let buyFilterButton = UIButton(type: .system)
+    let sellFilterButton = UIButton(type: .system)
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let titleLabel = UILabel()
+    private let filtersStackView = UIStackView()
     private let cardsStack = UIStackView()
     private let summaryCard = UIView()
     private let summaryHeaderRow = UIStackView()
@@ -20,6 +24,7 @@ final class InvestmentHistoryContentView: UIView {
         configureView()
         buildHierarchy()
         setupLayout()
+        applyStaticContent()
     }
 
     required init?(coder: NSCoder) {
@@ -30,6 +35,9 @@ final class InvestmentHistoryContentView: UIView {
         super.layoutSubviews()
         summaryCard.layer.cornerRadius = 24
         summaryBadgeView.layer.cornerRadius = 18
+        [allFilterButton, buyFilterButton, sellFilterButton].forEach {
+            $0.layer.cornerRadius = $0.bounds.height / 2
+        }
     }
 }
 
@@ -40,6 +48,7 @@ extension InvestmentHistoryContentView {
 
     func apply(_ data: InvestmentHistoryViewData) {
         titleLabel.text = data.titleText
+        applyFilterSelection(data.selectedFilter)
         summaryTitleLabel.text = data.monthlySummaryTitleText
         summaryBodyLabel.text = data.monthlySummaryBodyText
         emptyStateLabel.text = data.emptyMessageText
@@ -76,6 +85,16 @@ extension InvestmentHistoryContentView {
 
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
+
+        filtersStackView.axis = .horizontal
+        filtersStackView.spacing = 10
+        filtersStackView.distribution = .fillEqually
+
+        [allFilterButton, buyFilterButton, sellFilterButton].forEach {
+            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+            $0.setTitleColor(AppColor.secondaryText, for: .normal)
+            $0.backgroundColor = AppColor.surfaceMuted
+        }
 
         cardsStack.axis = .vertical
         cardsStack.spacing = 18
@@ -116,7 +135,8 @@ extension InvestmentHistoryContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [backButton, titleLabel, cardsStack, emptyStateLabel, summaryCard].forEach(contentContainer.addSubview)
+        [backButton, titleLabel, filtersStackView, cardsStack, emptyStateLabel, summaryCard].forEach(contentContainer.addSubview)
+        [allFilterButton, buyFilterButton, sellFilterButton].forEach(filtersStackView.addArrangedSubview)
         [summaryHeaderRow, summaryBodyLabel].forEach(summaryCard.addSubview)
         summaryHeaderRow.addArrangedSubview(summaryBadgeView)
         summaryHeaderRow.addArrangedSubview(summaryTitleLabel)
@@ -129,6 +149,7 @@ extension InvestmentHistoryContentView {
             contentContainer,
             backButton,
             titleLabel,
+            filtersStackView,
             cardsStack,
             emptyStateLabel,
             summaryCard,
@@ -160,11 +181,16 @@ extension InvestmentHistoryContentView {
             titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
-            cardsStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
+            filtersStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
+            filtersStackView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
+            filtersStackView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
+            filtersStackView.heightAnchor.constraint(equalToConstant: 56),
+
+            cardsStack.topAnchor.constraint(equalTo: filtersStackView.bottomAnchor, constant: 20),
             cardsStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             cardsStack.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
-            emptyStateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 120),
+            emptyStateLabel.topAnchor.constraint(equalTo: filtersStackView.bottomAnchor, constant: 84),
             emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
             emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32),
 
@@ -191,5 +217,25 @@ extension InvestmentHistoryContentView {
             summaryBodyLabel.trailingAnchor.constraint(equalTo: summaryCard.trailingAnchor, constant: -20),
             summaryBodyLabel.bottomAnchor.constraint(equalTo: summaryCard.bottomAnchor, constant: -20)
         ])
+    }
+
+    func applyFilterSelection(_ filter: InvestmentHistoryFilter) {
+        let buttons: [(UIButton, InvestmentHistoryFilter)] = [
+            (allFilterButton, .all),
+            (buyFilterButton, .buy),
+            (sellFilterButton, .sell)
+        ]
+
+        buttons.forEach { button, buttonFilter in
+            let isSelected = buttonFilter == filter
+            button.backgroundColor = isSelected ? AppColor.primaryYellow : AppColor.surfaceMuted
+            button.setTitleColor(isSelected ? AppColor.primaryText : AppColor.secondaryText, for: .normal)
+        }
+    }
+
+    func applyStaticContent() {
+        allFilterButton.setTitle("Tümü", for: .normal)
+        buyFilterButton.setTitle("Alım", for: .normal)
+        sellFilterButton.setTitle("Satım", for: .normal)
     }
 }
