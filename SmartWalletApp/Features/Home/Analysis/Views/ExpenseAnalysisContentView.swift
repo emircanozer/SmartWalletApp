@@ -20,7 +20,7 @@ final class ExpenseAnalysisContentView: UIView {
     private let aiCard = UIView()
     private let aiTitleLabel = UILabel()
     private let aiBodyLabel = UILabel()
-    private let emptyStateLabel = UILabel()
+    private let emptyStateView = EmptyStateView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private var summaryCards: [SummaryCardView] = []
 
@@ -48,14 +48,20 @@ extension ExpenseAnalysisContentView {
         headerTitleLabel.text = data.titleText
         chartCenterTitleLabel.text = "Toplam Harcama"
         chartCenterValueLabel.text = data.totalExpenseText
-        emptyStateLabel.text = data.emptyMessageText
         let isEmpty = data.emptyMessageText != nil
 
         summaryGrid.isHidden = isEmpty
         chartCard.isHidden = isEmpty
         categoriesCard.isHidden = isEmpty
         aiCard.isHidden = isEmpty
-        emptyStateLabel.isHidden = !isEmpty
+        emptyStateView.isHidden = !isEmpty
+        if let message = data.emptyMessageText {
+            emptyStateView.configure(
+                title: "Henüz harcama veriniz yok",
+                message: message,
+                systemImageName: "chart.pie"
+            )
+        }
 
         zip(summaryCards, data.summaryItems).forEach { card, item in
             card.configure(with: item)
@@ -158,11 +164,7 @@ extension ExpenseAnalysisContentView {
         aiBodyLabel.textColor = AppColor.primaryText
         aiBodyLabel.numberOfLines = 0
 
-        emptyStateLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        emptyStateLabel.textColor = AppColor.secondaryText
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.isHidden = true
+        emptyStateView.isHidden = true
 
         loadingIndicator.color = AppColor.primaryText
 
@@ -202,7 +204,7 @@ extension ExpenseAnalysisContentView {
             headerTitleLabel,
             notificationButton,
             summaryGrid,
-            emptyStateLabel,
+            emptyStateView,
             chartCard,
             categoriesCard,
             aiCard,
@@ -222,7 +224,7 @@ extension ExpenseAnalysisContentView {
             headerTitleLabel,
             notificationButton,
             summaryGrid,
-            emptyStateLabel,
+            emptyStateView,
             chartCard,
             pieChartView,
             chartCenterTitleLabel,
@@ -267,9 +269,9 @@ extension ExpenseAnalysisContentView {
             summaryGrid.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
             summaryGrid.heightAnchor.constraint(equalToConstant: 220),
 
-            emptyStateLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 120),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32),
+            emptyStateView.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 36),
+            emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
+            emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
 
             chartCard.topAnchor.constraint(equalTo: summaryGrid.bottomAnchor, constant: 18),
             chartCard.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
@@ -315,6 +317,8 @@ extension ExpenseAnalysisContentView {
             aiBodyLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 18),
             aiBodyLabel.trailingAnchor.constraint(equalTo: aiCard.trailingAnchor, constant: -18),
             aiBodyLabel.bottomAnchor.constraint(equalTo: aiCard.bottomAnchor, constant: -16),
+
+            emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -24),
 
             loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)

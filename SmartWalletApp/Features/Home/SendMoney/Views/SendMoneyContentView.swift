@@ -22,6 +22,7 @@ final class SendMoneyContentView: UIView {
     private let amountErrorLabel = UILabel()
     private let amountChipsStack = UIStackView()
     private let recipientsTitleLabel = UILabel()
+    private let recipientsContainerView = UIView()
     private let ibanSectionLabel = UILabel()
     private let ibanFieldContainer = UIView()
     private let ibanIconView = UIImageView()
@@ -31,9 +32,11 @@ final class SendMoneyContentView: UIView {
     private let noteSectionLabel = UILabel()
     private let noteContainer = UIView()
     private let notePlaceholderLabel = UILabel()
+    private let recipientsEmptyStateView = EmptyStateView()
 
     private var amountChipButtons: [SendMoneyAmountChipButton] = []
     private var recipientsTableHeightConstraint: NSLayoutConstraint?
+    private var recipientsEmptyStateHeightConstraint: NSLayoutConstraint?
     private var lookupHeightConstraint: NSLayoutConstraint?
     private(set) var currentRecipients: [SendMoneyRecipient] = []
     private(set) var currentSelectedRecipientID: String?
@@ -133,6 +136,7 @@ extension SendMoneyContentView {
         recipientsTableView.rowHeight = 82
         recipientsTableView.estimatedRowHeight = 82
         recipientsTableView.register(SendMoneyRecipientCell.self, forCellReuseIdentifier: SendMoneyRecipientCell.reuseIdentifier)
+        recipientsEmptyStateView.isHidden = true
 
         ibanSectionLabel.font = .systemFont(ofSize: 16, weight: .bold)
         ibanSectionLabel.textColor = AppColor.primaryText
@@ -196,7 +200,7 @@ extension SendMoneyContentView {
             amountCard,
             amountErrorLabel,
             recipientsTitleLabel,
-            recipientsTableView,
+            recipientsContainerView,
             ibanSectionLabel,
             ibanFieldContainer,
             lookupView,
@@ -208,6 +212,9 @@ extension SendMoneyContentView {
         ].forEach {
             containerView.addSubview($0)
         }
+
+        recipientsContainerView.addSubview(recipientsEmptyStateView)
+        recipientsContainerView.addSubview(recipientsTableView)
 
         amountCard.addSubview(amountTitleLabel)
         amountCard.addSubview(amountInputStack)
@@ -241,6 +248,8 @@ extension SendMoneyContentView {
             amountErrorLabel,
             amountChipsStack,
             recipientsTitleLabel,
+            recipientsContainerView,
+            recipientsEmptyStateView,
             recipientsTableView,
             ibanSectionLabel,
             ibanFieldContainer,
@@ -316,11 +325,21 @@ extension SendMoneyContentView {
             recipientsTitleLabel.topAnchor.constraint(equalTo: amountErrorLabel.bottomAnchor, constant: 18),
             recipientsTitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
 
-            recipientsTableView.topAnchor.constraint(equalTo: recipientsTitleLabel.bottomAnchor, constant: 12),
-            recipientsTableView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            recipientsTableView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            recipientsContainerView.topAnchor.constraint(equalTo: recipientsTitleLabel.bottomAnchor, constant: 12),
+            recipientsContainerView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            recipientsContainerView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            ibanSectionLabel.topAnchor.constraint(equalTo: recipientsTableView.bottomAnchor, constant: 18),
+            recipientsEmptyStateView.topAnchor.constraint(equalTo: recipientsContainerView.topAnchor),
+            recipientsEmptyStateView.leadingAnchor.constraint(equalTo: recipientsContainerView.leadingAnchor),
+            recipientsEmptyStateView.trailingAnchor.constraint(equalTo: recipientsContainerView.trailingAnchor),
+            recipientsEmptyStateView.bottomAnchor.constraint(equalTo: recipientsContainerView.bottomAnchor),
+
+            recipientsTableView.topAnchor.constraint(equalTo: recipientsContainerView.topAnchor),
+            recipientsTableView.leadingAnchor.constraint(equalTo: recipientsContainerView.leadingAnchor),
+            recipientsTableView.trailingAnchor.constraint(equalTo: recipientsContainerView.trailingAnchor),
+            recipientsTableView.bottomAnchor.constraint(equalTo: recipientsContainerView.bottomAnchor),
+
+            ibanSectionLabel.topAnchor.constraint(equalTo: recipientsContainerView.bottomAnchor, constant: 18),
             ibanSectionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             ibanSectionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
@@ -386,6 +405,8 @@ extension SendMoneyContentView {
         lookupHeightConstraint?.isActive = true
         recipientsTableHeightConstraint = recipientsTableView.heightAnchor.constraint(equalToConstant: 0)
         recipientsTableHeightConstraint?.isActive = true
+        recipientsEmptyStateHeightConstraint = recipientsEmptyStateView.heightAnchor.constraint(equalToConstant: 0)
+        recipientsEmptyStateHeightConstraint?.isActive = true
     }
 
     func applyContent() {
@@ -436,6 +457,17 @@ extension SendMoneyContentView {
         currentSelectedRecipientID = selectedRecipientID
         recipientsTableHeightConstraint?.constant = recipients.isEmpty ? 0 : CGFloat(recipients.count) * 82
         recipientsTableView.isHidden = recipients.isEmpty
+        recipientsEmptyStateView.isHidden = !recipients.isEmpty
+        if recipients.isEmpty {
+            recipientsEmptyStateHeightConstraint?.isActive = false
+            recipientsEmptyStateView.configure(
+                title: "Henüz kayıtlı alıcınız yok",
+                message: "IBAN girerek yeni bir alıcı seçebilir ve para transferi başlatabilirsiniz.",
+                systemImageName: "person.crop.circle.badge.plus"
+            )
+        } else {
+            recipientsEmptyStateHeightConstraint?.isActive = true
+        }
         recipientsTableView.reloadData()
         setNeedsLayout()
         layoutIfNeeded()

@@ -21,7 +21,7 @@ final class TransferReceiptsContentView: UIView {
     private let typeFilterIconView = UIImageView()
     private let typeChevronView = UIImageView()
     private let sectionTitleLabel = UILabel()
-    private let emptyLabel = UILabel()
+    private let emptyStateView = EmptyStateView()
     private var tableHeightConstraint: NSLayoutConstraint?
 
     override init(frame: CGRect) {
@@ -58,8 +58,16 @@ extension TransferReceiptsContentView {
         dateFilterButton.setTitle(data.selectedDateFilterTitleText, for: .normal)
         typeFilterButton.setTitle(data.selectedTypeFilterTitleText, for: .normal)
         sectionTitleLabel.text = data.sectionTitleText
-        emptyLabel.text = data.emptyMessageText
-        emptyLabel.isHidden = data.emptyMessageText == nil
+        let isEmpty = data.emptyMessageText != nil
+        emptyStateView.isHidden = !isEmpty
+        tableView.isHidden = isEmpty
+        if let message = data.emptyMessageText {
+            emptyStateView.configure(
+                title: "Dekont bulunamadı",
+                message: message,
+                systemImageName: "doc.text.magnifyingglass"
+            )
+        }
         tableHeightConstraint?.constant = CGFloat(data.items.count) * 128
     }
 
@@ -125,11 +133,7 @@ extension TransferReceiptsContentView {
         tableView.keyboardDismissMode = .interactive
         tableView.register(TransferReceiptsItemCell.self, forCellReuseIdentifier: TransferReceiptsItemCell.reuseIdentifier)
 
-        emptyLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        emptyLabel.textColor = AppColor.secondaryText
-        emptyLabel.textAlignment = .center
-        emptyLabel.numberOfLines = 0
-        emptyLabel.isHidden = true
+        emptyStateView.isHidden = true
     }
 
     func buildHierarchy() {
@@ -143,7 +147,7 @@ extension TransferReceiptsContentView {
             filterCardView,
             sectionTitleLabel,
             tableView,
-            emptyLabel
+            emptyStateView
         ].forEach(contentContainer.addSubview)
 
         [searchContainerView, dateFilterContainerView, typeFilterContainerView].forEach(filterCardView.addSubview)
@@ -157,7 +161,7 @@ extension TransferReceiptsContentView {
             scrollView, contentContainer, backButton, titleLabel, descriptionLabel, filterCardView,
             searchContainerView, searchIconView, searchField, dateFilterContainerView, dateFilterIconView,
             dateFilterButton, dateChevronView, typeFilterContainerView, typeFilterIconView, typeFilterButton,
-            typeChevronView, sectionTitleLabel, tableView, emptyLabel
+            typeChevronView, sectionTitleLabel, tableView, emptyStateView
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -246,10 +250,10 @@ extension TransferReceiptsContentView {
             sectionTitleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             sectionTitleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 
-            emptyLabel.topAnchor.constraint(equalTo: sectionTitleLabel.bottomAnchor, constant: 28),
-            emptyLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
-            emptyLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
-            emptyLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -28),
+            emptyStateView.topAnchor.constraint(equalTo: sectionTitleLabel.bottomAnchor, constant: 20),
+            emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 16),
+            emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -16),
+            emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -28),
             
             tableView.topAnchor.constraint(equalTo: sectionTitleLabel.bottomAnchor, constant: 18),
             tableView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 16),

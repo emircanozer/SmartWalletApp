@@ -17,7 +17,7 @@ final class InvestmentHistoryContentView: UIView {
     private let summaryTitleLabel = UILabel()
     private let summaryBodyLabel = UILabel()
     private let summaryIconView = UIImageView()
-    private let emptyStateLabel = UILabel()
+    private let emptyStateView = EmptyStateView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,7 +51,6 @@ extension InvestmentHistoryContentView {
         applyFilterSelection(data.selectedFilter)
         summaryTitleLabel.text = data.monthlySummaryTitleText
         summaryBodyLabel.text = data.monthlySummaryBodyText
-        emptyStateLabel.text = data.emptyMessageText
 
         cardsStack.arrangedSubviews.forEach {
             cardsStack.removeArrangedSubview($0)
@@ -66,7 +65,14 @@ extension InvestmentHistoryContentView {
 
         let isEmpty = data.emptyMessageText != nil
         cardsStack.isHidden = isEmpty
-        emptyStateLabel.isHidden = !isEmpty
+        emptyStateView.isHidden = !isEmpty
+        if let message = data.emptyMessageText {
+            emptyStateView.configure(
+                title: "Henüz yatırım işleminiz yok",
+                message: message,
+                systemImageName: "clock.arrow.circlepath"
+            )
+        }
 
         let hasSummary = !data.monthlySummaryBodyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         summaryCard.isHidden = !hasSummary
@@ -124,18 +130,14 @@ extension InvestmentHistoryContentView {
         summaryIconView.tintColor = AppColor.warmActionText
         summaryIconView.contentMode = .scaleAspectFit
 
-        emptyStateLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        emptyStateLabel.textColor = AppColor.secondaryText
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.isHidden = true
+        emptyStateView.isHidden = true
     }
 
     func buildHierarchy() {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [backButton, titleLabel, filtersStackView, cardsStack, emptyStateLabel, summaryCard].forEach(contentContainer.addSubview)
+        [backButton, titleLabel, filtersStackView, cardsStack, emptyStateView, summaryCard].forEach(contentContainer.addSubview)
         [allFilterButton, buyFilterButton, sellFilterButton].forEach(filtersStackView.addArrangedSubview)
         [summaryHeaderRow, summaryBodyLabel].forEach(summaryCard.addSubview)
         summaryHeaderRow.addArrangedSubview(summaryBadgeView)
@@ -151,7 +153,7 @@ extension InvestmentHistoryContentView {
             titleLabel,
             filtersStackView,
             cardsStack,
-            emptyStateLabel,
+            emptyStateView,
             summaryCard,
             summaryHeaderRow,
             summaryBadgeView,
@@ -190,15 +192,15 @@ extension InvestmentHistoryContentView {
             cardsStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             cardsStack.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
-            emptyStateLabel.topAnchor.constraint(equalTo: filtersStackView.bottomAnchor, constant: 84),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32),
+            emptyStateView.topAnchor.constraint(equalTo: filtersStackView.bottomAnchor, constant: 36),
+            emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
+            emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
             summaryCard.topAnchor.constraint(equalTo: cardsStack.bottomAnchor, constant: 24),
             summaryCard.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             summaryCard.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
             summaryCard.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -32),
-            summaryCard.topAnchor.constraint(greaterThanOrEqualTo: emptyStateLabel.bottomAnchor, constant: 24),
+            summaryCard.topAnchor.constraint(greaterThanOrEqualTo: emptyStateView.bottomAnchor, constant: 24),
 
             summaryHeaderRow.topAnchor.constraint(equalTo: summaryCard.topAnchor, constant: 20),
             summaryHeaderRow.leadingAnchor.constraint(equalTo: summaryCard.leadingAnchor, constant: 18),
