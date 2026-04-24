@@ -138,6 +138,9 @@ extension ProfileContentView {
 
         emailValueLabel.font = .systemFont(ofSize: 13, weight: .medium)
         emailValueLabel.textColor = AppColor.secondaryText
+        emailValueLabel.adjustsFontSizeToFitWidth = true
+        emailValueLabel.minimumScaleFactor = 0.75
+        emailValueLabel.lineBreakMode = .byClipping
 
         emailEditIconView.image = UIImage(systemName: "pencil")
         emailEditIconView.tintColor = AppColor.accentOlive

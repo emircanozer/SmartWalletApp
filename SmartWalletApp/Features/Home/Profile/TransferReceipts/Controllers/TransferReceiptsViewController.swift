@@ -7,6 +7,7 @@ final class TransferReceiptsViewController: UIViewController {
     private let viewModel: TransferReceiptsViewModel
     private let contentView = TransferReceiptsContentView()
     private var currentItems: [TransferReceiptsItemViewData] = []
+    private let backgroundTapGesture = UITapGestureRecognizer()
 
     init(viewModel: TransferReceiptsViewModel) {
         self.viewModel = viewModel
@@ -40,6 +41,10 @@ final class TransferReceiptsViewController: UIViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.searchField.addTarget(self, action: #selector(handleSearchChanged), for: .editingChanged)
+
+        backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
+        backgroundTapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(backgroundTapGesture)
     }
 
     func bindViewModel() {
@@ -106,6 +111,10 @@ final class TransferReceiptsViewController: UIViewController {
 
     @objc func handleSearchChanged() {
         viewModel.updateSearchText(contentView.searchField.text ?? "")
+    }
+
+    @objc func handleBackgroundTap() {
+        view.endEditing(true)
     }
 }
 

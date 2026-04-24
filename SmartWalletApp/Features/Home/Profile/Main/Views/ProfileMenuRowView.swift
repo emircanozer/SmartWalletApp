@@ -61,13 +61,23 @@ extension ProfileMenuRowView {
         iconImageView.contentMode = .scaleAspectFit
 
         titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+        titleLabel.numberOfLines = 2
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.minimumScaleFactor = 0.82
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         chevronImageView.image = UIImage(systemName: "chevron.right")
         chevronImageView.tintColor = AppColor.iconMuted
         chevronImageView.contentMode = .scaleAspectFit
+        chevronImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        chevronImageView.setContentHuggingPriority(.required, for: .horizontal)
 
         toggleSwitch.onTintColor = AppColor.primaryYellow
         toggleSwitch.addTarget(self, action: #selector(handleSwitchChanged), for: .valueChanged)
+        toggleSwitch.setContentCompressionResistancePriority(.required, for: .horizontal)
+        toggleSwitch.setContentHuggingPriority(.required, for: .horizontal)
 
         separatorView.backgroundColor = AppColor.divider
     }
@@ -94,6 +104,8 @@ extension ProfileMenuRowView {
             iconImageView.heightAnchor.constraint(equalToConstant: 16),
 
             titleLabel.leadingAnchor.constraint(equalTo: iconContainerView.trailingAnchor, constant: 14),
+            titleLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 10),
+            titleLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -10),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             chevronImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
@@ -112,7 +124,7 @@ extension ProfileMenuRowView {
             separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
             separatorView.heightAnchor.constraint(equalToConstant: 1),
 
-            heightAnchor.constraint(equalToConstant: 56)
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 56)
         ])
     }
 

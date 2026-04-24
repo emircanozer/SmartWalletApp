@@ -122,6 +122,7 @@ extension TransferReceiptsContentView {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.isScrollEnabled = false
+        tableView.keyboardDismissMode = .interactive
         tableView.register(TransferReceiptsItemCell.self, forCellReuseIdentifier: TransferReceiptsItemCell.reuseIdentifier)
 
         emptyLabel.font = .systemFont(ofSize: 15, weight: .medium)

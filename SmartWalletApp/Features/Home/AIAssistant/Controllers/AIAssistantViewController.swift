@@ -124,6 +124,28 @@ extension AIAssistantViewController: UITableViewDataSource, UITableViewDelegate 
         cell.configure(with: currentMessages[indexPath.row])
         return cell
     }
+
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        let message = currentMessages[indexPath.row]
+        let trimmedText = message.text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard message.kind == .text, !trimmedText.isEmpty else { return nil }
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let copyAction = UIAction(
+                title: "Kopyala",
+                image: UIImage(systemName: "doc.on.doc")
+            ) { _ in
+                UIPasteboard.general.string = trimmedText
+            }
+
+            return UIMenu(title: "", children: [copyAction])
+        }
+    }
 }
 
 extension AIAssistantViewController: AIAssistantMessageCellDelegate {
