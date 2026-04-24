@@ -5,7 +5,6 @@ class TransactionsListContentView: UIView {
     let tableView = UITableView(frame: .zero, style: .plain)
     let dateFilterButton = UIButton(type: .system)
     let clearDateFilterButton = UIButton(type: .system)
-    let emptyStateLabel = UILabel()
     let allFilterButton = UIButton(type: .system)
     let incomeFilterButton = UIButton(type: .system)
     let expenseFilterButton = UIButton(type: .system)
@@ -18,6 +17,7 @@ class TransactionsListContentView: UIView {
     private let summaryAmountLabel = UILabel()
     private let summaryIconContainer = UIView()
     private let summaryIconView = UIImageView()
+    private let emptyStateView = EmptyStateView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,11 +71,7 @@ extension TransactionsListContentView {
         clearDateFilterButton.setTitleColor(AppColor.accentOlive, for: .normal)
         clearDateFilterButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
 
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        emptyStateLabel.textColor = AppColor.quietText
-        emptyStateLabel.isHidden = true
+        emptyStateView.isHidden = true
 
         tableView.backgroundColor = .white
         tableView.separatorStyle = .none
@@ -101,7 +97,7 @@ extension TransactionsListContentView {
         addSubview(clearDateFilterButton)
         addSubview(summaryCard)
         addSubview(tableView)
-        addSubview(emptyStateLabel)
+        addSubview(emptyStateView)
 
         [allFilterButton, incomeFilterButton, expenseFilterButton, dateFilterButton].forEach {
             filtersStack.addArrangedSubview($0)
@@ -126,7 +122,7 @@ extension TransactionsListContentView {
             dateFilterButton,
             clearDateFilterButton,
             tableView,
-            emptyStateLabel
+            emptyStateView
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -178,10 +174,10 @@ extension TransactionsListContentView {
         ])
 
         NSLayoutConstraint.activate([
-            emptyStateLabel.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
-            emptyStateLabel.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 40),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
+            emptyStateView.topAnchor.constraint(equalTo: clearDateFilterButton.bottomAnchor, constant: 20),
+            emptyStateView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            emptyStateView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: summaryCard.topAnchor, constant: -20)
         ])
     }
 
@@ -190,7 +186,6 @@ extension TransactionsListContentView {
         subtitleLabel.text = "Son harcamalarınızı ve gelirlerinizi takip edin."
         dateFilterButton.setTitle("Tarih Seç", for: .normal)
         clearDateFilterButton.setTitle("Sıfırla", for: .normal)
-        emptyStateLabel.text = "Bu tarih aralığında işlem bulunamadı."
         allFilterButton.setTitle(TransactionsFilterType.all.title, for: .normal)
         incomeFilterButton.setTitle(TransactionsFilterType.income.title, for: .normal)
         expenseFilterButton.setTitle(TransactionsFilterType.expense.title, for: .normal)
@@ -208,8 +203,16 @@ extension TransactionsListContentView {
     }
 
     func setEmptyStateVisible(_ isVisible: Bool) {
-        emptyStateLabel.isHidden = !isVisible
+        emptyStateView.isHidden = !isVisible
         tableView.isHidden = isVisible
+        summaryCard.isHidden = isVisible
+        if isVisible {
+            emptyStateView.configure(
+                title: "İşlem bulunamadı",
+                message: "Bu tarih aralığında işlem bulunamadı.",
+                systemImageName: "list.bullet.rectangle"
+            )
+        }
     }
 
     func applyFilterSelection(_ filter: TransactionsFilterType) {

@@ -11,7 +11,7 @@ final class MarketPricesContentView: UIView {
     private let tableTitleLabel = UILabel()
     private let tableHeaderStack = UIStackView()
     private let rowsStack = UIStackView()
-    private let emptyStateLabel = UILabel()
+    private let emptyStateView = EmptyStateView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,12 +39,18 @@ extension MarketPricesContentView {
     // veri apply 
     func apply(_ data: MarketPricesViewData) {
         headerTitleLabel.text = data.titleText
-        emptyStateLabel.text = data.emptyMessageText
 
         let isEmpty = data.emptyMessageText != nil
         tableCard.isHidden = isEmpty
         tradeButton.isHidden = isEmpty
-        emptyStateLabel.isHidden = !isEmpty
+        emptyStateView.isHidden = !isEmpty
+        if let message = data.emptyMessageText {
+            emptyStateView.configure(
+                title: "Henüz piyasa verisi yok",
+                message: message,
+                systemImageName: "chart.line.downtrend.xyaxis"
+            )
+        }
 
         rowsStack.arrangedSubviews.forEach {
             rowsStack.removeArrangedSubview($0)
@@ -99,11 +105,7 @@ extension MarketPricesContentView {
         tradeButton.configuration = buttonConfiguration
         tradeButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
 
-        emptyStateLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        emptyStateLabel.textColor = AppColor.secondaryText
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.isHidden = true
+        emptyStateView.isHidden = true
 
         configureTableHeader()
     }
@@ -135,7 +137,7 @@ extension MarketPricesContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [headerTitleLabel, headerSubtitleLabel, tradeButton, tableCard, emptyStateLabel].forEach(contentContainer.addSubview)
+        [headerTitleLabel, headerSubtitleLabel, tradeButton, tableCard, emptyStateView].forEach(contentContainer.addSubview)
         [tableTitleLabel, tableHeaderStack, rowsStack].forEach(tableCard.addSubview)
     }
 
@@ -150,7 +152,7 @@ extension MarketPricesContentView {
             tableHeaderStack,
             rowsStack,
             tradeButton,
-            emptyStateLabel
+            emptyStateView
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -195,9 +197,10 @@ extension MarketPricesContentView {
 
             tableCard.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -32),
 
-            emptyStateLabel.topAnchor.constraint(equalTo: headerSubtitleLabel.bottomAnchor, constant: 120),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32)
+            emptyStateView.topAnchor.constraint(equalTo: headerSubtitleLabel.bottomAnchor, constant: 64),
+            emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
+            emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
+            emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -32)
         ])
     }
 }

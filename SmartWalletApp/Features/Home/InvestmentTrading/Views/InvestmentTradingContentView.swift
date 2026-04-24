@@ -17,7 +17,6 @@ final class InvestmentTradingContentView: UIView {
     private let priceCard = UIView()
     private let amountCard = UIView()
     private let summaryCard = UIView()
-    private let emptyStateLabel = UILabel()
     private let validationLabel = UILabel()
     private let amountTitleLabel = UILabel()
     private let dividerView = UIView()
@@ -30,6 +29,7 @@ final class InvestmentTradingContentView: UIView {
     private let holdingMetricView = TradingMetricView()
     private let summaryStack = UIStackView()
     private let keyboardTapGesture = UITapGestureRecognizer()
+    private let emptyStateView = EmptyStateView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -97,11 +97,17 @@ extension InvestmentTradingContentView {
         validationLabel.isHidden = data.validationMessageText == nil
 
         let isEmpty = data.emptyMessageText != nil
-        emptyStateLabel.text = data.emptyMessageText
         [assetChipsView, directionSegmentView, priceCard, amountCard, summaryCard, quickAmountChipsView, actionButton, validationLabel].forEach {
             $0.isHidden = isEmpty
         }
-        emptyStateLabel.isHidden = !isEmpty
+        emptyStateView.isHidden = !isEmpty
+        if let message = data.emptyMessageText {
+            emptyStateView.configure(
+                title: "İşlem verileri hazır değil",
+                message: message,
+                systemImageName: "chart.line.uptrend.xyaxis.circle"
+            )
+        }
     }
 
     func setBottomInset(_ inset: CGFloat) {
@@ -192,11 +198,7 @@ extension InvestmentTradingContentView {
         validationLabel.textAlignment = .center
         validationLabel.isHidden = true
 
-        emptyStateLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        emptyStateLabel.textColor = AppColor.secondaryText
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.isHidden = true
+        emptyStateView.isHidden = true
     }
 
     func buildHierarchy() {
@@ -215,7 +217,7 @@ extension InvestmentTradingContentView {
             summaryCard,
             actionButton,
             validationLabel,
-            emptyStateLabel
+            emptyStateView
         ].forEach(contentContainer.addSubview)
 
         [buyPriceMetricView, sellPriceMetricView, balanceMetricView, holdingMetricView].forEach(priceCard.addSubview)
@@ -240,7 +242,7 @@ extension InvestmentTradingContentView {
             summaryCard,
             actionButton,
             validationLabel,
-            emptyStateLabel,
+            emptyStateView,
             buyPriceMetricView,
             sellPriceMetricView,
             balanceMetricView,
@@ -368,9 +370,10 @@ extension InvestmentTradingContentView {
             validationLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -28),
             validationLabel.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -28),
 
-            emptyStateLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 120),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32)
+            emptyStateView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 36),
+            emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
+            emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
+            emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -32)
         ])
 
     }

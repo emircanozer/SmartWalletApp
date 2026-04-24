@@ -22,7 +22,7 @@ final class InvestmentPortfolioContentView: UIView {
     private let assetsCard = UIView()
     private let assetsScrollView = UIScrollView()
     private let assetsStack = UIStackView()
-    private let emptyStateLabel = UILabel()
+    private let emptyStateView = EmptyStateView()
     private var assetListHeightConstraint: NSLayoutConstraint?
 
     override init(frame: CGRect) {
@@ -59,7 +59,6 @@ extension InvestmentPortfolioContentView {
         profitLossLabel.textColor = data.isProfit ? AppColor.accentGold : UIColor(red: 0.98, green: 0.78, blue: 0.52, alpha: 1.0)
         profitLossDetailLabel.text = data.totalProfitLossDetailText
         dominantShareLabel.text = data.dominantShareText
-        emptyStateLabel.text = data.emptyMessageText
 
         let isEmpty = data.emptyMessageText != nil
         summaryCard.isHidden = isEmpty
@@ -68,7 +67,14 @@ extension InvestmentPortfolioContentView {
         assetsTitleLabel.isHidden = isEmpty
         assetsCard.isHidden = isEmpty
         tradeButton.isHidden = isEmpty
-        emptyStateLabel.isHidden = !isEmpty
+        emptyStateView.isHidden = !isEmpty
+        if let message = data.emptyMessageText {
+            emptyStateView.configure(
+                title: "Henüz yatırım varlığınız yok",
+                message: message,
+                systemImageName: "briefcase"
+            )
+        }
 
         allocationStack.arrangedSubviews.forEach {
             allocationStack.removeArrangedSubview($0)
@@ -164,11 +170,7 @@ extension InvestmentPortfolioContentView {
         assetsStack.axis = .vertical
         assetsStack.spacing = 14
 
-        emptyStateLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        emptyStateLabel.textColor = AppColor.secondaryText
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.isHidden = true
+        emptyStateView.isHidden = true
     }
 
     private func buildHierarchy() {
@@ -185,7 +187,7 @@ extension InvestmentPortfolioContentView {
             assetsTitleLabel,
             assetsCard,
             tradeButton,
-            emptyStateLabel
+            emptyStateView
         ].forEach(contentContainer.addSubview)
 
         [
@@ -224,7 +226,7 @@ extension InvestmentPortfolioContentView {
             tradeButton,
             assetsScrollView,
             assetsStack,
-            emptyStateLabel
+            emptyStateView
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         assetListHeightConstraint = assetsScrollView.heightAnchor.constraint(equalToConstant: 108)
@@ -320,10 +322,10 @@ extension InvestmentPortfolioContentView {
             assetsStack.bottomAnchor.constraint(equalTo: assetsScrollView.contentLayoutGuide.bottomAnchor),
             assetsStack.widthAnchor.constraint(equalTo: assetsScrollView.frameLayoutGuide.widthAnchor),
 
-            emptyStateLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 80),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -32),
-            emptyStateLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -40)
+            emptyStateView.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 36),
+            emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
+            emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
+            emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -40)
         ])
 
         assetListHeightConstraint?.isActive = true

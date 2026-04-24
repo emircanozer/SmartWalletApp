@@ -5,8 +5,6 @@ final class SendMoneyRecipientRowView: UIControl {
     private let avatarLabel = UILabel()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
-    private let selectionOuterView = UIView()
-    private let selectionInnerView = UIView()
 
     let recipient: SendMoneyRecipient
 
@@ -27,17 +25,11 @@ final class SendMoneyRecipientRowView: UIControl {
         super.layoutSubviews()
         layer.cornerRadius = 18
         avatarView.layer.cornerRadius = avatarView.bounds.width / 2
-        selectionOuterView.layer.cornerRadius = selectionOuterView.bounds.width / 2
-        selectionInnerView.layer.cornerRadius = selectionInnerView.bounds.width / 2
     }
 
     func applySelected(_ isSelected: Bool) {
         layer.borderWidth = isSelected ? 1.5 : 0
         layer.borderColor = isSelected ? AppColor.primaryYellow.cgColor : UIColor.clear.cgColor
-        selectionOuterView.layer.borderColor = isSelected
-            ? AppColor.primaryYellow.cgColor
-            : AppColor.chipBorder.cgColor
-        selectionInnerView.isHidden = !isSelected
     }
 }
 
@@ -60,13 +52,6 @@ final class SendMoneyRecipientRowView: UIControl {
 
         subtitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         subtitleLabel.textColor = AppColor.tertiaryText
-
-        selectionOuterView.layer.borderWidth = 1
-        selectionOuterView.layer.borderColor = AppColor.chipBorder.cgColor
-        selectionOuterView.backgroundColor = .clear
-
-        selectionInnerView.backgroundColor = AppColor.primaryYellow
-        selectionInnerView.isHidden = true
     }
 
     func buildHierarchy() {
@@ -74,12 +59,10 @@ final class SendMoneyRecipientRowView: UIControl {
         avatarView.addSubview(avatarLabel)
         addSubview(nameLabel)
         addSubview(subtitleLabel)
-        addSubview(selectionOuterView)
-        selectionOuterView.addSubview(selectionInnerView)
     }
 
     func setupLayout() {
-        [avatarView, avatarLabel, nameLabel, subtitleLabel, selectionOuterView, selectionInnerView].forEach {
+        [avatarView, avatarLabel, nameLabel, subtitleLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -95,21 +78,11 @@ final class SendMoneyRecipientRowView: UIControl {
             avatarLabel.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor),
 
             nameLabel.leadingAnchor.constraint(equalTo: avatarView.trailingAnchor, constant: 12),
-            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: selectionOuterView.leadingAnchor, constant: -12),
+            nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
 
             subtitleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             subtitleLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            subtitleLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
-
-            selectionOuterView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            selectionOuterView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            selectionOuterView.widthAnchor.constraint(equalToConstant: 22),
-            selectionOuterView.heightAnchor.constraint(equalToConstant: 22),
-
-            selectionInnerView.centerXAnchor.constraint(equalTo: selectionOuterView.centerXAnchor),
-            selectionInnerView.centerYAnchor.constraint(equalTo: selectionOuterView.centerYAnchor),
-            selectionInnerView.widthAnchor.constraint(equalToConstant: 10),
-            selectionInnerView.heightAnchor.constraint(equalToConstant: 10)
+            subtitleLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor)
         ])
 
         nameTopConstraint = nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16)
