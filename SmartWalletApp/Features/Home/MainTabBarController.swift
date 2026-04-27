@@ -18,7 +18,7 @@ class MainTabBarController: UITabBarController { // tabbar tanımlanması için 
 
 extension MainTabBarController {
     func configureTabBar() {
-        tabBar.backgroundColor = .white
+        tabBar.backgroundColor = AppColor.whitePrimary
         tabBar.tintColor = AppColor.primaryYellow
         tabBar.unselectedItemTintColor = AppColor.tabInactive
         tabBar.layer.shadowColor = UIColor.black.cgColor
@@ -28,7 +28,7 @@ extension MainTabBarController {
 
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
+        appearance.backgroundColor = AppColor.whitePrimary
         appearance.stackedLayoutAppearance.selected.iconColor = AppColor.primaryYellow
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
             .foregroundColor: AppColor.primaryYellow,

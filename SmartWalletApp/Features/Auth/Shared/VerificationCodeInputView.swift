@@ -53,6 +53,7 @@ extension VerificationCodeInputView {
         stackView.spacing = 8
 
         textField.keyboardType = .numberPad
+        textField.keyboardAppearance = .default
         textField.textContentType = .oneTimeCode
         textField.tintColor = .clear
         textField.textColor = .clear
@@ -170,12 +171,12 @@ private class VerificationDigitView: UIView {
             ? AppColor.verificationEmptyText
             : AppColor.verificationFilledText
 
-        backgroundColor = isActive ? .white : AppColor.codeInactive
+        backgroundColor = isActive ? AppColor.whitePrimary : AppColor.codeInactive
         layer.borderWidth = isActive ? 3 : 0
         layer.borderColor = isActive ? AppColor.accentBlue.cgColor : UIColor.clear.cgColor
 
         if isFilled {
-            backgroundColor = .white
+            backgroundColor = AppColor.whitePrimary
             layer.borderWidth = 2
             layer.borderColor = AppColor.filledBorder.cgColor
         }

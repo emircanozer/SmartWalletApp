@@ -22,8 +22,23 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.receipt(transactionId: transactionId), as: WalletTransactionReceiptResponse.self)
     }
 
+    // 2 endpointin birleşimi ile geldi
     func fetchRecipients() async throws -> [WalletRecipientResponse] {
-        try await apiClient.send(WalletEndpoint.favorite, as: [WalletRecipientResponse].self)
+        let contacts = try? await apiClient.send(WalletEndpoint.contactsList, as: [WalletRecipientResponse].self)
+        let favorites = try? await apiClient.send(WalletEndpoint.favorite, as: [WalletRecipientResponse].self)
+
+        guard contacts != nil || favorites != nil else {
+            throw NetworkError.invalidResponse
+        }
+
+        let merged = (contacts ?? []) + (favorites ?? [])
+        var uniqueRecipientsByIBAN: [String: WalletRecipientResponse] = [:]
+
+        for recipient in merged {
+            uniqueRecipientsByIBAN[recipient.iban] = recipient
+        }
+
+        return Array(uniqueRecipientsByIBAN.values)
     }
 
     func fetchOwnerName(iban: String) async throws -> WalletOwnerNameResponse {
@@ -77,6 +92,7 @@ final class WalletService {
     case myWallet
     case transactions(walletId: String)
     case receipt(transactionId: String)
+    case contactsList
     case favorite
     case ownerName(iban: String)
     case analysis
@@ -97,6 +113,8 @@ final class WalletService {
             return "/api/Wallets/\(walletId)/transactions"
         case .receipt(let transactionId):
             return "/api/Wallets/\(transactionId)/receipt"
+        case .contactsList:
+            return "/api/Wallets/contacts"
         case .favorite:
             return "/api/Wallets/favorite"
         case .ownerName(let iban):

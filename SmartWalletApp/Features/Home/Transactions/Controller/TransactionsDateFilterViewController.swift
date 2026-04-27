@@ -62,7 +62,7 @@ final class TransactionsDateFilterViewController: UIViewController {
 
  extension TransactionsDateFilterViewController {
     func configureView() {
-        view.backgroundColor = .white
+        view.backgroundColor = AppColor.appBackground
 
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
@@ -71,7 +71,7 @@ final class TransactionsDateFilterViewController: UIViewController {
         subtitleLabel.textColor = AppColor.secondaryText
 
         [rangeSummaryView, pickerCardView].forEach {
-            $0.backgroundColor = .white
+            $0.backgroundColor = AppColor.whitePrimary
             $0.layer.shadowColor = UIColor.black.cgColor
             $0.layer.shadowOpacity = 0.03
             $0.layer.shadowRadius = 10

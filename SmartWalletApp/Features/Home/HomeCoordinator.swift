@@ -30,7 +30,11 @@ class HomeCoordinator: Coordinator {
         let marketPricesViewController = MarketPricesViewController(viewModel: marketPricesViewModel)
         let assistantViewModel = AIAssistantViewModel(assistantService: assistantService)
         let assistantViewController = AIAssistantViewController(viewModel: assistantViewModel)
-        let profileViewModel = ProfileViewModel(authService: authService, tokenStore: tokenStore)
+        let profileViewModel = ProfileViewModel(
+            authService: authService,
+            tokenStore: tokenStore,
+            isDarkModeEnabled: ThemePreferenceStore.shared.isDarkModeEnabled
+        )
         let profileViewController = ProfileViewController(viewModel: profileViewModel)
 
         let dashboardNavigationController = makeNavigationController(root: dashboardViewController, title: "Ana Sayfa", imageName: "house")

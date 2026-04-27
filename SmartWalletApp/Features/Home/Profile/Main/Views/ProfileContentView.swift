@@ -86,7 +86,7 @@ extension ProfileContentView {
         let imageName = isEnabled ? "moon.fill" : "moon"
         darkModeButton.setImage(UIImage(systemName: imageName), for: .normal)
         darkModeButton.tintColor = isEnabled ? AppColor.primaryYellow : AppColor.navigationTint
-        darkModeButton.backgroundColor = isEnabled ? AppColor.darkSurfaceAlt : .white
+        darkModeButton.backgroundColor = isEnabled ? AppColor.darkSurfaceAlt : AppColor.whitePrimary
         darkModeButton.layer.borderWidth = 1
         darkModeButton.layer.borderColor = (isEnabled ? AppColor.darkSurfaceAlt : AppColor.borderSoft).cgColor
     }
@@ -104,10 +104,10 @@ extension ProfileContentView {
 
         darkModeButton.contentMode = .scaleAspectFit
 
-        headerContainerView.backgroundColor = .white
+        headerContainerView.backgroundColor = AppColor.whitePrimary
 
         avatarRingView.backgroundColor = AppColor.primaryYellow
-        avatarInnerView.backgroundColor = .white
+        avatarInnerView.backgroundColor = AppColor.whitePrimary
 
         avatarLabel.font = .systemFont(ofSize: 24, weight: .bold)
         avatarLabel.textColor = AppColor.secondaryText
@@ -115,14 +115,14 @@ extension ProfileContentView {
 
         statusDotView.backgroundColor = AppColor.primaryYellow
         statusDotView.layer.borderWidth = 2
-        statusDotView.layer.borderColor = UIColor.white.cgColor
+        statusDotView.layer.borderColor = AppColor.whitePrimary.cgColor
 
         nameLabel.font = .systemFont(ofSize: 22, weight: .bold)
         nameLabel.textColor = AppColor.primaryText
         nameLabel.numberOfLines = 2
 
         [emailCardView, accountCardView, lastLoginCardView, historyCardView, supportCardView].forEach {
-            $0.backgroundColor = .white
+            $0.backgroundColor = AppColor.whitePrimary
             $0.layer.shadowColor = UIColor.black.cgColor
             $0.layer.shadowOpacity = 0.04
             $0.layer.shadowRadius = 16
@@ -166,7 +166,7 @@ extension ProfileContentView {
 
         logoutButton.setTitleColor(AppColor.dangerStrong, for: .normal)
         logoutButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
-        logoutButton.backgroundColor = .white
+        logoutButton.backgroundColor = AppColor.whitePrimary
         logoutButton.layer.borderWidth = 1
         logoutButton.layer.borderColor = UIColor(red: 0.99, green: 0.86, blue: 0.86, alpha: 1.0).cgColor
     }

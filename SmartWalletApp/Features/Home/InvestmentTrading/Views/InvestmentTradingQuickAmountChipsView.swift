@@ -28,11 +28,11 @@ extension InvestmentTradingQuickAmountChipsView {
             let button = UIButton(type: .system)
             var configuration = UIButton.Configuration.plain()
             configuration.title = item.title
-            configuration.baseForegroundColor = AppColor.secondaryText
+            configuration.baseForegroundColor = AppColor.inputText
             configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 8, bottom: 10, trailing: 8)
             button.configuration = configuration
             button.titleLabel?.font = .systemFont(ofSize: 12, weight: .bold)
-            button.backgroundColor = .white
+            button.backgroundColor = AppColor.whitePrimary
             button.layer.cornerRadius = 14
             button.layer.borderWidth = 1
             button.layer.borderColor = AppColor.borderSoft.cgColor

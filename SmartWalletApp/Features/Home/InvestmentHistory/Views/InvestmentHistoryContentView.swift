@@ -105,7 +105,7 @@ extension InvestmentHistoryContentView {
         cardsStack.axis = .vertical
         cardsStack.spacing = 18
 
-        summaryCard.backgroundColor = UIColor.white
+        summaryCard.backgroundColor = AppColor.whitePrimary
         summaryCard.layer.borderWidth = 1
         summaryCard.layer.borderColor = AppColor.borderWarm.cgColor
         summaryCard.layer.shadowColor = UIColor.black.cgColor

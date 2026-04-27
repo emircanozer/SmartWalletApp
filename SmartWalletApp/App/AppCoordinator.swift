@@ -35,8 +35,8 @@ class AppCoordinator: Coordinator {
 
     private func showAuthFlow() {
         authNavigationController.setNavigationBarHidden(true, animated: false)
-        authNavigationController.view.backgroundColor = .white
-        window.backgroundColor = .white
+        authNavigationController.view.backgroundColor = AppColor.appBackground
+        window.backgroundColor = AppColor.appBackground
         window.rootViewController = authNavigationController
         window.makeKeyAndVisible()
 
@@ -64,7 +64,7 @@ class AppCoordinator: Coordinator {
         }
         children = [homeCoordinator]
         homeCoordinator.start()
-        window.backgroundColor = .white
+        window.backgroundColor = AppColor.appBackground
         window.rootViewController = homeCoordinator.rootViewController
         window.makeKeyAndVisible()
         print("DEBUG App: home flow baslatildi, dashboard gosteriliyor.")

@@ -46,7 +46,7 @@ extension TransferSuccessContentView {
 
  extension TransferSuccessContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
 
@@ -62,7 +62,7 @@ extension TransferSuccessContentView {
         subtitleLabel.textAlignment = .center
         subtitleLabel.numberOfLines = 0
 
-        detailCard.backgroundColor = .white
+        detailCard.backgroundColor = AppColor.whitePrimary
         detailCard.layer.shadowColor = UIColor.black.cgColor
         detailCard.layer.shadowOpacity = 0.05
         detailCard.layer.shadowRadius = 18

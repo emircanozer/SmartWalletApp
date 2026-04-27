@@ -68,7 +68,7 @@ extension InvestmentTradeConfirmationContentView {
 
  extension InvestmentTradeConfirmationContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
 
@@ -81,7 +81,7 @@ extension InvestmentTradeConfirmationContentView {
         subtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
         subtitleLabel.textColor = AppColor.secondaryText
 
-        cardView.backgroundColor = .white
+        cardView.backgroundColor = AppColor.whitePrimary
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.06
         cardView.layer.shadowRadius = 18

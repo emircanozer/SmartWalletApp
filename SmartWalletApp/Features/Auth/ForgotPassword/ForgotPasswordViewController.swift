@@ -60,10 +60,10 @@ class ForgotPasswordViewController: UIViewController {
 
 extension ForgotPasswordViewController {
     func configureView() {
-        view.backgroundColor = .white
+        view.backgroundColor = AppColor.appBackground
         navigationController?.setNavigationBarHidden(true, animated: false)
 
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = AppColor.appBackground
 
         headerStack.axis = .horizontal
         headerStack.alignment = .center

@@ -61,13 +61,13 @@ extension ResetPasswordContentView {
 
 extension ResetPasswordContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
         scrollView.keyboardDismissMode = .onDrag
 
-        contentContainer.backgroundColor = .white
+        contentContainer.backgroundColor = AppColor.appBackground
 
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         backButton.tintColor = AppColor.navigationTint

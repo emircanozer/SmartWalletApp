@@ -48,10 +48,10 @@ extension DashboardTransactionCell {
     }
 
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = .clear
         selectionStyle = .none
 
-        cardView.backgroundColor = .white
+        cardView.backgroundColor = AppColor.whitePrimary
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.06
         cardView.layer.shadowRadius = 16
@@ -71,8 +71,8 @@ extension DashboardTransactionCell {
         dateLabel.textColor = AppColor.quietText
 
         badgeLabel.font = .systemFont(ofSize: 12, weight: .bold)
-        badgeLabel.textColor = AppColor.mutedText
-        badgeLabel.backgroundColor = AppColor.divider
+        badgeLabel.textColor = AppColor.secondaryText
+        badgeLabel.backgroundColor = AppColor.surfaceMuted
         badgeLabel.clipsToBounds = true
 
         amountLabel.font = .systemFont(ofSize: 20, weight: .bold)

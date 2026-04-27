@@ -13,7 +13,7 @@ class WelcomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(true, animated: false)
-        navigationController?.view.backgroundColor = .white
+        navigationController?.view.backgroundColor = AppColor.appBackground
         bindActions()
     }
 

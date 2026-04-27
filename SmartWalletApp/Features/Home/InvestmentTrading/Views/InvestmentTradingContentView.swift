@@ -71,7 +71,13 @@ extension InvestmentTradingContentView {
 
         amountTextField.text = data.amountText
         amountTitleLabel.text = data.amountTitleText
-        amountTextField.placeholder = data.amountPlaceholderText
+        amountTextField.attributedPlaceholder = NSAttributedString(
+            string: data.amountPlaceholderText,
+            attributes: [
+                .foregroundColor: AppColor.placeholderText,
+                .font: UIFont.systemFont(ofSize: 38, weight: .bold)
+            ]
+        )
         amountUnitButton.setTitle(data.amountUnitText, for: .normal)
 
         quickAmountChipsView.configure(with: data.quickAmountItems)
@@ -122,7 +128,7 @@ extension InvestmentTradingContentView {
 
  extension InvestmentTradingContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
@@ -143,7 +149,7 @@ extension InvestmentTradingContentView {
         subtitleLabel.numberOfLines = 2
 
         [priceCard, amountCard, summaryCard].forEach {
-            $0.backgroundColor = .white
+            $0.backgroundColor = AppColor.whitePrimary
             $0.layer.shadowColor = UIColor.black.cgColor
             $0.layer.shadowOpacity = 0.06
             $0.layer.shadowRadius = 18
@@ -157,6 +163,8 @@ extension InvestmentTradingContentView {
         amountTextField.font = .systemFont(ofSize: 38, weight: .bold)
         amountTextField.textColor = AppColor.primaryText
         amountTextField.keyboardType = .decimalPad
+        amountTextField.keyboardAppearance = .default
+        amountTextField.tintColor = AppColor.primaryYellow
         amountTextField.borderStyle = .none
 
         var amountUnitConfiguration = UIButton.Configuration.plain()

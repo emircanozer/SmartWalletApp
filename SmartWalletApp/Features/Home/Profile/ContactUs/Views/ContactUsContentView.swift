@@ -95,7 +95,7 @@ extension ContactUsContentView {
         subtitleLabel.textColor = AppColor.secondaryText
         subtitleLabel.numberOfLines = 2
 
-        formCardView.backgroundColor = .white
+        formCardView.backgroundColor = AppColor.whitePrimary
         formCardView.layer.shadowColor = UIColor.black.cgColor
         formCardView.layer.shadowOpacity = 0.04
         formCardView.layer.shadowRadius = 16
@@ -110,13 +110,14 @@ extension ContactUsContentView {
             $0.textColor = AppColor.fieldTitleText
         }
 
-        messageContainerView.backgroundColor = .white
+        messageContainerView.backgroundColor = AppColor.whitePrimary
         messageContainerView.layer.borderWidth = 1
         messageContainerView.layer.borderColor = AppColor.borderSoft.cgColor
 
         messageTextView.backgroundColor = .clear
         messageTextView.font = .systemFont(ofSize: 16, weight: .medium)
         messageTextView.textColor = AppColor.inputText
+        messageTextView.keyboardAppearance = .default
         messageTextView.textContainerInset = UIEdgeInsets(top: 14, left: 10, bottom: 14, right: 10)
         messageTextView.autocapitalizationType = .sentences
         messageTextView.autocorrectionType = .yes

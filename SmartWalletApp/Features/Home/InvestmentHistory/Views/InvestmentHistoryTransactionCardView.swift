@@ -39,7 +39,7 @@ extension InvestmentHistoryTransactionCardView {
 
 extension InvestmentHistoryTransactionCardView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.whitePrimary
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.05
         layer.shadowRadius = 18

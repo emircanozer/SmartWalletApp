@@ -34,7 +34,7 @@ class TransactionsListContentView: UIView {
 
 extension TransactionsListContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
@@ -73,7 +73,7 @@ extension TransactionsListContentView {
 
         emptyStateView.isHidden = true
 
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.rowHeight = 122

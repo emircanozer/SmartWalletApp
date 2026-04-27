@@ -30,7 +30,7 @@ extension InvestmentTradingAssetChipsView {
             let button = UIButton(type: .system)
             var configuration = UIButton.Configuration.filled()
             configuration.title = item.title
-            configuration.baseBackgroundColor = item.isSelected ? AppColor.primaryYellow : .white
+            configuration.baseBackgroundColor = item.isSelected ? AppColor.primaryYellow : AppColor.whitePrimary
             configuration.baseForegroundColor = item.isSelected ? AppColor.primaryText : AppColor.secondaryText
             configuration.cornerStyle = .capsule
             configuration.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 18, bottom: 10, trailing: 18)

@@ -81,7 +81,7 @@ extension ContactUsSuccessContentView {
         bodyLabel.numberOfLines = 0
         bodyLabel.setLineSpacing(6)
 
-        infoCardView.backgroundColor = .white
+        infoCardView.backgroundColor = AppColor.whitePrimary
         infoCardView.layer.shadowColor = UIColor.black.cgColor
         infoCardView.layer.shadowOpacity = 0.04
         infoCardView.layer.shadowRadius = 18

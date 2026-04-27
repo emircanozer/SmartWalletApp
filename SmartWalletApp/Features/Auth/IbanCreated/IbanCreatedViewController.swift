@@ -57,7 +57,7 @@ extension IbanCreatedViewController {
 
         contentView.backgroundColor = .clear
 
-        cardView.backgroundColor = .white
+        cardView.backgroundColor = AppColor.whitePrimary
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.06
         cardView.layer.shadowRadius = 24

@@ -96,7 +96,7 @@ extension TransferReceiptsContentView {
         filterCardView.backgroundColor = AppColor.surfaceMuted
 
         [searchContainerView, dateFilterContainerView, typeFilterContainerView].forEach {
-            $0.backgroundColor = .white
+            $0.backgroundColor = AppColor.whitePrimary
         }
 
         searchIconView.image = UIImage(systemName: "magnifyingglass")
@@ -105,6 +105,7 @@ extension TransferReceiptsContentView {
         searchField.borderStyle = .none
         searchField.font = .systemFont(ofSize: 16, weight: .medium)
         searchField.textColor = AppColor.inputText
+        searchField.keyboardAppearance = .default
         searchField.clearButtonMode = .whileEditing
 
         dateFilterIconView.image = UIImage(systemName: "calendar")

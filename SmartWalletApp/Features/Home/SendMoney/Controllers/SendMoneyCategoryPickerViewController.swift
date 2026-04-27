@@ -29,13 +29,13 @@ final class SendMoneyCategoryPickerViewController: UIViewController {
 
  extension SendMoneyCategoryPickerViewController {
     func configureView() {
-        view.backgroundColor = .white
+        view.backgroundColor = AppColor.appBackground
 
         titleLabel.font = .systemFont(ofSize: 18, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
         titleLabel.text = "Kategori Seç"
 
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = AppColor.appBackground
         tableView.tintColor = AppColor.primaryText
         tableView.separatorStyle = .none
         tableView.rowHeight = 84
@@ -129,7 +129,7 @@ private final class SendMoneyCategoryCell: UITableViewCell {
         subtitleLabel.text = category.subtitle
         checkmarkView.isHidden = !isSelected
         containerView.layer.borderColor = (isSelected ? AppColor.primaryYellow : AppColor.borderSoft).cgColor
-        containerView.backgroundColor = isSelected ? AppColor.surfaceWarm : .white
+        containerView.backgroundColor = isSelected ? AppColor.surfaceWarm : AppColor.whitePrimary
     }
 }
 
@@ -138,9 +138,9 @@ private final class SendMoneyCategoryCell: UITableViewCell {
         backgroundColor = .clear
         selectionStyle = .none
 
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .clear
 
-        containerView.backgroundColor = .white
+        containerView.backgroundColor = AppColor.whitePrimary
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = AppColor.borderSoft.cgColor
 

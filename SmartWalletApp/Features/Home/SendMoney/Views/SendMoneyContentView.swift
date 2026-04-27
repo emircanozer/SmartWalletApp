@@ -32,11 +32,9 @@ final class SendMoneyContentView: UIView {
     private let noteSectionLabel = UILabel()
     private let noteContainer = UIView()
     private let notePlaceholderLabel = UILabel()
-    private let recipientsEmptyStateView = EmptyStateView()
 
     private var amountChipButtons: [SendMoneyAmountChipButton] = []
     private var recipientsTableHeightConstraint: NSLayoutConstraint?
-    private var recipientsEmptyStateHeightConstraint: NSLayoutConstraint?
     private var lookupHeightConstraint: NSLayoutConstraint?
     private(set) var currentRecipients: [SendMoneyRecipient] = []
     private(set) var currentSelectedRecipientID: String?
@@ -77,11 +75,13 @@ extension SendMoneyContentView {
     }
 
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
         scrollView.keyboardDismissMode = .onDrag
+
+        containerView.backgroundColor = AppColor.appBackground
 
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
@@ -113,6 +113,7 @@ extension SendMoneyContentView {
         amountTextField.font = .systemFont(ofSize: 36, weight: .bold)
         amountTextField.textColor = .white
         amountTextField.keyboardType = .decimalPad
+        amountTextField.keyboardAppearance = .default
         amountTextField.textAlignment = .left
 
         amountErrorLabel.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -136,7 +137,6 @@ extension SendMoneyContentView {
         recipientsTableView.rowHeight = 82
         recipientsTableView.estimatedRowHeight = 82
         recipientsTableView.register(SendMoneyRecipientCell.self, forCellReuseIdentifier: SendMoneyRecipientCell.reuseIdentifier)
-        recipientsEmptyStateView.isHidden = true
 
         ibanSectionLabel.font = .systemFont(ofSize: 16, weight: .bold)
         ibanSectionLabel.textColor = AppColor.primaryText
@@ -153,6 +153,7 @@ extension SendMoneyContentView {
         ibanTextField.textColor = AppColor.inputText
         ibanTextField.autocapitalizationType = .allCharacters
         ibanTextField.autocorrectionType = .no
+        ibanTextField.keyboardAppearance = .default
 
         categorySectionLabel.font = .systemFont(ofSize: 18, weight: .bold)
         categorySectionLabel.textColor = AppColor.primaryText
@@ -179,6 +180,7 @@ extension SendMoneyContentView {
         noteTextView.font = .systemFont(ofSize: 15, weight: .medium)
         noteTextView.textColor = AppColor.inputText
         noteTextView.backgroundColor = .clear
+        noteTextView.keyboardAppearance = .default
 
         notePlaceholderLabel.font = .systemFont(ofSize: 15, weight: .medium)
         notePlaceholderLabel.textColor = AppColor.notePlaceholder
@@ -213,7 +215,6 @@ extension SendMoneyContentView {
             containerView.addSubview($0)
         }
 
-        recipientsContainerView.addSubview(recipientsEmptyStateView)
         recipientsContainerView.addSubview(recipientsTableView)
 
         amountCard.addSubview(amountTitleLabel)
@@ -249,7 +250,6 @@ extension SendMoneyContentView {
             amountChipsStack,
             recipientsTitleLabel,
             recipientsContainerView,
-            recipientsEmptyStateView,
             recipientsTableView,
             ibanSectionLabel,
             ibanFieldContainer,
@@ -329,11 +329,6 @@ extension SendMoneyContentView {
             recipientsContainerView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             recipientsContainerView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            recipientsEmptyStateView.topAnchor.constraint(equalTo: recipientsContainerView.topAnchor),
-            recipientsEmptyStateView.leadingAnchor.constraint(equalTo: recipientsContainerView.leadingAnchor),
-            recipientsEmptyStateView.trailingAnchor.constraint(equalTo: recipientsContainerView.trailingAnchor),
-            recipientsEmptyStateView.bottomAnchor.constraint(equalTo: recipientsContainerView.bottomAnchor),
-
             recipientsTableView.topAnchor.constraint(equalTo: recipientsContainerView.topAnchor),
             recipientsTableView.leadingAnchor.constraint(equalTo: recipientsContainerView.leadingAnchor),
             recipientsTableView.trailingAnchor.constraint(equalTo: recipientsContainerView.trailingAnchor),
@@ -405,8 +400,6 @@ extension SendMoneyContentView {
         lookupHeightConstraint?.isActive = true
         recipientsTableHeightConstraint = recipientsTableView.heightAnchor.constraint(equalToConstant: 0)
         recipientsTableHeightConstraint?.isActive = true
-        recipientsEmptyStateHeightConstraint = recipientsEmptyStateView.heightAnchor.constraint(equalToConstant: 0)
-        recipientsEmptyStateHeightConstraint?.isActive = true
     }
 
     func applyContent() {
@@ -417,7 +410,13 @@ extension SendMoneyContentView {
         amountTitleLabel.text = "TUTAR"
         recipientsTitleLabel.text = "Alıcı Seç"
         ibanSectionLabel.text = "Yeni Kullanıcı / IBAN"
-        ibanTextField.placeholder = "TR..."
+        ibanTextField.attributedPlaceholder = NSAttributedString(
+            string: "TR...",
+            attributes: [
+                .foregroundColor: AppColor.placeholderText,
+                .font: UIFont.systemFont(ofSize: 15, weight: .semibold)
+            ]
+        )
         categorySectionLabel.text = "Kategori"
         categoryButton.setTitle("Kategori Seç", for: .normal)
         noteSectionLabel.text = "İşlem Notu"
@@ -457,17 +456,6 @@ extension SendMoneyContentView {
         currentSelectedRecipientID = selectedRecipientID
         recipientsTableHeightConstraint?.constant = recipients.isEmpty ? 0 : CGFloat(recipients.count) * 82
         recipientsTableView.isHidden = recipients.isEmpty
-        recipientsEmptyStateView.isHidden = !recipients.isEmpty
-        if recipients.isEmpty {
-            recipientsEmptyStateHeightConstraint?.isActive = false
-            recipientsEmptyStateView.configure(
-                title: "Henüz kayıtlı alıcınız yok",
-                message: "IBAN girerek yeni bir alıcı seçebilir ve para transferi başlatabilirsiniz.",
-                systemImageName: "person.crop.circle.badge.plus"
-            )
-        } else {
-            recipientsEmptyStateHeightConstraint?.isActive = true
-        }
         recipientsTableView.reloadData()
         setNeedsLayout()
         layoutIfNeeded()

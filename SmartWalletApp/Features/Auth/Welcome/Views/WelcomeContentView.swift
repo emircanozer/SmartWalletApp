@@ -69,13 +69,13 @@ class WelcomeContentView: UIView {
 
 extension WelcomeContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = AppColor.appBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
 
-        contentContainer.backgroundColor = .white
+        contentContainer.backgroundColor = AppColor.appBackground
 
         headerStack.axis = .horizontal
         headerStack.alignment = .center
@@ -105,7 +105,7 @@ extension WelcomeContentView {
         avatarOrbitView.layer.borderWidth = 1
         avatarOrbitView.layer.borderColor = AppColor.borderWarm.cgColor
 
-        avatarCircleView.backgroundColor = .white
+        avatarCircleView.backgroundColor = AppColor.whitePrimary
         avatarCircleView.layer.borderWidth = 5
         avatarCircleView.layer.borderColor = AppColor.accentYellow.cgColor
 
@@ -135,7 +135,7 @@ extension WelcomeContentView {
         primaryButton.layer.shadowRadius = 18
         primaryButton.layer.shadowOffset = CGSize(width: 0, height: 10)
 
-        secondaryButton.backgroundColor = .white
+        secondaryButton.backgroundColor = AppColor.whitePrimary
         secondaryButton.setTitleColor(AppColor.accentYellow, for: .normal)
         secondaryButton.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
         secondaryButton.layer.borderWidth = 1
@@ -144,7 +144,7 @@ extension WelcomeContentView {
         tertiaryButton.setTitleColor(AppColor.bodyText, for: .normal)
         tertiaryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
 
-        bottomBar.backgroundColor = .white
+        bottomBar.backgroundColor = AppColor.whitePrimary
         bottomBar.layer.shadowColor = UIColor.black.cgColor
         bottomBar.layer.shadowOpacity = 0.08
         bottomBar.layer.shadowRadius = 24

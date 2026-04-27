@@ -37,8 +37,8 @@ class VerificationCodeContentView: UIView {
 
 extension VerificationCodeContentView {
     func configureView() {
-        backgroundColor = .white
-        contentContainer.backgroundColor = .white
+        backgroundColor = AppColor.appBackground
+        contentContainer.backgroundColor = AppColor.appBackground
 
         logoImageView.image = UIImage(named: "logo")
         logoImageView.contentMode = .scaleAspectFit

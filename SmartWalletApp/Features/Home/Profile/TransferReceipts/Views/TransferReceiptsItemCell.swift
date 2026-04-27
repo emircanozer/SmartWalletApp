@@ -49,7 +49,7 @@ extension TransferReceiptsItemCell {
         backgroundColor = .clear
         selectionStyle = .none
 
-        cardView.backgroundColor = .white
+        cardView.backgroundColor = AppColor.whitePrimary
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.05
         cardView.layer.shadowRadius = 16

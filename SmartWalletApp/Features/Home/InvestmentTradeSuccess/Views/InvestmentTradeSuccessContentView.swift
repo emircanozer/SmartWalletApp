@@ -67,7 +67,7 @@ extension InvestmentTradeSuccessContentView {
 
  extension InvestmentTradeSuccessContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
 
@@ -91,7 +91,7 @@ extension InvestmentTradeSuccessContentView {
         subtitleLabel.textAlignment = .center
         subtitleLabel.numberOfLines = 0
 
-        detailCard.backgroundColor = .white
+        detailCard.backgroundColor = AppColor.whitePrimary
         detailCard.layer.shadowColor = UIColor.black.cgColor
         detailCard.layer.shadowOpacity = 0.05
         detailCard.layer.shadowRadius = 18
@@ -122,7 +122,7 @@ extension InvestmentTradeSuccessContentView {
         balanceValueLabel.textColor = AppColor.primaryText
         balanceValueLabel.textAlignment = .right
 
-        statusPillView.backgroundColor = .white
+        statusPillView.backgroundColor = AppColor.whitePrimary
         statusPillView.layer.borderWidth = 1
         statusPillView.layer.borderColor = AppColor.borderSoft.cgColor
 
@@ -143,7 +143,7 @@ extension InvestmentTradeSuccessContentView {
         primaryButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
 
         var secondaryConfiguration = UIButton.Configuration.filled()
-        secondaryConfiguration.baseBackgroundColor = .white
+        secondaryConfiguration.baseBackgroundColor = AppColor.whitePrimary
         secondaryConfiguration.baseForegroundColor = AppColor.primaryText
         secondaryConfiguration.cornerStyle = .capsule
         secondaryConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 17, leading: 24, bottom: 17, trailing: 24)

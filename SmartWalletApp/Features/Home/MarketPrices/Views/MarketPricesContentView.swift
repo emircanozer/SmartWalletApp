@@ -80,7 +80,7 @@ extension MarketPricesContentView {
         headerSubtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
         headerSubtitleLabel.textColor = AppColor.secondaryText
 
-        tableCard.backgroundColor = .white
+        tableCard.backgroundColor = AppColor.whitePrimary
         tableCard.layer.shadowColor = UIColor.black.cgColor
         tableCard.layer.shadowOpacity = 0.06
         tableCard.layer.shadowRadius = 18

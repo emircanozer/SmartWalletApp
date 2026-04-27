@@ -79,7 +79,7 @@ extension TransferReceiptContentView {
 
  extension TransferReceiptContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
 
@@ -99,7 +99,7 @@ extension TransferReceiptContentView {
         subtitleLabel.textColor = AppColor.receiptSubtitle
         subtitleLabel.textAlignment = .center
 
-        detailCard.backgroundColor = .white
+        detailCard.backgroundColor = AppColor.whitePrimary
         detailCard.layer.shadowColor = UIColor.black.cgColor
         detailCard.layer.shadowOpacity = 0.06
         detailCard.layer.shadowRadius = 22

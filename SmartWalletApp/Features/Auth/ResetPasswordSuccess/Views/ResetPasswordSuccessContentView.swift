@@ -46,7 +46,7 @@ extension ResetPasswordSuccessContentView {
 
  extension ResetPasswordSuccessContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         backButton.tintColor = AppColor.navigationTint

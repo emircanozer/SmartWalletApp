@@ -110,7 +110,7 @@ extension UpdateEmailContentView {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.setLineSpacing(5)
 
-        currentEmailCardView.backgroundColor = .white
+        currentEmailCardView.backgroundColor = AppColor.whitePrimary
         currentEmailCardView.layer.shadowColor = UIColor.black.cgColor
         currentEmailCardView.layer.shadowOpacity = 0.04
         currentEmailCardView.layer.shadowRadius = 16

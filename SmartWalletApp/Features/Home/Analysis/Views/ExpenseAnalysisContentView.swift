@@ -90,12 +90,12 @@ extension ExpenseAnalysisContentView {
 
  extension ExpenseAnalysisContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
 
-        contentContainer.backgroundColor = .white
+        contentContainer.backgroundColor = AppColor.appBackground
 
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         backButton.tintColor = AppColor.navigationTint
@@ -103,7 +103,7 @@ extension ExpenseAnalysisContentView {
         headerTitleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         headerTitleLabel.textColor = AppColor.primaryText
 
-        notificationButton.backgroundColor = .white
+        notificationButton.backgroundColor = AppColor.whitePrimary
         notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
         notificationButton.tintColor = AppColor.warmActionText
         notificationButton.layer.borderWidth = 1
@@ -113,7 +113,7 @@ extension ExpenseAnalysisContentView {
         summaryGrid.spacing = 12
         summaryGrid.distribution = .fillEqually
 
-        chartCard.backgroundColor = .white
+        chartCard.backgroundColor = AppColor.whitePrimary
         chartCard.layer.shadowColor = UIColor.black.cgColor
         chartCard.layer.shadowOpacity = 0.05
         chartCard.layer.shadowRadius = 18
@@ -123,7 +123,7 @@ extension ExpenseAnalysisContentView {
         pieChartView.rotationEnabled = false
         pieChartView.holeRadiusPercent = 0.72
         pieChartView.transparentCircleRadiusPercent = 0.75
-        pieChartView.holeColor = .white
+        pieChartView.holeColor = AppColor.whitePrimary
         pieChartView.drawEntryLabelsEnabled = false
         pieChartView.usePercentValuesEnabled = false
         pieChartView.highlightPerTapEnabled = false
@@ -136,7 +136,7 @@ extension ExpenseAnalysisContentView {
         chartCenterValueLabel.textColor = AppColor.primaryText
         chartCenterValueLabel.textAlignment = .center
 
-        categoriesCard.backgroundColor = .white
+        categoriesCard.backgroundColor = AppColor.whitePrimary
         categoriesCard.layer.shadowColor = UIColor.black.cgColor
         categoriesCard.layer.shadowOpacity = 0.05
         categoriesCard.layer.shadowRadius = 18
@@ -367,7 +367,7 @@ private final class SummaryCardView: UIView {
     }
 
     private func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.whitePrimary
         layer.borderWidth = 1
         layer.borderColor = AppColor.borderSoft.cgColor
 

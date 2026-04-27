@@ -43,8 +43,8 @@ extension ForgotPasswordCodeContentView {
 
  extension ForgotPasswordCodeContentView {
     func configureView() {
-        backgroundColor = .white
-        contentContainer.backgroundColor = .white
+        backgroundColor = AppColor.appBackground
+        contentContainer.backgroundColor = AppColor.appBackground
 
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         backButton.tintColor = AppColor.navigationTint

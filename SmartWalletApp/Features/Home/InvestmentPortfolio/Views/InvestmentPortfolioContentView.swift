@@ -104,7 +104,7 @@ extension InvestmentPortfolioContentView {
     }
 
     private func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
@@ -115,7 +115,7 @@ extension InvestmentPortfolioContentView {
         headerTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
         headerTitleLabel.textColor = AppColor.accentOlive
 
-        notificationButton.backgroundColor = .white
+        notificationButton.backgroundColor = AppColor.whitePrimary
         notificationButton.tintColor = AppColor.accentOlive
         notificationButton.layer.borderWidth = 1
         notificationButton.layer.borderColor = AppColor.borderSoft.cgColor
@@ -153,7 +153,7 @@ extension InvestmentPortfolioContentView {
         assetsTitleLabel.font = .systemFont(ofSize: 28, weight: .bold)
         assetsTitleLabel.textColor = AppColor.primaryText
 
-        assetsCard.backgroundColor = .white
+        assetsCard.backgroundColor = AppColor.whitePrimary
         assetsCard.layer.shadowColor = UIColor.black.cgColor
         assetsCard.layer.shadowOpacity = 0.06
         assetsCard.layer.shadowRadius = 18

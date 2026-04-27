@@ -43,14 +43,14 @@ extension MarketPriceRowView {
         sellPriceLabel.text = item.sellPriceText
         changeLabel.text = item.dailyChangeText
         changeLabel.textColor = item.isPositiveChange ? AppColor.successStrong : AppColor.dangerStrong
-        changeBadgeView.backgroundColor = item.isPositiveChange ? AppColor.successSurface : UIColor(red: 1.0, green: 0.95, blue: 0.94, alpha: 1.0)
+        changeBadgeView.backgroundColor = item.isPositiveChange ? AppColor.successSurface : AppColor.dangerSurface
         separatorView.isHidden = !showsSeparator
     }
 }
 
 extension MarketPriceRowView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = .clear
 
         assetStack.axis = .vertical
         assetStack.spacing = 4

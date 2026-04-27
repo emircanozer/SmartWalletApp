@@ -5,7 +5,7 @@ final class ProfileViewModel {
 
     private let authService: AuthService
     private let tokenStore: TokenStore
-    private var isDarkModeEnabled: Bool
+    private(set) var isDarkModeEnabled: Bool
 
     init(authService: AuthService, tokenStore: TokenStore, isDarkModeEnabled: Bool = false) {
         self.authService = authService
@@ -29,6 +29,7 @@ final class ProfileViewModel {
     @MainActor
     func updateDarkMode(_ isEnabled: Bool) {
         isDarkModeEnabled = isEnabled
+        ThemePreferenceStore.shared.setDarkModeEnabled(isEnabled)
         onStateChange?(.idle)
     }
 

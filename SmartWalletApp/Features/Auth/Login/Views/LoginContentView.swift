@@ -59,11 +59,11 @@ class LoginContentView: UIView {
 
 extension LoginContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
         scrollView.keyboardDismissMode = .interactive
-        contentContainer.backgroundColor = .white
+        contentContainer.backgroundColor = AppColor.appBackground
 
         headerStack.axis = .horizontal
         headerStack.alignment = .center
@@ -95,7 +95,7 @@ extension LoginContentView {
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         subtitleLabel.numberOfLines = 0
 
-        cardView.backgroundColor = .white
+        cardView.backgroundColor = AppColor.whitePrimary
         cardView.layer.borderWidth = 1
         cardView.layer.borderColor = AppColor.borderWarm.cgColor
         cardView.layer.shadowColor = UIColor.black.cgColor

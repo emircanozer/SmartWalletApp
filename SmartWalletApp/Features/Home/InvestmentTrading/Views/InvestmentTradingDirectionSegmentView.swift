@@ -75,7 +75,7 @@ extension InvestmentTradingDirectionSegmentView {
         configuration.baseForegroundColor = isSelected ? AppColor.accentOlive : AppColor.secondaryText
         button.configuration = configuration
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: isSelected ? .bold : .semibold)
-        button.backgroundColor = isSelected ? .white : .clear
+        button.backgroundColor = isSelected ? AppColor.whitePrimary : .clear
     }
 
     @objc func handleBuyTap() {

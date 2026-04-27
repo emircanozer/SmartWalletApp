@@ -104,7 +104,7 @@ class AuthInputFieldView: UIView {
         topActionButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
         topActionButton.isHidden = topActionButton.title(for: .normal) == nil
 
-        containerView.backgroundColor = .white
+        containerView.backgroundColor = AppColor.whitePrimary
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = AppColor.borderSoft.cgColor
         containerView.layer.cornerRadius = 12
@@ -120,6 +120,8 @@ class AuthInputFieldView: UIView {
         textField.borderStyle = .none
         textField.font = .systemFont(ofSize: 16, weight: .medium)
         textField.textColor = AppColor.inputText
+        textField.backgroundColor = .clear
+        textField.keyboardAppearance = .default
         textField.isSecureTextEntry = isSecure
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no

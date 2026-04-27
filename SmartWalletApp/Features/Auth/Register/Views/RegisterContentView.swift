@@ -75,13 +75,13 @@ class RegisterContentView: UIView {
 
 extension RegisterContentView {
     func configureView() {
-        backgroundColor = .white
+        backgroundColor = AppColor.appBackground
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
         scrollView.keyboardDismissMode = .interactive
 
-        contentContainer.backgroundColor = .white
+        contentContainer.backgroundColor = AppColor.appBackground
 
         iconView.image = UIImage(named: "logo")
         iconView.contentMode = .scaleAspectFit

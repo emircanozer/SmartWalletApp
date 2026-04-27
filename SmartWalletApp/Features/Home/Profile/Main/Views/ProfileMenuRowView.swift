@@ -33,7 +33,7 @@ extension ProfileMenuRowView {
         titleLabel.textColor = item.isDestructive ? AppColor.dangerStrong : AppColor.primaryText
         iconImageView.image = UIImage(systemName: item.iconName)
         iconImageView.tintColor = item.isDestructive ? AppColor.dangerStrong : AppColor.navigationTint
-        iconContainerView.backgroundColor = item.isDestructive ? UIColor(red: 1.0, green: 0.96, blue: 0.96, alpha: 1.0) : AppColor.surfaceMuted
+        iconContainerView.backgroundColor = item.isDestructive ? AppColor.dangerSurface : AppColor.surfaceMuted
         separatorView.isHidden = !showsSeparator
 
         switch item.accessory {

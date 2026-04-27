@@ -90,6 +90,7 @@ extension ProfileViewController {
     func applyDarkMode(_ isEnabled: Bool) {
         viewModel.updateDarkMode(isEnabled)
         view.window?.overrideUserInterfaceStyle = isEnabled ? .dark : .light
+        contentView.updateDarkModeButton(isEnabled: isEnabled)
     }
 
     func showAlert(message: String) {
@@ -122,7 +123,7 @@ extension ProfileViewController {
     }
 
     @objc func handleDarkModeTap() {
-        let willEnableDarkMode = view.traitCollection.userInterfaceStyle != .dark
+        let willEnableDarkMode = !viewModel.isDarkModeEnabled
         applyDarkMode(willEnableDarkMode)
     }
 
