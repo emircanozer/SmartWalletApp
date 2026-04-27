@@ -59,6 +59,12 @@ final class InvestmentHistoryViewController: UIViewController {
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
                 self.contentView.apply(data)
+            case .aiSummaryLoading:
+                self.contentView.setSummaryLoading(true)
+            case .aiSummaryLoaded(let data):
+                self.contentView.applySummary(data)
+            case .aiSummaryFailed(let message):
+                self.contentView.showSummaryFallback(message)
             case .failure(let message):
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()

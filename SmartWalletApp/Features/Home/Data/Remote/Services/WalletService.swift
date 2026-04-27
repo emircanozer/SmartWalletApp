@@ -65,6 +65,10 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.investmentHistory, as: PortfolioInvestmentHistoryResponse.self)
     }
 
+    func fetchPortfolioAISummary() async throws -> PortfolioAISummaryResponse {
+        try await apiClient.send(WalletEndpoint.portfolioAISummary, as: PortfolioAISummaryResponse.self)
+    }
+
     func buyPortfolioAsset(request: PortfolioTradeRequest) async throws -> PortfolioTradeResponse {
         let body = try encoder.encode(request)
         return try await apiClient.send(WalletEndpoint.portfolioBuy(body: body), as: PortfolioTradeResponse.self)
@@ -104,6 +108,7 @@ final class WalletService {
     case portfolioSummary
     case portfolioPrices
     case investmentHistory
+    case portfolioAISummary
     case portfolioBuy(body: Data)
     case portfolioSell(body: Data)
     case contacts(body: Data)
@@ -134,6 +139,8 @@ final class WalletService {
             return "/api/Portfolios/prices"
         case .investmentHistory:
             return "/api/Portfolios/investment-history"
+        case .portfolioAISummary:
+            return "/api/Portfolios/ai-summary"
         case .portfolioBuy:
             return "/api/Portfolios/buy"
         case .portfolioSell:

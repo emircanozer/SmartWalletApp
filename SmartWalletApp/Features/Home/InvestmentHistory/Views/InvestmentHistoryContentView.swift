@@ -17,6 +17,7 @@ final class InvestmentHistoryContentView: UIView {
     private let summaryTitleLabel = UILabel()
     private let summaryBodyLabel = UILabel()
     private let summaryIconView = UIImageView()
+    private let summaryLoadingIndicator = UIActivityIndicatorView(style: .medium)
     private let emptyStateView = EmptyStateView()
 
     override init(frame: CGRect) {
@@ -49,8 +50,6 @@ extension InvestmentHistoryContentView {
     func apply(_ data: InvestmentHistoryViewData) {
         titleLabel.text = data.titleText
         applyFilterSelection(data.selectedFilter)
-        summaryTitleLabel.text = data.monthlySummaryTitleText
-        summaryBodyLabel.text = data.monthlySummaryBodyText
 
         cardsStack.arrangedSubviews.forEach {
             cardsStack.removeArrangedSubview($0)
@@ -73,9 +72,30 @@ extension InvestmentHistoryContentView {
                 systemImageName: "clock.arrow.circlepath"
             )
         }
+    }
 
-        let hasSummary = !data.monthlySummaryBodyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        summaryCard.isHidden = !hasSummary
+    func setSummaryLoading(_ isLoading: Bool) {
+        summaryCard.isHidden = false
+        summaryTitleLabel.text = "Aylık Özet"
+        if isLoading {
+            summaryBodyLabel.isHidden = true
+            summaryLoadingIndicator.startAnimating()
+        } else {
+            summaryLoadingIndicator.stopAnimating()
+            summaryBodyLabel.isHidden = false
+        }
+    }
+
+    func applySummary(_ data: InvestmentHistorySummaryViewData) {
+        summaryTitleLabel.text = data.titleText
+        summaryBodyLabel.text = data.bodyText
+        setSummaryLoading(false)
+    }
+
+    func showSummaryFallback(_ message: String) {
+        summaryTitleLabel.text = "Aylık Özet"
+        summaryBodyLabel.text = message
+        setSummaryLoading(false)
     }
 }
 
@@ -125,12 +145,18 @@ extension InvestmentHistoryContentView {
         summaryBodyLabel.font = .systemFont(ofSize: 15, weight: .medium)
         summaryBodyLabel.textColor = AppColor.bodyText
         summaryBodyLabel.numberOfLines = 0
+        summaryBodyLabel.lineBreakMode = .byWordWrapping
+        summaryBodyLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        summaryBodyLabel.setContentHuggingPriority(.required, for: .vertical)
 
         summaryIconView.image = UIImage(systemName: "sparkles")
         summaryIconView.tintColor = AppColor.warmActionText
         summaryIconView.contentMode = .scaleAspectFit
 
+        summaryLoadingIndicator.color = AppColor.warmActionText
+
         emptyStateView.isHidden = true
+        summaryCard.isHidden = true
     }
 
     func buildHierarchy() {
@@ -139,7 +165,7 @@ extension InvestmentHistoryContentView {
 
         [backButton, titleLabel, filtersStackView, cardsStack, emptyStateView, summaryCard].forEach(contentContainer.addSubview)
         [allFilterButton, buyFilterButton, sellFilterButton].forEach(filtersStackView.addArrangedSubview)
-        [summaryHeaderRow, summaryBodyLabel].forEach(summaryCard.addSubview)
+        [summaryHeaderRow, summaryBodyLabel, summaryLoadingIndicator].forEach(summaryCard.addSubview)
         summaryHeaderRow.addArrangedSubview(summaryBadgeView)
         summaryHeaderRow.addArrangedSubview(summaryTitleLabel)
         summaryBadgeView.addSubview(summaryIconView)
@@ -159,7 +185,8 @@ extension InvestmentHistoryContentView {
             summaryBadgeView,
             summaryTitleLabel,
             summaryBodyLabel,
-            summaryIconView
+            summaryIconView,
+            summaryLoadingIndicator
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -213,6 +240,9 @@ extension InvestmentHistoryContentView {
             summaryIconView.centerYAnchor.constraint(equalTo: summaryBadgeView.centerYAnchor),
             summaryIconView.widthAnchor.constraint(equalToConstant: 16),
             summaryIconView.heightAnchor.constraint(equalToConstant: 16),
+
+            summaryLoadingIndicator.centerXAnchor.constraint(equalTo: summaryCard.centerXAnchor),
+            summaryLoadingIndicator.centerYAnchor.constraint(equalTo: summaryCard.centerYAnchor, constant: 10),
 
             summaryBodyLabel.topAnchor.constraint(equalTo: summaryHeaderRow.bottomAnchor, constant: 14),
             summaryBodyLabel.leadingAnchor.constraint(equalTo: summaryCard.leadingAnchor, constant: 20),

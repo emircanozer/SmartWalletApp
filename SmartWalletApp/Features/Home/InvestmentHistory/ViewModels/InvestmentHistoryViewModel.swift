@@ -1,5 +1,4 @@
 import Foundation
-import UIKit
 
 final class InvestmentHistoryViewModel {
     var onStateChange: ((InvestmentHistoryViewState) -> Void)?
@@ -19,7 +18,17 @@ final class InvestmentHistoryViewModel {
         do {
             let response = try await walletService.fetchInvestmentHistory()
             self.response = response
-            onStateChange?(.loaded(map(response)))
+            let viewData = InvestmentHistoryViewDataFactory.makeViewData(from: response, filter: selectedFilter)
+            onStateChange?(.loaded(viewData))
+
+            onStateChange?(.aiSummaryLoading)
+
+            do {
+                let summaryResponse = try await walletService.fetchPortfolioAISummary()
+                onStateChange?(.aiSummaryLoaded(InvestmentHistoryViewDataFactory.makeSummaryViewData(from: summaryResponse)))
+            } catch {
+                onStateChange?(.aiSummaryFailed("Yapay zeka özeti şu anda alınamıyor."))
+            }
         } catch {
             onStateChange?(.failure("İşlem geçmişi alınamadı. Lütfen tekrar deneyin."))
         }
@@ -28,12 +37,6 @@ final class InvestmentHistoryViewModel {
     func applyFilter(_ filter: InvestmentHistoryFilter) {
         selectedFilter = filter
         guard let response else { return }
-        onStateChange?(.loaded(map(response)))
-    }
-}
-
- extension InvestmentHistoryViewModel {
-    func map(_ response: PortfolioInvestmentHistoryResponse) -> InvestmentHistoryViewData {
-        InvestmentHistoryPresentationMapper.makeViewData(from: response, filter: selectedFilter)
+        onStateChange?(.loaded(InvestmentHistoryViewDataFactory.makeViewData(from: response, filter: selectedFilter)))
     }
 }

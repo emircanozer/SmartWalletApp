@@ -89,7 +89,27 @@ final class TransactionsListViewModel {
     }
 
     static func mapTransactions(_ transactions: [WalletTransactionResponse]) -> [DashboardTransaction] {
-        TransactionsPresentationMapper.mapTransactions(transactions)
+        transactions.map { transaction in
+            let category = TransactionCategory(backendValue: transaction.category)
+            let badgeTitle = category.badgeTitle(isIncome: transaction.isIncoming)
+            let amountPrefix = transaction.isIncoming ? "+" : "-"
+            let amountText = "\(amountPrefix)\(formatDisplayAmount(transaction.amount))"
+            let date = parseDate(transaction.transactionTime)
+            let trimmedDescription = transaction.description.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            return DashboardTransaction(
+                id: transaction.id,
+                title: category.title,
+                subtitle: trimmedDescription.isEmpty ? badgeTitle : trimmedDescription,
+                date: date,
+                dateText: formatDate(date),
+                categoryBadgeText: badgeTitle,
+                amount: transaction.amount,
+                amountText: amountText,
+                isIncome: transaction.isIncoming,
+                category: category
+            )
+        }
     }
 }
 
@@ -120,9 +140,57 @@ final class TransactionsListViewModel {
     }
 
     func makeViewData() -> TransactionsListViewData {
-        TransactionsPresentationMapper.makeViewData(
-            filteredTransactions: filteredTransactions,
-            selectedFilter: selectedFilter
+        let totalAmount = filteredTransactions.reduce(Decimal.zero) { partialResult, transaction in
+            partialResult + transaction.amount
+        }
+
+        let summaryTitle: String
+        let summaryIsPositive: Bool
+        let summaryShowsPrefix: Bool
+
+        switch selectedFilter {
+        case .all:
+            summaryTitle = "TOPLAM HAREKET"
+            summaryIsPositive = true
+            summaryShowsPrefix = false
+        case .income:
+            summaryTitle = "TOPLAM GELİR"
+            summaryIsPositive = true
+            summaryShowsPrefix = true
+        case .expense:
+            summaryTitle = "TOPLAM GİDER"
+            summaryIsPositive = false
+            summaryShowsPrefix = true
+        }
+
+        return TransactionsListViewData(
+            transactions: filteredTransactions,
+            selectedFilter: selectedFilter,
+            summaryTitle: summaryTitle,
+            summaryAmountText: formatAmount(
+                totalAmount,
+                isPositive: summaryIsPositive,
+                showsPrefix: summaryShowsPrefix
+            ),
+            summaryIsPositive: summaryIsPositive,
+            summaryShowsPrefix: summaryShowsPrefix
         )
+    }
+
+    func formatAmount(_ amount: Decimal, isPositive: Bool, showsPrefix: Bool) -> String {
+        let prefix = showsPrefix ? (isPositive ? "+" : "-") : ""
+        return AppNumberTextFormatter.prefixedLira(amount, prefix: prefix)
+    }
+
+    static func formatDisplayAmount(_ amount: Decimal) -> String {
+        AppNumberTextFormatter.prefixedLira(amount)
+    }
+
+    static func parseDate(_ rawValue: String) -> Date {
+        AppDateTextFormatter.parseServerDate(rawValue)
+    }
+
+    static func formatDate(_ date: Date) -> String {
+        AppDateTextFormatter.string(from: date, style: .transactionDateTime)
     }
 }

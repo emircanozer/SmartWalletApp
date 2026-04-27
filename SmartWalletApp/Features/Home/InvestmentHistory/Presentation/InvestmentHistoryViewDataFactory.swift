@@ -1,8 +1,11 @@
 import Foundation
 import UIKit
 
-enum InvestmentHistoryPresentationMapper {
-    static func makeViewData(from response: PortfolioInvestmentHistoryResponse, filter: InvestmentHistoryFilter) -> InvestmentHistoryViewData {
+enum InvestmentHistoryViewDataFactory {
+    static func makeViewData(
+        from response: PortfolioInvestmentHistoryResponse,
+        filter: InvestmentHistoryFilter
+    ) -> InvestmentHistoryViewData {
         let items = response.transactions.compactMap { transaction -> InvestmentHistoryTransactionItem? in
             let isBuy = transaction.transactionType.lowercased().contains("al")
 
@@ -32,9 +35,14 @@ enum InvestmentHistoryPresentationMapper {
             titleText: "İşlem Geçmişi",
             selectedFilter: filter,
             items: items,
-            monthlySummaryTitleText: "Aylık Özet",
-            monthlySummaryBodyText: response.monthlyAiSummary,
             emptyMessageText: items.isEmpty ? "Henüz yatırım işlemi bulunmuyor." : nil
+        )
+    }
+
+    static func makeSummaryViewData(from response: PortfolioAISummaryResponse) -> InvestmentHistorySummaryViewData {
+        InvestmentHistorySummaryViewData(
+            titleText: "Aylık Özet",
+            bodyText: response.summary
         )
     }
 

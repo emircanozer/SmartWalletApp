@@ -4,6 +4,9 @@ enum InvestmentHistoryViewState {
     case idle
     case loading
     case loaded(InvestmentHistoryViewData)
+    case aiSummaryLoading
+    case aiSummaryLoaded(InvestmentHistorySummaryViewData)
+    case aiSummaryFailed(String)
     case failure(String)
 }
 
@@ -38,7 +41,10 @@ struct InvestmentHistoryViewData {
     let titleText: String
     let selectedFilter: InvestmentHistoryFilter
     let items: [InvestmentHistoryTransactionItem]
-    let monthlySummaryTitleText: String
-    let monthlySummaryBodyText: String
     let emptyMessageText: String?
+}
+
+struct InvestmentHistorySummaryViewData {
+    let titleText: String
+    let bodyText: String
 }
