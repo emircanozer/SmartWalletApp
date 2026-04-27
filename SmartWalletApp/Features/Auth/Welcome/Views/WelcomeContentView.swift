@@ -102,12 +102,11 @@ extension WelcomeContentView {
         notificationButton.tintColor = AppColor.inputText
 
         avatarOrbitView.backgroundColor = AppColor.surfaceWarmSoft
-        avatarOrbitView.layer.borderWidth = 1
-        avatarOrbitView.layer.borderColor = AppColor.borderWarm.cgColor
+        avatarOrbitView.layer.borderWidth = 0.5
 
         avatarCircleView.backgroundColor = AppColor.whitePrimary
         avatarCircleView.layer.borderWidth = 5
-        avatarCircleView.layer.borderColor = AppColor.accentYellow.cgColor
+        avatarCircleView.layer.borderColor = AppColor.resolvedCGColor(AppColor.accentYellow, for: traitCollection)
 
         avatarIconView.image = UIImage(systemName: "person.crop.circle.fill")
         avatarIconView.tintColor = AppColor.accentYellow
@@ -139,7 +138,7 @@ extension WelcomeContentView {
         secondaryButton.setTitleColor(AppColor.accentYellow, for: .normal)
         secondaryButton.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
         secondaryButton.layer.borderWidth = 1
-        secondaryButton.layer.borderColor = AppColor.borderWarm.cgColor
+        secondaryButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         tertiaryButton.setTitleColor(AppColor.bodyText, for: .normal)
         tertiaryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -304,6 +303,9 @@ extension WelcomeContentView {
         bottomBar.layer.cornerRadius = 30
         avatarOrbitView.layer.cornerRadius = avatarOrbitView.bounds.width / 2
         avatarCircleView.layer.cornerRadius = avatarCircleView.bounds.width / 2
+        avatarOrbitView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
+        secondaryButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
+        avatarCircleView.layer.borderColor = AppColor.resolvedCGColor(AppColor.accentYellow, for: traitCollection)
     }
 }
 

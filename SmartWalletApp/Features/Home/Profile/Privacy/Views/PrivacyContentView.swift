@@ -41,7 +41,7 @@ extension PrivacyContentView {
     }
 }
 
-private extension PrivacyContentView {
+extension PrivacyContentView {
     func configureView() {
         backgroundColor = AppColor.appBackground
 
@@ -150,7 +150,7 @@ private final class PrivacySectionView: UIView {
     }
 }
 
-private extension PrivacySectionView {
+ extension PrivacySectionView {
     func configureView() {
         backgroundColor = .clear
 

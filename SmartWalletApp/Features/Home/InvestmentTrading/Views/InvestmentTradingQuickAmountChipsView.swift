@@ -35,7 +35,7 @@ extension InvestmentTradingQuickAmountChipsView {
             button.backgroundColor = AppColor.whitePrimary
             button.layer.cornerRadius = 14
             button.layer.borderWidth = 1
-            button.layer.borderColor = AppColor.borderSoft.cgColor
+            button.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
             button.accessibilityIdentifier = "\(item.value)"
             button.addAction(UIAction { [weak self] _ in
                 self?.onQuickAmountSelected?(item.value)

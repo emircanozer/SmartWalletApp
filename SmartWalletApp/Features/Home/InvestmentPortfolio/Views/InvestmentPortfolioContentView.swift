@@ -118,7 +118,7 @@ extension InvestmentPortfolioContentView {
         notificationButton.backgroundColor = AppColor.whitePrimary
         notificationButton.tintColor = AppColor.accentOlive
         notificationButton.layer.borderWidth = 1
-        notificationButton.layer.borderColor = AppColor.borderSoft.cgColor
+        notificationButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
         notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
 
         summaryCard.backgroundColor = AppColor.darkSurfaceAlt

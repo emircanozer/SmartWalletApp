@@ -112,7 +112,7 @@ extension ContactUsContentView {
 
         messageContainerView.backgroundColor = AppColor.whitePrimary
         messageContainerView.layer.borderWidth = 1
-        messageContainerView.layer.borderColor = AppColor.borderSoft.cgColor
+        messageContainerView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         messageTextView.backgroundColor = .clear
         messageTextView.font = .systemFont(ofSize: 16, weight: .medium)

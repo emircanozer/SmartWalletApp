@@ -143,7 +143,7 @@ extension SendMoneyContentView {
 
         ibanFieldContainer.backgroundColor = AppColor.surfacePanel
         ibanFieldContainer.layer.borderWidth = 1
-        ibanFieldContainer.layer.borderColor = AppColor.chipSurface.cgColor
+        ibanFieldContainer.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         ibanIconView.image = UIImage(systemName: "creditcard")
         ibanIconView.tintColor = AppColor.iconMuted
@@ -160,7 +160,7 @@ extension SendMoneyContentView {
 
         categoryFieldContainer.backgroundColor = AppColor.surfacePanel
         categoryFieldContainer.layer.borderWidth = 1
-        categoryFieldContainer.layer.borderColor = AppColor.chipSurface.cgColor
+        categoryFieldContainer.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         categoryButton.contentHorizontalAlignment = .left
         categoryButton.setTitleColor(AppColor.inputText, for: .normal)
@@ -175,7 +175,7 @@ extension SendMoneyContentView {
 
         noteContainer.backgroundColor = AppColor.surfacePanel
         noteContainer.layer.borderWidth = 1
-        noteContainer.layer.borderColor = AppColor.chipSurface.cgColor
+        noteContainer.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         noteTextView.font = .systemFont(ofSize: 15, weight: .medium)
         noteTextView.textColor = AppColor.inputText

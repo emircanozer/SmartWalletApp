@@ -20,6 +20,7 @@ final class ExpenseAnalysisContentView: UIView {
     private let aiCard = UIView()
     private let aiTitleLabel = UILabel()
     private let aiBodyLabel = UILabel()
+    private let aiLoadingIndicator = UIActivityIndicatorView(style: .medium)
     private let emptyStateView = EmptyStateView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     private var summaryCards: [SummaryCardView] = []
@@ -78,13 +79,35 @@ extension ExpenseAnalysisContentView {
             categoriesStack.addArrangedSubview(row)
         }
 
-        aiTitleLabel.text = data.aiInsightTitle
-        aiBodyLabel.text = data.aiInsightBody
+        aiTitleLabel.text = "YAPAY ZEKA ANALİZİ"
+        aiBodyLabel.text = "Yapay zeka tavsiyesi hazırlanıyor..."
         applyChart(slices: data.chartSlices)
     }
 
     func setLoading(_ isLoading: Bool) {
         isLoading ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
+    }
+
+    func setAIInsightLoading(_ isLoading: Bool) {
+        if isLoading {
+            aiBodyLabel.isHidden = true
+            aiLoadingIndicator.startAnimating()
+        } else {
+            aiLoadingIndicator.stopAnimating()
+            aiBodyLabel.isHidden = false
+        }
+    }
+
+    func applyAIInsight(_ data: ExpenseAnalysisAIInsightViewData) {
+        aiTitleLabel.text = data.titleText
+        aiBodyLabel.text = data.bodyText
+        setAIInsightLoading(false)
+    }
+
+    func showAIInsightFallback(_ message: String) {
+        aiTitleLabel.text = "YAPAY ZEKA ANALİZİ"
+        aiBodyLabel.text = message
+        setAIInsightLoading(false)
     }
 }
 
@@ -107,7 +130,7 @@ extension ExpenseAnalysisContentView {
         notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
         notificationButton.tintColor = AppColor.warmActionText
         notificationButton.layer.borderWidth = 1
-        notificationButton.layer.borderColor = AppColor.borderSoft.cgColor
+        notificationButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         summaryGrid.axis = .vertical
         summaryGrid.spacing = 12
@@ -154,7 +177,7 @@ extension ExpenseAnalysisContentView {
         categoriesStack.spacing = 18
 
         aiCard.backgroundColor = AppColor.surfaceWarm
-        aiCard.layer.borderColor = AppColor.borderWarm.cgColor
+        aiCard.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
         aiCard.layer.borderWidth = 1
 
         aiTitleLabel.font = .systemFont(ofSize: 13, weight: .bold)
@@ -163,6 +186,11 @@ extension ExpenseAnalysisContentView {
         aiBodyLabel.font = .systemFont(ofSize: 14, weight: .medium)
         aiBodyLabel.textColor = AppColor.primaryText
         aiBodyLabel.numberOfLines = 0
+        aiBodyLabel.lineBreakMode = .byWordWrapping
+        aiBodyLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        aiBodyLabel.setContentHuggingPriority(.required, for: .vertical)
+
+        aiLoadingIndicator.color = AppColor.warmActionText
 
         emptyStateView.isHidden = true
 
@@ -213,7 +241,7 @@ extension ExpenseAnalysisContentView {
 
         [pieChartView, chartCenterTitleLabel, chartCenterValueLabel].forEach(chartCard.addSubview)
         [categoriesTitleLabel, categoriesActionLabel, categoriesStack].forEach(categoriesCard.addSubview)
-        [aiTitleLabel, aiBodyLabel].forEach(aiCard.addSubview)
+        [aiTitleLabel, aiBodyLabel, aiLoadingIndicator].forEach(aiCard.addSubview)
     }
 
     func setupLayout() {
@@ -307,11 +335,15 @@ extension ExpenseAnalysisContentView {
             aiCard.topAnchor.constraint(equalTo: categoriesCard.bottomAnchor, constant: 18),
             aiCard.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
             aiCard.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
+            aiCard.heightAnchor.constraint(greaterThanOrEqualToConstant: 120),
             aiCard.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -24),
 
             aiTitleLabel.topAnchor.constraint(equalTo: aiCard.topAnchor, constant: 16),
             aiTitleLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 18),
             aiTitleLabel.trailingAnchor.constraint(equalTo: aiCard.trailingAnchor, constant: -18),
+
+            aiLoadingIndicator.centerXAnchor.constraint(equalTo: aiCard.centerXAnchor),
+            aiLoadingIndicator.centerYAnchor.constraint(equalTo: aiCard.centerYAnchor),
 
             aiBodyLabel.topAnchor.constraint(equalTo: aiTitleLabel.bottomAnchor, constant: 10),
             aiBodyLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 18),
@@ -369,7 +401,7 @@ private final class SummaryCardView: UIView {
     private func configureView() {
         backgroundColor = AppColor.whitePrimary
         layer.borderWidth = 1
-        layer.borderColor = AppColor.borderSoft.cgColor
+        layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         iconView.tintColor = AppColor.secondaryText
         iconView.contentMode = .scaleAspectFit

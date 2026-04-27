@@ -178,7 +178,7 @@ private class VerificationDigitView: UIView {
         if isFilled {
             backgroundColor = AppColor.whitePrimary
             layer.borderWidth = 2
-            layer.borderColor = AppColor.filledBorder.cgColor
+            layer.borderColor = AppColor.resolvedCGColor(AppColor.filledBorder, for: traitCollection)
         }
     }
 }

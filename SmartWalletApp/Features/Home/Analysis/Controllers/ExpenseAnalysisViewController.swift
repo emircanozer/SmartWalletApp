@@ -46,6 +46,12 @@ final class ExpenseAnalysisViewController: UIViewController {
             case .loaded(let data):
                 self.contentView.setLoading(false)
                 self.contentView.apply(data)
+            case .aiInsightLoading:
+                self.contentView.setAIInsightLoading(true)
+            case .aiInsightLoaded(let data):
+                self.contentView.applyAIInsight(data)
+            case .aiInsightFailed(let message):
+                self.contentView.showAIInsightFallback(message)
             }
         }
     }

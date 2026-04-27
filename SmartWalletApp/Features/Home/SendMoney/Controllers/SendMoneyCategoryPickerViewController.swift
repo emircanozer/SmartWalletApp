@@ -128,7 +128,7 @@ private final class SendMoneyCategoryCell: UITableViewCell {
         titleLabel.text = category.title
         subtitleLabel.text = category.subtitle
         checkmarkView.isHidden = !isSelected
-        containerView.layer.borderColor = (isSelected ? AppColor.primaryYellow : AppColor.borderSoft).cgColor
+        containerView.layer.borderColor = AppColor.resolvedCGColor(isSelected ? AppColor.primaryYellow : AppColor.borderSoft, for: traitCollection)
         containerView.backgroundColor = isSelected ? AppColor.surfaceWarm : AppColor.whitePrimary
     }
 }
@@ -142,7 +142,7 @@ private final class SendMoneyCategoryCell: UITableViewCell {
 
         containerView.backgroundColor = AppColor.whitePrimary
         containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = AppColor.borderSoft.cgColor
+        containerView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         titleLabel.textColor = AppColor.primaryText

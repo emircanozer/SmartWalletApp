@@ -107,7 +107,7 @@ extension InvestmentHistoryContentView {
 
         summaryCard.backgroundColor = AppColor.whitePrimary
         summaryCard.layer.borderWidth = 1
-        summaryCard.layer.borderColor = AppColor.borderWarm.cgColor
+        summaryCard.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
         summaryCard.layer.shadowColor = UIColor.black.cgColor
         summaryCard.layer.shadowOpacity = 0.04
         summaryCard.layer.shadowRadius = 16

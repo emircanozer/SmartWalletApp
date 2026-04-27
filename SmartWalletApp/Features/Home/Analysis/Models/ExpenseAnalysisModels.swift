@@ -27,12 +27,18 @@ struct ExpenseAnalysisViewData {
     let summaryItems: [ExpenseAnalysisSummaryItem]
     let chartSlices: [ExpenseAnalysisChartSlice]
     let categoryItems: [ExpenseAnalysisCategoryItem]
-    let aiInsightTitle: String
-    let aiInsightBody: String
+}
+
+struct ExpenseAnalysisAIInsightViewData {
+    let titleText: String
+    let bodyText: String
 }
 
 enum ExpenseAnalysisViewState {
     case idle
     case loading
     case loaded(ExpenseAnalysisViewData)
+    case aiInsightLoading
+    case aiInsightLoaded(ExpenseAnalysisAIInsightViewData)
+    case aiInsightFailed(String)
 }

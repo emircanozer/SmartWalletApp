@@ -100,7 +100,7 @@ extension RegisterContentView {
 
         checkboxButton.layer.cornerRadius = 6
         checkboxButton.layer.borderWidth = 1
-        checkboxButton.layer.borderColor = AppColor.filledBorder.cgColor
+        checkboxButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.filledBorder, for: traitCollection)
         checkboxButton.tintColor = AppColor.accentYellow
 
         termsLabel.numberOfLines = 0

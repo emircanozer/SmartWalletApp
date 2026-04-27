@@ -60,7 +60,7 @@ final class SendMoneyViewModel {
 
     func selectQuickAmount(_ amount: Decimal) {
         selectedAmount = amount
-        amountText = formatPlainAmount(amount)
+        amountText = SendMoneyPresentationMapper.plainAmount(amount)
         emitLoadedState()
     }
 
@@ -263,7 +263,7 @@ final class SendMoneyViewModel {
             SendMoneyRecipient(
                 id: recipient.iban,
                 name: recipient.contactName ?? recipient.fullName,
-                ownerMaskedName: maskName(recipient.fullName),
+                ownerMaskedName: SendMoneyPresentationMapper.maskName(recipient.fullName),
                 subtitle: "",
                 iban: recipient.iban,
                 isSaved: true
@@ -292,19 +292,18 @@ final class SendMoneyViewModel {
             ? "Bakiyenizden fazla tutar gönderemezsiniz."
             : nil
 
-        return SendMoneyViewData(
-            balanceText: formatCurrency(availableBalance),
-            amountText: amountText.isEmpty ? "" : amountText,
+        return SendMoneyPresentationMapper.makeViewData(
+            availableBalance: availableBalance,
+            amountText: amountText,
             selectedAmount: selectedAmount,
             quickAmounts: quickAmounts,
             recipients: recipients,
             selectedRecipientID: selectedRecipientID,
             enteredIBAN: enteredIBAN,
             lookupRecipient: lookupRecipient,
-            selectedCategoryTitle: selectedCategory?.title ?? "Kategori Seç",
             selectedCategory: selectedCategory,
             noteText: noteText,
-            amountErrorMessage: amountError,
+            amountError: amountError,
             canConfirm: canConfirmTransfer(amount: amount, amountError: amountError)
         )
     }
@@ -336,18 +335,6 @@ final class SendMoneyViewModel {
         return Decimal(string: normalized.replacingOccurrences(of: ",", with: ".")) ?? 0
     }
 
-    func formatCurrency(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.prefixedLira(
-            amount,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        )
-    }
-
-    func formatPlainAmount(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.inputDecimalTRY(amount, maximumFractionDigits: 2)
-    }
-
     func resetForm() {
         enteredIBAN = ""
         amountText = "100"
@@ -376,14 +363,6 @@ final class SendMoneyViewModel {
             lookupRecipient = nil
             emitLoadedState()
         }
-    }
-
-    func maskName(_ fullName: String) -> String {
-        let trimmed = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let first = trimmed.first else { return "" }
-        let suffix = trimmed.suffix(1)
-        let starCount = max(trimmed.count - 2, 5)
-        return "\(first)\(String(repeating: "*", count: starCount))\(suffix)"
     }
 
     func sanitizeAmountInput(_ rawValue: String) -> String {

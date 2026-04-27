@@ -28,7 +28,7 @@ final class PrivacyViewController: UIViewController {
     }
 }
 
-private extension PrivacyViewController {
+ extension PrivacyViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
     }

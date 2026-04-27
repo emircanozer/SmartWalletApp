@@ -38,68 +38,11 @@ final class DashboardViewModel {
 }
 
  extension DashboardViewModel {
-    //ham response'u  UI Model'e çevirme
     func makeViewData(wallet: MyWalletResponse, transactions: [WalletTransactionResponse]) -> DashboardViewData {
-        // her birini ui modeline çeviriyor
-        let mappedTransactions = transactions.map(mapTransaction)
-        let previewTransactions = Array(mappedTransactions.prefix(3)) // ilk 3
-
-        return DashboardViewData(
-            greetingText: "Merhaba \(formatDisplayName(wallet.fullName))",
-            ibanText: wallet.iban,
-            balanceText: formatBalance(wallet.balance),
-            currencyText: currencyText,
-            previewTransactions: previewTransactions,
-            allTransactions: mappedTransactions
+        DashboardPresentationMapper.makeViewData(
+            wallet: wallet,
+            transactions: transactions,
+            currencyText: currencyText
         )
-    }
-
-    //BACKENDEKİ ham modeli ui modele çevirdi çünkü ekranın veya cellin ham responsedan daha fazla bilgiye ihtiyacı var  ** önemli
-    func mapTransaction(_ transaction: WalletTransactionResponse) -> DashboardTransaction {
-        let category = TransactionCategory(backendValue: transaction.category)
-        let badgeTitle = category.badgeTitle(isIncome: transaction.isIncoming)
-        let amountPrefix = transaction.isIncoming ? "+" : "-"
-        let amountText = "\(amountPrefix)\(formatAmount(transaction.amount))"
-        let date = parseDate(transaction.transactionTime)
-        let trimmedDescription = transaction.description.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        return DashboardTransaction(
-            id: transaction.id,
-            title: category.title,
-            subtitle: trimmedDescription.isEmpty ? badgeTitle : trimmedDescription,
-            date: date,
-            dateText: formatDate(date),
-            categoryBadgeText: badgeTitle,
-            amount: transaction.amount,
-            amountText: amountText,
-            isIncome: transaction.isIncoming,
-            category: category
-        )
-    }
-
-    func formatBalance(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.decimal(
-            amount,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        )
-    }
-
-    func formatAmount(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.prefixedLira(amount)
-    }
-
-    func parseDate(_ rawValue: String) -> Date {
-        AppDateTextFormatter.parseServerDate(rawValue)
-    }
-
-    func formatDate(_ date: Date) -> String {
-        AppDateTextFormatter.string(from: date, style: .transactionDateTime)
-    }
-
-    func formatDisplayName(_ fullName: String) -> String {
-        let trimmed = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let firstCharacter = trimmed.first else { return trimmed }
-        return firstCharacter.uppercased() + trimmed.dropFirst()
     }
 }

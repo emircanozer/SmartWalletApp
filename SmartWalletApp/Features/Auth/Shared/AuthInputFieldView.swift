@@ -36,6 +36,11 @@ class AuthInputFieldView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        containerView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
+    }
+
     var text: String {
         textField.text ?? ""
     }
@@ -106,7 +111,7 @@ class AuthInputFieldView: UIView {
 
         containerView.backgroundColor = AppColor.whitePrimary
         containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = AppColor.borderSoft.cgColor
+        containerView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
         containerView.layer.cornerRadius = 12
 
         contentStack.axis = .horizontal

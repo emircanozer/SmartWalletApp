@@ -52,6 +52,13 @@ class LoginContentView: UIView {
         applyContent()
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        heroIconWrapper.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
+        cardView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
+        loginButton.layer.cornerRadius = loginButton.bounds.height / 2
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -84,7 +91,7 @@ extension LoginContentView {
 
         heroIconWrapper.backgroundColor = AppColor.surfaceWarmSoft
         heroIconWrapper.layer.borderWidth = 1
-        heroIconWrapper.layer.borderColor = AppColor.borderWarm.cgColor
+        heroIconWrapper.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
         heroIconView.image = UIImage(systemName: "creditcard.fill")
         heroIconView.tintColor = AppColor.primaryYellow
@@ -97,7 +104,7 @@ extension LoginContentView {
 
         cardView.backgroundColor = AppColor.whitePrimary
         cardView.layer.borderWidth = 1
-        cardView.layer.borderColor = AppColor.borderWarm.cgColor
+        cardView.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.05
         cardView.layer.shadowRadius = 20
