@@ -313,6 +313,11 @@ class HomeCoordinator: Coordinator {
             return
         }
 
+        if action == .privacy {
+            showPrivacy()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -320,6 +325,17 @@ class HomeCoordinator: Coordinator {
         )
         alert.addAction(UIAlertAction(title: "Tamam", style: .default))
         rootViewController.present(alert, animated: true)
+    }
+
+    private func showPrivacy() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = PrivacyViewModel()
+        let viewController = PrivacyViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
     }
 
     private func showDeleteAccount() {
