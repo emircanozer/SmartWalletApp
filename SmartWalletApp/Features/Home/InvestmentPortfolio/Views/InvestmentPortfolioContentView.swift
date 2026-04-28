@@ -7,7 +7,6 @@ final class InvestmentPortfolioContentView: UIView {
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let headerTitleLabel = UILabel()
-    private let notificationButton = UIButton(type: .system)
     private let summaryCard = UIView()
     private let summaryTitleLabel = UILabel()
     private let totalValueLabel = UILabel()
@@ -41,7 +40,6 @@ final class InvestmentPortfolioContentView: UIView {
         super.layoutSubviews()
         summaryCard.layer.cornerRadius = 28
         assetsCard.layer.cornerRadius = 22
-        notificationButton.layer.cornerRadius = 20
         dominantDotView.layer.cornerRadius = 4
     }
 }
@@ -115,12 +113,6 @@ extension InvestmentPortfolioContentView {
         headerTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
         headerTitleLabel.textColor = AppColor.accentOlive
 
-        notificationButton.backgroundColor = AppColor.whitePrimary
-        notificationButton.tintColor = AppColor.accentOlive
-        notificationButton.layer.borderWidth = 1
-        notificationButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
-        notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
-
         summaryCard.backgroundColor = AppColor.darkSurfaceAlt
         summaryCard.layer.shadowColor = UIColor.black.cgColor
         summaryCard.layer.shadowOpacity = 0.14
@@ -131,7 +123,7 @@ extension InvestmentPortfolioContentView {
         summaryTitleLabel.textColor = AppColor.white62
 
         totalValueLabel.font = .systemFont(ofSize: 42, weight: .bold)
-        totalValueLabel.textColor = AppColor.whitePrimary
+        totalValueLabel.textColor = .white
 
         profitLossLabel.font = .systemFont(ofSize: 18, weight: .bold)
         profitLossDetailLabel.font = .systemFont(ofSize: 14, weight: .medium)
@@ -180,7 +172,6 @@ extension InvestmentPortfolioContentView {
         [
             backButton,
             headerTitleLabel,
-            notificationButton,
             summaryCard,
             allocationTitleLabel,
             allocationStack,
@@ -210,7 +201,6 @@ extension InvestmentPortfolioContentView {
             contentContainer,
             backButton,
             headerTitleLabel,
-            notificationButton,
             summaryCard,
             summaryTitleLabel,
             totalValueLabel,
@@ -250,11 +240,6 @@ extension InvestmentPortfolioContentView {
 
             headerTitleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             headerTitleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 8),
-
-            notificationButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            notificationButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
-            notificationButton.widthAnchor.constraint(equalToConstant: 40),
-            notificationButton.heightAnchor.constraint(equalToConstant: 40),
 
             summaryCard.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 24),
             summaryCard.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),

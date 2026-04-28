@@ -11,7 +11,6 @@ class WelcomeContentView: UIView {
     private let titleLabel = UILabel()
     private let headerActionsStack = UIStackView()
     private let languageButton = UIButton(type: .system)
-    private let notificationButton = UIButton(type: .system)
     private let heroContainer = UIView()
     private let avatarOrbitView = UIView()
     private let avatarCircleView = UIView()
@@ -98,9 +97,6 @@ extension WelcomeContentView {
         languageButton.setTitleColor(AppColor.mutedText, for: .normal)
         languageButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .medium)
 
-        notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
-        notificationButton.tintColor = AppColor.inputText
-
         avatarOrbitView.backgroundColor = AppColor.surfaceWarmSoft
         avatarOrbitView.layer.borderWidth = 0.5
 
@@ -174,7 +170,6 @@ extension WelcomeContentView {
         brandStack.addArrangedSubview(titleLabel)
 
         headerActionsStack.addArrangedSubview(languageButton)
-        headerActionsStack.addArrangedSubview(notificationButton)
 
         heroContainer.addSubview(avatarOrbitView)
         avatarOrbitView.addSubview(avatarCircleView)
@@ -218,9 +213,6 @@ extension WelcomeContentView {
             headerStack.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 14),
             headerStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             headerStack.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
-
-            notificationButton.widthAnchor.constraint(equalToConstant: 22),
-            notificationButton.heightAnchor.constraint(equalToConstant: 22),
 
             heroContainer.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 40),
             heroContainer.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),

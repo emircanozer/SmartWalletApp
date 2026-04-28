@@ -7,7 +7,6 @@ final class ExpenseAnalysisContentView: UIView {
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let headerTitleLabel = UILabel()
-    private let notificationButton = UIButton(type: .system)
     private let summaryGrid = UIStackView()
     private let chartCard = UIView()
     private let pieChartView = PieChartView()
@@ -15,7 +14,6 @@ final class ExpenseAnalysisContentView: UIView {
     private let chartCenterValueLabel = UILabel()
     private let categoriesCard = UIView()
     private let categoriesTitleLabel = UILabel()
-    private let categoriesActionLabel = UILabel()
     private let categoriesStack = UIStackView()
     private let aiCard = UIView()
     private let aiTitleLabel = UILabel()
@@ -38,7 +36,7 @@ final class ExpenseAnalysisContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        [notificationButton, chartCard, categoriesCard, aiCard].forEach {
+        [chartCard, categoriesCard, aiCard].forEach {
             $0.layer.cornerRadius = 20
         }
     }
@@ -126,12 +124,6 @@ extension ExpenseAnalysisContentView {
         headerTitleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         headerTitleLabel.textColor = AppColor.primaryText
 
-        notificationButton.backgroundColor = AppColor.whitePrimary
-        notificationButton.setImage(UIImage(systemName: "bell"), for: .normal)
-        notificationButton.tintColor = AppColor.warmActionText
-        notificationButton.layer.borderWidth = 1
-        notificationButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
-
         summaryGrid.axis = .vertical
         summaryGrid.spacing = 12
         summaryGrid.distribution = .fillEqually
@@ -168,10 +160,6 @@ extension ExpenseAnalysisContentView {
         categoriesTitleLabel.font = .systemFont(ofSize: 20, weight: .bold)
         categoriesTitleLabel.textColor = AppColor.primaryText
         categoriesTitleLabel.text = "Kategoriler"
-
-        categoriesActionLabel.font = .systemFont(ofSize: 14, weight: .bold)
-        categoriesActionLabel.textColor = AppColor.accentOlive
-        categoriesActionLabel.text = "Tümünü Gör"
 
         categoriesStack.axis = .vertical
         categoriesStack.spacing = 18
@@ -230,7 +218,6 @@ extension ExpenseAnalysisContentView {
         [
             backButton,
             headerTitleLabel,
-            notificationButton,
             summaryGrid,
             emptyStateView,
             chartCard,
@@ -240,7 +227,7 @@ extension ExpenseAnalysisContentView {
         ].forEach(contentContainer.addSubview)
 
         [pieChartView, chartCenterTitleLabel, chartCenterValueLabel].forEach(chartCard.addSubview)
-        [categoriesTitleLabel, categoriesActionLabel, categoriesStack].forEach(categoriesCard.addSubview)
+        [categoriesTitleLabel, categoriesStack].forEach(categoriesCard.addSubview)
         [aiTitleLabel, aiBodyLabel, aiLoadingIndicator].forEach(aiCard.addSubview)
     }
 
@@ -250,7 +237,6 @@ extension ExpenseAnalysisContentView {
             contentContainer,
             backButton,
             headerTitleLabel,
-            notificationButton,
             summaryGrid,
             emptyStateView,
             chartCard,
@@ -259,7 +245,6 @@ extension ExpenseAnalysisContentView {
             chartCenterValueLabel,
             categoriesCard,
             categoriesTitleLabel,
-            categoriesActionLabel,
             categoriesStack,
             aiCard,
             aiTitleLabel,
@@ -286,11 +271,6 @@ extension ExpenseAnalysisContentView {
 
             headerTitleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             headerTitleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 12),
-
-            notificationButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            notificationButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
-            notificationButton.widthAnchor.constraint(equalToConstant: 34),
-            notificationButton.heightAnchor.constraint(equalToConstant: 34),
 
             summaryGrid.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 22),
             summaryGrid.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
@@ -323,9 +303,6 @@ extension ExpenseAnalysisContentView {
 
             categoriesTitleLabel.topAnchor.constraint(equalTo: categoriesCard.topAnchor, constant: 18),
             categoriesTitleLabel.leadingAnchor.constraint(equalTo: categoriesCard.leadingAnchor, constant: 18),
-
-            categoriesActionLabel.centerYAnchor.constraint(equalTo: categoriesTitleLabel.centerYAnchor),
-            categoriesActionLabel.trailingAnchor.constraint(equalTo: categoriesCard.trailingAnchor, constant: -18),
 
             categoriesStack.topAnchor.constraint(equalTo: categoriesTitleLabel.bottomAnchor, constant: 18),
             categoriesStack.leadingAnchor.constraint(equalTo: categoriesCard.leadingAnchor, constant: 18),
