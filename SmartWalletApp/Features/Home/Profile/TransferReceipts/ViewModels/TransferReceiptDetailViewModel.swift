@@ -39,40 +39,12 @@ extension TransferReceiptDetailViewModel {
         return TransferReceiptViewData(
             senderNameText: response.senderName,
             receiverNameText: response.receiverName,
-            ibanText: formatIBAN(counterpartyIBAN),
+            ibanText: AppStringTextFormatter.formattedIBAN(counterpartyIBAN),
             amountText: AppNumberTextFormatter.prefixedLira(response.amount),
             transactionDateText: AppDateTextFormatter.string(from: response.transactionDate, style: .transactionDateTime),
             referenceNumberText: response.referenceNumber,
-            categoryTitleText: prettifyCategory(response.category),
-            noteText: normalizedNoteText(response.description)
+            categoryTitleText: AppStringTextFormatter.prettifiedCategory(response.category),
+            noteText: AppStringTextFormatter.normalizedOptionalText(response.description)
         )
-    }
-
-    private func normalizedNoteText(_ text: String) -> String {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? "-" : trimmed
-    }
-
-    private func prettifyCategory(_ text: String) -> String {
-        guard !text.isEmpty else { return "-" }
-        return text
-            .replacingOccurrences(of: "Ö", with: " Ö")
-            .replacingOccurrences(of: "İ", with: " İ")
-            .replacingOccurrences(of: "([a-zçğıöşü])([A-ZÇĞİÖŞÜ])", with: "$1 $2", options: .regularExpression)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    private func formatIBAN(_ iban: String) -> String {
-        let trimmed = iban.replacingOccurrences(of: " ", with: "")
-        guard !trimmed.isEmpty else { return "-" }
-
-        var chunks: [String] = []
-        var index = trimmed.startIndex
-        while index < trimmed.endIndex {
-            let nextIndex = trimmed.index(index, offsetBy: 4, limitedBy: trimmed.endIndex) ?? trimmed.endIndex
-            chunks.append(String(trimmed[index..<nextIndex]))
-            index = nextIndex
-        }
-        return chunks.joined(separator: " ")
     }
 }

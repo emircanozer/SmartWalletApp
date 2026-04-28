@@ -1,6 +1,6 @@
 import UIKit
 
-class RegisterViewController: UIViewController {
+class RegisterViewController: BaseViewController {
     var onLogin: (() -> Void)?
     var onVerify: ((PendingRegistrationContext) -> Void)?
 
@@ -70,12 +70,6 @@ extension RegisterViewController {
         contentView.registerButton.alpha = isLoading ? 0.85 : 1
         contentView.registerButton.isEnabled = !isLoading
         setCenteredLoading(isLoading)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     func updateCheckboxAppearance() {

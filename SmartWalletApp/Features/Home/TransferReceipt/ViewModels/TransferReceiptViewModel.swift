@@ -44,12 +44,12 @@ final class TransferReceiptViewModel {
         TransferReceiptViewData(
             senderNameText: wallet?.fullName ?? "-",
             receiverNameText: response.receiverName,
-            ibanText: formatIBAN(response.receiverIban.isEmpty ? wallet?.iban ?? "" : response.receiverIban),
-            amountText: formatAmount(response.amount),
-            transactionDateText: formatDate(response.transactionDate),
+            ibanText: AppStringTextFormatter.formattedIBAN(response.receiverIban.isEmpty ? wallet?.iban ?? "" : response.receiverIban),
+            amountText: AppNumberTextFormatter.prefixedLira(response.amount),
+            transactionDateText: AppDateTextFormatter.string(from: response.transactionDate, style: .transactionDateTime),
             referenceNumberText: response.referenceNumber,
             categoryTitleText: categoryTitle(for: response.category),
-            noteText: normalizedNoteText(response.description)
+            noteText: AppStringTextFormatter.normalizedOptionalText(response.description)
         )
     }
 
@@ -74,32 +74,5 @@ final class TransferReceiptViewModel {
         default:
             return "Diğer"
         }
-    }
-
-    func normalizedNoteText(_ text: String) -> String {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? "-" : trimmed
-    }
-
-    func formatAmount(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.prefixedLira(amount)
-    }
-
-    func formatDate(_ rawValue: String) -> String {
-        AppDateTextFormatter.string(from: rawValue, style: .transactionDateTime)
-    }
-
-    func formatIBAN(_ iban: String) -> String {
-        let trimmed = iban.replacingOccurrences(of: " ", with: "")
-        guard !trimmed.isEmpty else { return "-" }
-
-        var chunks: [String] = []
-        var index = trimmed.startIndex
-        while index < trimmed.endIndex {
-            let nextIndex = trimmed.index(index, offsetBy: 4, limitedBy: trimmed.endIndex) ?? trimmed.endIndex
-            chunks.append(String(trimmed[index..<nextIndex]))
-            index = nextIndex
-        }
-        return chunks.joined(separator: " ")
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onRegister: (() -> Void)?
     var onForgotPassword: (() -> Void)?
@@ -75,12 +75,6 @@ extension LoginViewController {
         contentView.loginButton.alpha = isLoading ? 0.85 : 1
         contentView.loginButton.isEnabled = !isLoading
         setCenteredLoading(isLoading)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

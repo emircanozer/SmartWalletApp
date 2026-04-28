@@ -1,9 +1,7 @@
 import Foundation
 
-
-
 final class APIClient {
-    private let baseURL: URL 
+    private let baseURL: URL
     private let session: URLSession
     // auth isteyen request’te access token gerekiyorsa onu vermek için
     private let tokenProvider: () -> String?
@@ -11,8 +9,7 @@ final class APIClient {
 
     init(
         baseURL: URL = NetworkConfiguration.baseURL,
-        session: URLSession = .shared, //session = urlsession.shared
-        // değişebilir
+        session: URLSession = .shared,
         tokenProvider: @escaping () -> String? = { nil }
     ) {
         self.baseURL = baseURL
@@ -30,11 +27,10 @@ final class APIClient {
      fonksiyonu çağırdığımız yerde decodable olan istediğimiz modeli tanımlıyabiliriz en güzel yanı her model için farklı fonk tanımlamamıza gerek yok generic yaptığımız için her farklı yerde fonku çağırdığımız yerde model tipini yazmamız yeterli örn loginresponse , registerresponse gibi
 
      */
-    
     func send<Response: Decodable>(_ endpoint: Endpoint, as type: Response.Type = Response.self) async throws -> Response {
-        let request = try makeRequest(from: endpoint) // request oluşturuyor
-        logRequest(request) // console için önemsiz
-        let (data, response) = try await session.data(for: request) // sonra urlsession istek atıyor
+        let request = try makeRequest(from: endpoint)
+        logRequest(request)
+        let (data, response) = try await session.data(for: request)
         let httpResponse = try validate(response: response)
         logResponse(data: data, response: httpResponse)
 
@@ -86,7 +82,7 @@ final class APIClient {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        // token gerekiyorsa 
+        // token gerekiyorsa
         if endpoint.requiresAuthorization, let token = tokenProvider() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
@@ -106,9 +102,11 @@ final class APIClient {
         if let apiError = try? decoder.decode(APIErrorResponse.self, from: data) {
             let message = apiError.detail ?? apiError.message
             print("DEBUG Network: server error status=\(statusCode) message=\(message ?? "-")")
+
             if statusCode == 401 {
                 return .unauthorized(message: message)
             }
+
             return .server(statusCode: statusCode, message: message)
         }
 

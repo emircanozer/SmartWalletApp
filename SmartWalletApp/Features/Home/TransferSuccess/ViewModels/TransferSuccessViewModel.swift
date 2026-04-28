@@ -29,17 +29,9 @@ final class TransferSuccessViewModel {
     func makeViewData() -> TransferSuccessViewData {
         TransferSuccessViewData(
             titleText: "Para Gönderildi",
-            subtitleText: "\(response.receiverName) kişisine \(formatAmount(response.amount)) transfer işlemi başarıyla gerçekleştirildi.",
-            transactionDateText: formatDate(response.transactionDate),
+            subtitleText: "\(response.receiverName) kişisine \(AppNumberTextFormatter.prefixedLira(response.amount)) transfer işlemi başarıyla gerçekleştirildi.",
+            transactionDateText: AppDateTextFormatter.string(from: response.transactionDate, style: .transactionDateTime),
             referenceNumberText: response.referenceNumber
         )
-    }
-
-    func formatAmount(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.prefixedLira(amount)
-    }
-
-    func formatDate(_ rawValue: String) -> String {
-        AppDateTextFormatter.string(from: rawValue, style: .transactionDateTime)
     }
 }

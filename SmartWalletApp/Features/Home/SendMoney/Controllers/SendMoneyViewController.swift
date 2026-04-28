@@ -5,7 +5,7 @@ enum SendMoneyPresentationStyle {
     case pushedFromDashboard
 }
 
-final class SendMoneyViewController: UIViewController {
+final class SendMoneyViewController: BaseViewController {
     private enum Constants {
         static let noteCharacterLimit = 40
     }
@@ -124,9 +124,7 @@ final class SendMoneyViewController: UIViewController {
     }
 
     func bindDismissKeyboard() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        installKeyboardDismissTap()
     }
 
     func loadScreen() {
@@ -140,12 +138,6 @@ final class SendMoneyViewController: UIViewController {
             button.removeTarget(nil, action: nil, for: .allEvents)
             button.addTarget(self, action: #selector(handleAmountChipTap(_:)), for: .touchUpInside)
         }
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     func promptForRecipientName() {
@@ -200,10 +192,6 @@ final class SendMoneyViewController: UIViewController {
             self?.viewModel.selectCategory(category)
         }
         present(viewController, animated: true)
-    }
-
-    @objc func handleBackgroundTap() {
-        view.endEditing(true)
     }
 
     @objc func handlePullToRefresh() {

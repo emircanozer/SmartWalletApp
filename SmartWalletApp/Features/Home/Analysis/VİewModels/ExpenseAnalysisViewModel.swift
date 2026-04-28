@@ -60,20 +60,28 @@ final class ExpenseAnalysisViewModel {
     }
 }
 
+// ham response u ui modeline çeviriyoruz
  extension ExpenseAnalysisViewModel {
-     // ham responseu ui modeline çeviriyoruz
     func map(_ response: WalletAnalysisResponse) -> ExpenseAnalysisViewData {
         let isEmpty = (response.totalMonthlyExpense as NSDecimalNumber).decimalValue == .zero || response.categoryDetails.isEmpty
 
         let summaryItems = [
             ExpenseAnalysisSummaryItem(
                 title: "Aylık Harcama",
-                value: formatCurrency(response.totalMonthlyExpense),
+                value: AppNumberTextFormatter.currencyTRY(
+                    response.totalMonthlyExpense,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                ),
                 iconName: "creditcard"
             ),
             ExpenseAnalysisSummaryItem(
                 title: "Günlük Ortalama",
-                value: formatCurrency(response.dailyAverageExpense),
+                value: AppNumberTextFormatter.currencyTRY(
+                    response.dailyAverageExpense,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                ),
                 iconName: "calendar"
             ),
             ExpenseAnalysisSummaryItem(
@@ -91,8 +99,12 @@ final class ExpenseAnalysisViewModel {
         let categoryItems = response.categoryDetails.enumerated().map { index, item in
             ExpenseAnalysisCategoryItem(
                 name: item.categoryName,
-                amountText: formatCurrency(item.totalAmount),
-                percentageText: "%\(formatPercent(item.percentage))",
+                amountText: AppNumberTextFormatter.currencyTRY(
+                    item.totalAmount,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                ),
+                percentageText: "%\(AppNumberTextFormatter.decimal(item.percentage, minimumFractionDigits: 0, maximumFractionDigits: 1))",
                 progress: min(CGFloat((item.percentage as NSDecimalNumber).doubleValue / 100.0), 1),
                 color: chartColors[index % chartColors.count]
             )
@@ -108,7 +120,11 @@ final class ExpenseAnalysisViewModel {
 
         return ExpenseAnalysisViewData(
             titleText: "Harcama Analizi",
-            totalExpenseText: formatCurrency(response.totalMonthlyExpense),
+            totalExpenseText: AppNumberTextFormatter.currencyTRY(
+                response.totalMonthlyExpense,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            ),
             emptyMessageText: isEmpty ? "Henüz bir harcamanız yok." : nil,
             summaryItems: summaryItems,
             chartSlices: chartSlices,
@@ -116,24 +132,8 @@ final class ExpenseAnalysisViewModel {
         )
     }
 
-    func formatCurrency(_ value: Decimal) -> String {
-        AppNumberTextFormatter.currencyTRY(
-            value,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        )
-    }
-
-    func formatPercent(_ value: Decimal) -> String {
-        AppNumberTextFormatter.decimal(
-            value,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 1
-        )
-    }
-
     func topPercentageText(from details: [WalletAnalysisCategoryResponse]) -> String {
         guard let topPercentage = details.map(\.percentage).max() else { return "%0" }
-        return "%\(formatPercent(topPercentage))"
+        return "%\(AppNumberTextFormatter.decimal(topPercentage, minimumFractionDigits: 0, maximumFractionDigits: 1))"
     }
 }

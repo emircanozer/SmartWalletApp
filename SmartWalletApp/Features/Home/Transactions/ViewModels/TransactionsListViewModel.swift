@@ -93,16 +93,18 @@ final class TransactionsListViewModel {
             let category = TransactionCategory(backendValue: transaction.category)
             let badgeTitle = category.badgeTitle(isIncome: transaction.isIncoming)
             let amountPrefix = transaction.isIncoming ? "+" : "-"
-            let amountText = "\(amountPrefix)\(formatDisplayAmount(transaction.amount))"
-            let date = parseDate(transaction.transactionTime)
-            let trimmedDescription = transaction.description.trimmingCharacters(in: .whitespacesAndNewlines)
+            let amountText = "\(amountPrefix)\(AppNumberTextFormatter.prefixedLira(transaction.amount))"
+            let date = AppDateTextFormatter.parseServerDate(transaction.transactionTime)
 
             return DashboardTransaction(
                 id: transaction.id,
                 title: category.title,
-                subtitle: trimmedDescription.isEmpty ? badgeTitle : trimmedDescription,
+                subtitle: AppStringTextFormatter.transactionSubtitle(
+                    transaction.description,
+                    fallback: badgeTitle
+                ),
                 date: date,
-                dateText: formatDate(date),
+                dateText: AppDateTextFormatter.string(from: date, style: .transactionDateTime),
                 categoryBadgeText: badgeTitle,
                 amount: transaction.amount,
                 amountText: amountText,
@@ -167,30 +169,12 @@ final class TransactionsListViewModel {
             transactions: filteredTransactions,
             selectedFilter: selectedFilter,
             summaryTitle: summaryTitle,
-            summaryAmountText: formatAmount(
+            summaryAmountText: AppNumberTextFormatter.prefixedLira(
                 totalAmount,
-                isPositive: summaryIsPositive,
-                showsPrefix: summaryShowsPrefix
+                prefix: summaryShowsPrefix ? (summaryIsPositive ? "+" : "-") : ""
             ),
             summaryIsPositive: summaryIsPositive,
             summaryShowsPrefix: summaryShowsPrefix
         )
-    }
-
-    func formatAmount(_ amount: Decimal, isPositive: Bool, showsPrefix: Bool) -> String {
-        let prefix = showsPrefix ? (isPositive ? "+" : "-") : ""
-        return AppNumberTextFormatter.prefixedLira(amount, prefix: prefix)
-    }
-
-    static func formatDisplayAmount(_ amount: Decimal) -> String {
-        AppNumberTextFormatter.prefixedLira(amount)
-    }
-
-    static func parseDate(_ rawValue: String) -> Date {
-        AppDateTextFormatter.parseServerDate(rawValue)
-    }
-
-    static func formatDate(_ date: Date) -> String {
-        AppDateTextFormatter.string(from: date, style: .transactionDateTime)
     }
 }

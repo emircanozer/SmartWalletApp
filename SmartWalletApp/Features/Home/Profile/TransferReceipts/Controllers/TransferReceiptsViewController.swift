@@ -1,14 +1,12 @@
 import UIKit
 
-final class TransferReceiptsViewController: UIViewController {
+final class TransferReceiptsViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onReceiptDetailSelected: ((String) -> Void)?
 
     private let viewModel: TransferReceiptsViewModel
     private let contentView = TransferReceiptsContentView()
     private var currentItems: [TransferReceiptsItemViewData] = []
-    private let backgroundTapGesture = UITapGestureRecognizer()
-
     init(viewModel: TransferReceiptsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -42,9 +40,7 @@ final class TransferReceiptsViewController: UIViewController {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.searchField.addTarget(self, action: #selector(handleSearchChanged), for: .editingChanged)
 
-        backgroundTapGesture.addTarget(self, action: #selector(handleBackgroundTap))
-        backgroundTapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(backgroundTapGesture)
+        installKeyboardDismissTap()
     }
 
     func bindViewModel() {
@@ -99,12 +95,6 @@ final class TransferReceiptsViewController: UIViewController {
         }
     }
 
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
-    }
-
     @objc func handleBackTap() {
         onBack?()
     }
@@ -113,9 +103,6 @@ final class TransferReceiptsViewController: UIViewController {
         viewModel.updateSearchText(contentView.searchField.text ?? "")
     }
 
-    @objc func handleBackgroundTap() {
-        view.endEditing(true)
-    }
 }
 
 extension TransferReceiptsViewController: UITableViewDataSource, UITableViewDelegate {

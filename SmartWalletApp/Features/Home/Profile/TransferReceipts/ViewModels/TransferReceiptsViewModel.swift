@@ -13,9 +13,7 @@ final class TransferReceiptsViewModel {
     init(walletService: WalletService) {
         self.walletService = walletService
     }
-}
 
-extension TransferReceiptsViewModel {
     @MainActor
     func load() async {
         onStateChange?(.loading)
@@ -46,7 +44,9 @@ extension TransferReceiptsViewModel {
         selectedTypeFilter = filter
         emitLoadedState()
     }
+}
 
+ extension TransferReceiptsViewModel {
     private func emitLoadedState() {
         onStateChange?(.loaded(makeViewData()))
     }
@@ -115,7 +115,10 @@ extension TransferReceiptsViewModel {
         let category = TransactionCategory(backendValue: transaction.category)
         let normalizedSearch = searchText.lowercased()
         let title = category.title.lowercased()
-        let subtitle = normalizedSubtitle(for: transaction, category: category).lowercased()
+        let subtitle = AppStringTextFormatter.transactionSubtitle(
+            transaction.description,
+            fallback: category.badgeTitle(isIncome: transaction.isIncoming)
+        ).lowercased()
         return title.contains(normalizedSearch) || subtitle.contains(normalizedSearch)
     }
 
@@ -129,16 +132,14 @@ extension TransferReceiptsViewModel {
             iconTintColor: category.iconTintColor,
             iconBackgroundColor: category.iconBackgroundColor,
             typeText: isIncoming ? "GELEN TRANSFER" : category.title.uppercased(),
-            titleText: normalizedSubtitle(for: transaction, category: category),
+            titleText: AppStringTextFormatter.transactionSubtitle(
+                transaction.description,
+                fallback: category.badgeTitle(isIncome: transaction.isIncoming)
+            ),
             amountText: "\(amountPrefix)\(AppNumberTextFormatter.prefixedLira(transaction.amount))",
             amountColor: isIncoming ? AppColor.success : AppColor.danger,
             dateText: AppDateTextFormatter.string(from: transaction.transactionTime, style: .transactionDateTime),
             detailButtonTitleText: "Dekont Detayı"
         )
-    }
-
-    private func normalizedSubtitle(for transaction: WalletTransactionResponse, category: TransactionCategory) -> String {
-        let trimmed = transaction.description.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? category.badgeTitle(isIncome: transaction.isIncoming) : trimmed
     }
 }

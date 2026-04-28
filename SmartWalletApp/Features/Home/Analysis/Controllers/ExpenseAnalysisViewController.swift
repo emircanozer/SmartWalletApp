@@ -1,6 +1,6 @@
 import UIKit
 
-final class ExpenseAnalysisViewController: UIViewController {
+final class ExpenseAnalysisViewController: BaseViewController {
     var onBack: (() -> Void)?
 
     private let viewModel: ExpenseAnalysisViewModel

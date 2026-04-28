@@ -1,6 +1,6 @@
 import UIKit
 
-final class InvestmentTradingViewController: UIViewController {
+final class InvestmentTradingViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onReviewTrade: ((InvestmentTradeContext) -> Void)?
 
@@ -113,12 +113,6 @@ final class InvestmentTradingViewController: UIViewController {
             name: UIResponder.keyboardWillHideNotification,
             object: nil
         )
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

@@ -1,6 +1,6 @@
 import UIKit
 
-final class ChangePasswordViewController: UIViewController {
+final class ChangePasswordViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onForgotPassword: (() -> Void)?
     var onPasswordChanged: (() -> Void)?
@@ -114,12 +114,6 @@ final class ChangePasswordViewController: UIViewController {
             newPassword: contentView.newPasswordField.trimmedText,
             confirmPassword: contentView.confirmPasswordField.trimmedText
         )
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

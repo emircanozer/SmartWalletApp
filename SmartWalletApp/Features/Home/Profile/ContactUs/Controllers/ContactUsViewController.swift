@@ -1,7 +1,7 @@
 import MessageUI
 import UIKit
 
-final class ContactUsViewController: UIViewController {
+final class ContactUsViewController: BaseViewController {
     private enum Constants {
         static let messageCharacterLimit = 300
     }
@@ -49,9 +49,7 @@ extension ContactUsViewController {
         contentView.emailField.setEditingDidBeginTarget(self, action: #selector(handleEmailFocus))
         contentView.messageTextView.delegate = self
 
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap))
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+        installKeyboardDismissTap()
     }
 
     func bindViewModel() {
@@ -117,12 +115,6 @@ extension ContactUsViewController {
         UIApplication.shared.open(url)
     }
 
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
-    }
-
     func updateForm() {
         viewModel.updateForm(
             name: contentView.nameField.trimmedText,
@@ -136,7 +128,7 @@ extension ContactUsViewController {
     }
 
     @objc func handleSendTap() {
-        view.endEditing(true)
+        dismissKeyboard()
         viewModel.sendMessage(
             name: contentView.nameField.trimmedText,
             email: contentView.emailField.trimmedText,
@@ -154,10 +146,6 @@ extension ContactUsViewController {
 
     @objc func handleEmailFocus() {
         contentView.scrollToVisible(contentView.emailField)
-    }
-
-    @objc func handleBackgroundTap() {
-        view.endEditing(true)
     }
 
     @objc func handleKeyboardWillChangeFrame(_ notification: Notification) {

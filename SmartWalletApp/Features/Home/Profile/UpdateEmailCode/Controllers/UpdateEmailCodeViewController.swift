@@ -1,6 +1,6 @@
 import UIKit
 
-final class UpdateEmailCodeViewController: UIViewController {
+final class UpdateEmailCodeViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onVerified: (() -> Void)?
 
@@ -91,12 +91,6 @@ final class UpdateEmailCodeViewController: UIViewController {
 
     func updateVerifyButtonState() {
         contentView.setVerifyEnabled(contentView.codeInputView.code.count == 6)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

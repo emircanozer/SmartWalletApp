@@ -1,6 +1,6 @@
 import UIKit
 
-final class InvestmentTradeConfirmationViewController: UIViewController {
+final class InvestmentTradeConfirmationViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onApproved: ((InvestmentTradeSuccessContext) -> Void)?
 
@@ -61,12 +61,6 @@ final class InvestmentTradeConfirmationViewController: UIViewController {
                 self.onApproved?(context)
             }
         }
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

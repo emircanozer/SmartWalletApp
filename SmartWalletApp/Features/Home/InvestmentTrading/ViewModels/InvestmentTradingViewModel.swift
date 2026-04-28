@@ -60,7 +60,6 @@ final class InvestmentTradingViewModel {
     
     /*  artık seçili asset değişti
     sonra emitLoadedState() çağrılıyor */
-    @MainActor
     // varlık  butonu seçiyor kullanıcı
     func selectAsset(_ asset: InvestmentTradingAssetType) {
         selectedAsset = asset
@@ -68,14 +67,12 @@ final class InvestmentTradingViewModel {
         emitLoadedState()
     }
 
-    @MainActor
     // al sat segmentedi seçecek kullanıcı işleyiş aynı
     func selectDirection(_ direction: InvestmentTradeDirection) {
         selectedDirection = direction
         emitLoadedState()
     }
 
-    @MainActor
     func selectInputMode(_ mode: InvestmentTradingInputMode) {
         guard let selectedAsset, selectedAsset.supportsFiatInput else { return }
         guard selectedInputMode != mode else { return }
@@ -84,19 +81,16 @@ final class InvestmentTradingViewModel {
         emitLoadedState()
     }
 
-    @MainActor
     func updateEnteredAmount(_ text: String) {
         enteredAmountText = sanitizeInput(text)
         emitLoadedState()
     }
 
-    @MainActor
     func applyQuickAmount(_ value: Decimal) {
-        enteredAmountText = decimalInputText(value)
+        enteredAmountText = AppNumberTextFormatter.inputDecimal(value)
         emitLoadedState()
     }
 
-    @MainActor
     func makeTradeContext() -> InvestmentTradeContext? {
         guard let selectedAsset,
               let wallet,
@@ -226,7 +220,7 @@ extension InvestmentTradingViewModel {
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Girilen Tutar",
-                    value: formatCurrency(enteredAmount)
+                    value: AppNumberTextFormatter.currencyTRY(enteredAmount)
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: selectedDirection == .buy ? "Tahmini Alınacak" : "Tahmini Satılacak",
@@ -245,11 +239,11 @@ extension InvestmentTradingViewModel {
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Girilen Miktar",
-                    value: enteredAmount > .zero ? "\(formatQuantity(enteredAmount)) \(selectedAsset.amountUnit)" : "0 \(selectedAsset.amountUnit)"
+                    value: enteredAmount > .zero ? "\(InvestmentTradingValueFormatter.quantity(enteredAmount)) \(selectedAsset.amountUnit)" : "0 \(selectedAsset.amountUnit)"
                 ),
                 InvestmentTradingSummaryRowItem(
                     title: "Toplam Tutar",
-                    value: formatCurrency(estimatedTotal)
+                    value: AppNumberTextFormatter.currencyTRY(estimatedTotal)
                 )
             ]
         }
@@ -271,8 +265,8 @@ extension InvestmentTradingViewModel {
             selectedInputMode: selectedInputMode,
             buyPriceText: InvestmentTradingValueFormatter.unitPrice(price?.buyPrice ?? .zero, asset: selectedAsset),
             sellPriceText: InvestmentTradingValueFormatter.unitPrice(price?.sellPrice ?? .zero, asset: selectedAsset),
-            balanceText: formatCurrency(wallet.balance),
-            holdingText: "\(formatQuantity(ownedAmount)) \(selectedAsset.amountUnit)",
+            balanceText: AppNumberTextFormatter.currencyTRY(wallet.balance),
+            holdingText: "\(InvestmentTradingValueFormatter.quantity(ownedAmount)) \(selectedAsset.amountUnit)",
             amountText: enteredAmountText,
             amountTitleText: selectedInputMode == .fiat ? "TUTAR GİRİNİZ" : "MİKTAR GİRİNİZ",
             amountPlaceholderText: "0.00",
@@ -284,10 +278,10 @@ extension InvestmentTradingViewModel {
                 ? (selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ SATILACAK")
                 : (selectedDirection == .buy ? "TAHMİNİ ALINACAK" : "TAHMİNİ GELECEK"),
             estimateValueText: selectedInputMode == .fiat
-                ? "\(InvestmentTradingValueFormatter.estimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
-                : (selectedDirection == .buy
-                    ? "\(formatQuantity(estimatedAssetAmount)) \(selectedAsset.amountUnit)"
-                    : formatCurrency(estimatedTotal)),
+                    ? "\(InvestmentTradingValueFormatter.estimatedAssetAmount(estimatedAssetAmount, asset: selectedAsset)) \(selectedAsset.amountUnit)"
+                    : (selectedDirection == .buy
+                    ? "\(InvestmentTradingValueFormatter.quantity(estimatedAssetAmount)) \(selectedAsset.amountUnit)"
+                    : AppNumberTextFormatter.currencyTRY(estimatedTotal)),
             actionButtonTitle: selectedDirection == .buy
                 ? "\(selectedAsset.displayCode) SATIN AL"
                 : "\(selectedAsset.displayCode) SAT",
@@ -319,7 +313,9 @@ extension InvestmentTradingViewModel {
         return values.map { value in
             InvestmentTradingQuickAmountItem(
                 value: value,
-                title: selectedInputMode == .fiat ? "\(formatQuantity(value)) TL" : "\(formatQuantity(value)) \(asset.amountUnit)"
+                title: selectedInputMode == .fiat
+                    ? "\(InvestmentTradingValueFormatter.quantity(value)) TL"
+                    : "\(InvestmentTradingValueFormatter.quantity(value)) \(asset.amountUnit)"
             )
         }
     }
@@ -405,18 +401,6 @@ extension InvestmentTradingViewModel {
     func parsedEnteredAmount() -> Decimal {
         guard !enteredAmountText.isEmpty else { return .zero }
         return Decimal(string: enteredAmountText, locale: Locale(identifier: "en_US_POSIX")) ?? .zero
-    }
-
-    func formatCurrency(_ value: Decimal) -> String {
-        AppNumberTextFormatter.currencyTRY(value)
-    }
-
-    func formatQuantity(_ value: Decimal) -> String {
-        InvestmentTradingValueFormatter.quantity(value)
-    }
-
-    func decimalInputText(_ value: Decimal) -> String {
-        AppNumberTextFormatter.inputDecimal(value)
     }
 
     func currentUnitPrice() -> Decimal {

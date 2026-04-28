@@ -1,6 +1,6 @@
 import UIKit
 
-final class DeleteAccountViewController: UIViewController {
+final class DeleteAccountViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onDeleted: (() -> Void)?
 
@@ -71,12 +71,6 @@ extension DeleteAccountViewController {
     func updateFormState() {
         let isEnabled = isConfirmationChecked && !contentView.passwordField.trimmedText.isEmpty
         contentView.updateDeleteButton(isEnabled: isEnabled)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     func showDeletedAlert(message: String) {

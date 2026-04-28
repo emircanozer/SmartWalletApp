@@ -51,7 +51,11 @@ extension InvestmentPortfolioViewModel {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
             )
-            let profitPercent = signedPercentText(asset.profitLossPercentage)
+            let profitPercent = AppNumberTextFormatter.signedPercent(
+                asset.profitLossPercentage,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            )
 
             return InvestmentPortfolioAssetItem(
                 title: assetType.title,
@@ -72,8 +76,12 @@ extension InvestmentPortfolioViewModel {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
             ),
-            totalProfitLossText: signedCurrencyText(response.totalProfitLoss),
-            totalProfitLossDetailText: "\(signedPercentText(response.profitLossPercentage)) bugün",
+            totalProfitLossText: AppNumberTextFormatter.signedCurrencyTRY(
+                response.totalProfitLoss,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            ),
+            totalProfitLossDetailText: "\(AppNumberTextFormatter.signedPercent(response.profitLossPercentage, minimumFractionDigits: 0, maximumFractionDigits: 2)) bugün",
             isProfit: (response.totalProfitLoss as NSDecimalNumber).decimalValue >= .zero,
             dominantShareText: "En Büyük Pay: \(dominantShare)",
             allocationItems: allocationItems,
@@ -111,21 +119,5 @@ extension InvestmentPortfolioViewModel {
                 color: group.color
             )
         }
-    }
-
-    private func signedCurrencyText(_ value: Decimal) -> String {
-        AppNumberTextFormatter.signedCurrencyTRY(
-            value,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-        )
-    }
-
-    private func signedPercentText(_ value: Decimal) -> String {
-        AppNumberTextFormatter.signedPercent(
-            value,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-        )
     }
 }

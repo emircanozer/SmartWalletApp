@@ -1,6 +1,6 @@
 import UIKit
 
-final class MarketPricesViewController: UIViewController {
+final class MarketPricesViewController: BaseViewController {
     private let viewModel: MarketPricesViewModel
     private let contentView = MarketPricesContentView()
     private let refreshControl = UIRefreshControl()
@@ -65,13 +65,6 @@ final class MarketPricesViewController: UIViewController {
         Task {
             await viewModel.load()
         }
-    }
-
-    // çıkarılacak 
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handlePullToRefresh() {

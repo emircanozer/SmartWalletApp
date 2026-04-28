@@ -1,7 +1,7 @@
 import UIKit
 
-final class AIAssistantViewController: UIViewController {
-    private enum Constants {
+final class AIAssistantViewController: BaseViewController {
+     enum Constants {
         static let cellIdentifier = "AIAssistantMessageCell"
     }
 
@@ -84,12 +84,6 @@ extension AIAssistantViewController {
         let lastRow = currentMessages.count - 1
         contentView.tableView.layoutIfNeeded()
         contentView.tableView.scrollToRow(at: IndexPath(row: lastRow, section: 0), at: .bottom, animated: true)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleDraftChanged() {

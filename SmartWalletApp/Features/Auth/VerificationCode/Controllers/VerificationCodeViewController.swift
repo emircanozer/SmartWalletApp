@@ -1,6 +1,6 @@
 import UIKit
 
-class VerificationCodeViewController: UIViewController {
+class VerificationCodeViewController: BaseViewController {
     var onBackToLogin: (() -> Void)?
     var onVerify: ((PendingRegistrationContext) -> Void)?
 
@@ -91,12 +91,6 @@ extension VerificationCodeViewController {
         contentView.resendButton.isEnabled = !isLoading
         contentView.resendButton.alpha = isLoading ? 0.7 : 1
         setCenteredLoading(isLoading)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     func observeKeyboard() {

@@ -35,9 +35,17 @@ extension MarketPricesViewModel {
                 iconName: assetType.iconName,
                 accentColor: assetType.accentColor,
                 iconSurfaceColor: assetType.surfaceColor,
-                buyPriceText: formattedPrice(price.buyPrice),
-                sellPriceText: formattedPrice(price.sellPrice),
-                dailyChangeText: signedPercentText(price.dailyChangePercentage),
+                buyPriceText: AppNumberTextFormatter.decimal(
+                    price.buyPrice,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 4
+                ),
+                sellPriceText: AppNumberTextFormatter.decimal(
+                    price.sellPrice,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 4
+                ),
+                dailyChangeText: AppNumberTextFormatter.signedPercent(price.dailyChangePercentage),
                 isPositiveChange: dailyChange >= .zero
             )
         }
@@ -47,17 +55,5 @@ extension MarketPricesViewModel {
             items: items,
             emptyMessageText: items.isEmpty ? "Henüz piyasa verisi yok." : nil
         )
-    }
-
-    func formattedPrice(_ value: Decimal) -> String {
-        AppNumberTextFormatter.decimal(
-            value,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 4
-        )
-    }
-
-    func signedPercentText(_ value: Decimal) -> String {
-        AppNumberTextFormatter.signedPercent(value)
     }
 }

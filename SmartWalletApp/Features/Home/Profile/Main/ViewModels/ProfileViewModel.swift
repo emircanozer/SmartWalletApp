@@ -26,7 +26,6 @@ final class ProfileViewModel {
         }
     }
 
-    @MainActor
     func updateDarkMode(_ isEnabled: Bool) {
         isDarkModeEnabled = isEnabled
         ThemePreferenceStore.shared.setDarkModeEnabled(isEnabled)

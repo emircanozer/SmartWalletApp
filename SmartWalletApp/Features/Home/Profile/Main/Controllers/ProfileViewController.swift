@@ -1,6 +1,6 @@
 import UIKit
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: BaseViewController {
     var onActionSelected: ((ProfileRowAction) -> Void)?
     var onEmailSelected: ((String) -> Void)?
     var onLogout: (() -> Void)?
@@ -91,12 +91,6 @@ extension ProfileViewController {
         viewModel.updateDarkMode(isEnabled)
         view.window?.overrideUserInterfaceStyle = isEnabled ? .dark : .light
         contentView.updateDarkModeButton(isEnabled: isEnabled)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     func showLogoutConfirmation() {

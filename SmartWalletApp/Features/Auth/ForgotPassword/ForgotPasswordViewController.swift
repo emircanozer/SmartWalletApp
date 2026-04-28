@@ -1,6 +1,6 @@
 import UIKit
 
-class ForgotPasswordViewController: UIViewController {
+class ForgotPasswordViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onCodeVerificationRequired: ((String) -> Void)?
 
@@ -215,12 +215,6 @@ extension ForgotPasswordViewController {
         sendButton.alpha = isLoading ? 0.85 : 1
         sendButton.isEnabled = !isLoading
         setCenteredLoading(isLoading)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackgroundTap() {

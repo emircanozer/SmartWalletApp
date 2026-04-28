@@ -1,6 +1,6 @@
 import UIKit
 
-final class UpdateEmailViewController: UIViewController {
+final class UpdateEmailViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onVerificationSent: ((UpdateEmailVerificationContext) -> Void)?
 
@@ -99,12 +99,6 @@ extension UpdateEmailViewController {
             newEmail: contentView.newEmailField.trimmedText,
             confirmEmail: contentView.confirmEmailField.trimmedText
         )
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

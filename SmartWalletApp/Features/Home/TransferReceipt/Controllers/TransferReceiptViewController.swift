@@ -1,6 +1,6 @@
 import UIKit
 
-final class TransferReceiptViewController: UIViewController {
+final class TransferReceiptViewController: BaseViewController {
     var onReturnHome: (() -> Void)?
 
     private let viewModel: TransferReceiptViewModel
@@ -80,12 +80,6 @@ final class TransferReceiptViewController: UIViewController {
 
         // pdf için
         return try TransferReceiptPDFBuilder.exportURL(for: currentData)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleDownloadTap() {

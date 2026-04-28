@@ -1,6 +1,6 @@
 import UIKit
 
-final class TransferReceiptDetailViewController: UIViewController {
+final class TransferReceiptDetailViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onReturnHome: (() -> Void)?
 
@@ -100,12 +100,6 @@ final class TransferReceiptDetailViewController: UIViewController {
         }
 
         return try TransferReceiptPDFBuilder.exportURL(for: currentData)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

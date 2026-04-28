@@ -1,6 +1,6 @@
 import UIKit
 
-final class ResetPasswordViewController: UIViewController {
+final class ResetPasswordViewController: BaseViewController {
     var onBack: (() -> Void)?
     // şifre sıfırlama başarılı olursa dışarı haber verebilirim
     var onResetCompleted: (() -> Void)?
@@ -74,12 +74,6 @@ final class ResetPasswordViewController: UIViewController {
         contentView.updateButton.alpha = isLoading ? 0.85 : 1
         contentView.updateButton.isEnabled = !isLoading
         setCenteredLoading(isLoading)
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleBackTap() {

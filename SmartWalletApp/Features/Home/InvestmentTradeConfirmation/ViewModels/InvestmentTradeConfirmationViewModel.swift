@@ -68,7 +68,7 @@ final class InvestmentTradeConfirmationViewModel {
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "GİRİLEN TUTAR",
-                    value: formatCurrency(context.enteredAmount),
+                    value: AppNumberTextFormatter.currencyTRY(context.enteredAmount),
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
@@ -78,12 +78,12 @@ final class InvestmentTradeConfirmationViewModel {
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "KULLANILABİLİR BAKİYE",
-                    value: formatCurrency(context.currentBalance),
+                    value: AppNumberTextFormatter.currencyTRY(context.currentBalance),
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "İŞLEM SONRASI BAKİYE",
-                    value: formatCurrency(context.resultingBalance),
+                    value: AppNumberTextFormatter.currencyTRY(context.resultingBalance),
                     valueColor: AppColor.accentOlive
                 )
             ]
@@ -96,22 +96,22 @@ final class InvestmentTradeConfirmationViewModel {
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "GİRİLEN MİKTAR",
-                    value: "\(formatQuantity(context.enteredAmount)) \(context.assetType.amountUnit)",
+                    value: "\(InvestmentTradingValueFormatter.quantity(context.enteredAmount)) \(context.assetType.amountUnit)",
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "TOPLAM TUTAR",
-                    value: formatCurrency(context.totalAmount),
+                    value: AppNumberTextFormatter.currencyTRY(context.totalAmount),
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "KULLANILABİLİR BAKİYE",
-                    value: formatCurrency(context.currentBalance),
+                    value: AppNumberTextFormatter.currencyTRY(context.currentBalance),
                     valueColor: AppColor.primaryText
                 ),
                 InvestmentTradeConfirmationDetailItem(
                     title: "İŞLEM SONRASI BAKİYE",
-                    value: formatCurrency(context.resultingBalance),
+                    value: AppNumberTextFormatter.currencyTRY(context.resultingBalance),
                     valueColor: AppColor.accentOlive
                 )
             ]
@@ -129,10 +129,10 @@ final class InvestmentTradeConfirmationViewModel {
     }
 
     func makeSuccessContext() -> InvestmentTradeSuccessContext {
-        let assetAmountText = "\(formatQuantity(context.assetAmount)) \(context.assetType.amountUnit)"
+        let assetAmountText = "\(InvestmentTradingValueFormatter.quantity(context.assetAmount)) \(context.assetType.amountUnit)"
         let subtitleText: String
         if context.inputMode == .fiat {
-            subtitleText = "\(formatCurrency(context.enteredAmount)) tutarındaki \(context.assetType.title.lowercased()) \(context.direction == .buy ? "alım" : "satım") işleminiz başarıyla tamamlandı."
+            subtitleText = "\(AppNumberTextFormatter.currencyTRY(context.enteredAmount)) tutarındaki \(context.assetType.title.lowercased()) \(context.direction == .buy ? "alım" : "satım") işleminiz başarıyla tamamlandı."
         } else {
             subtitleText = "\(assetAmountText) \(context.assetType.title.lowercased()) \(context.direction == .buy ? "alım" : "satım") işleminiz başarıyla tamamlandı."
         }
@@ -141,17 +141,9 @@ final class InvestmentTradeConfirmationViewModel {
             assetDisplayName: "\(context.assetType.title) (\(context.assetType.marketCode))",
             directionTitle: context.direction.confirmationTitle,
             amountText: assetAmountText,
-            totalAmountText: formatCurrency(context.totalAmount),
-            resultingBalanceText: formatCurrency(context.resultingBalance),
+            totalAmountText: AppNumberTextFormatter.currencyTRY(context.totalAmount),
+            resultingBalanceText: AppNumberTextFormatter.currencyTRY(context.resultingBalance),
             subtitleText: subtitleText
         )
-    }
-
-    func formatCurrency(_ value: Decimal) -> String {
-        AppNumberTextFormatter.currencyTRY(value)
-    }
-
-    func formatQuantity(_ value: Decimal) -> String {
-        InvestmentTradingValueFormatter.quantity(value)
     }
 }

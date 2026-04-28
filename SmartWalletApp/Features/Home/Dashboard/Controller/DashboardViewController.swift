@@ -4,7 +4,7 @@ import UIKit
  loading / loaded / failure durumlarına göre UI’ı güncelliyor
  */
 
-class DashboardViewController: UIViewController {
+class DashboardViewController: BaseViewController {
     var onSeeAllTransactions: (([DashboardTransaction]) -> Void)?
     var onSendMoneyTap: (() -> Void)?
     var onInvestmentTradingTap: (() -> Void)?
@@ -146,12 +146,6 @@ extension DashboardViewController {
                 self?.toastLabel.alpha = 0
             }
         }
-    }
-
-    func showAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default))
-        present(alert, animated: true)
     }
 
     @objc func handleCopyTap() {
