@@ -1,6 +1,8 @@
 import UIKit
 
 final class MarketPricesViewController: BaseViewController {
+    var onTradeTap: (() -> Void)?
+
     private let viewModel: MarketPricesViewModel
     private let contentView = MarketPricesContentView()
     private let refreshControl = UIRefreshControl()
@@ -20,6 +22,7 @@ final class MarketPricesViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindActions()
         bindViewModel()
         configureRefreshControl()
     }
@@ -31,7 +34,11 @@ final class MarketPricesViewController: BaseViewController {
     }
 }
 
- extension MarketPricesViewController {
+extension MarketPricesViewController {
+    func bindActions() {
+        contentView.tradeButton.addTarget(self, action: #selector(handleTradeTap), for: .touchUpInside)
+    }
+
     func configureRefreshControl() {
         refreshControl.addTarget(self, action: #selector(handlePullToRefresh), for: .valueChanged)
         contentView.setRefreshControl(refreshControl)
@@ -69,5 +76,9 @@ final class MarketPricesViewController: BaseViewController {
 
     @objc func handlePullToRefresh() {
         loadPrices()
+    }
+
+    @objc func handleTradeTap() {
+        onTradeTap?()
     }
 }

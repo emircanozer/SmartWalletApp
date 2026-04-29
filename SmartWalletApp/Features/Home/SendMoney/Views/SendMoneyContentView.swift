@@ -25,7 +25,6 @@ final class SendMoneyContentView: UIView {
     private let recipientsContainerView = UIView()
     private let ibanSectionLabel = UILabel()
     private let ibanFieldContainer = UIView()
-    private let ibanIconView = UIImageView()
     private let categorySectionLabel = UILabel()
     private let categoryFieldContainer = UIView()
     private let categoryChevronView = UIImageView()
@@ -134,8 +133,8 @@ extension SendMoneyContentView {
         recipientsTableView.isScrollEnabled = false
         recipientsTableView.allowsSelection = true
         recipientsTableView.showsVerticalScrollIndicator = false
-        recipientsTableView.rowHeight = 82
-        recipientsTableView.estimatedRowHeight = 82
+        recipientsTableView.rowHeight = 72
+        recipientsTableView.estimatedRowHeight = 72
         recipientsTableView.register(SendMoneyRecipientCell.self, forCellReuseIdentifier: SendMoneyRecipientCell.reuseIdentifier)
 
         ibanSectionLabel.font = .systemFont(ofSize: 16, weight: .bold)
@@ -144,10 +143,6 @@ extension SendMoneyContentView {
         ibanFieldContainer.backgroundColor = AppColor.surfacePanel
         ibanFieldContainer.layer.borderWidth = 1
         ibanFieldContainer.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
-
-        ibanIconView.image = UIImage(systemName: "creditcard")
-        ibanIconView.tintColor = AppColor.iconMuted
-        ibanIconView.contentMode = .scaleAspectFit
 
         ibanTextField.font = .systemFont(ofSize: 15, weight: .semibold)
         ibanTextField.textColor = AppColor.inputText
@@ -225,7 +220,6 @@ extension SendMoneyContentView {
         amountInputStack.addArrangedSubview(amountTextField)
 
         ibanFieldContainer.addSubview(ibanTextField)
-        ibanFieldContainer.addSubview(ibanIconView)
         categoryFieldContainer.addSubview(categoryButton)
         categoryFieldContainer.addSubview(categoryChevronView)
 
@@ -254,7 +248,6 @@ extension SendMoneyContentView {
             ibanSectionLabel,
             ibanFieldContainer,
             ibanTextField,
-            ibanIconView,
             lookupView,
             categorySectionLabel,
             categoryFieldContainer,
@@ -344,13 +337,8 @@ extension SendMoneyContentView {
             ibanFieldContainer.heightAnchor.constraint(equalToConstant: 52),
 
             ibanTextField.leadingAnchor.constraint(equalTo: ibanFieldContainer.leadingAnchor, constant: 14),
-            ibanTextField.trailingAnchor.constraint(equalTo: ibanIconView.leadingAnchor, constant: -10),
+            ibanTextField.trailingAnchor.constraint(equalTo: ibanFieldContainer.trailingAnchor, constant: -14),
             ibanTextField.centerYAnchor.constraint(equalTo: ibanFieldContainer.centerYAnchor),
-
-            ibanIconView.trailingAnchor.constraint(equalTo: ibanFieldContainer.trailingAnchor, constant: -14),
-            ibanIconView.centerYAnchor.constraint(equalTo: ibanFieldContainer.centerYAnchor),
-            ibanIconView.widthAnchor.constraint(equalToConstant: 20),
-            ibanIconView.heightAnchor.constraint(equalToConstant: 20),
 
             lookupView.topAnchor.constraint(equalTo: ibanFieldContainer.bottomAnchor, constant: 10),
             lookupView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),

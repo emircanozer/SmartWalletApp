@@ -295,8 +295,8 @@ extension ProfileContentView {
 
             emailEditIconView.centerYAnchor.constraint(equalTo: emailCardView.centerYAnchor),
             emailEditIconView.trailingAnchor.constraint(equalTo: emailCardView.trailingAnchor, constant: -18),
-            emailEditIconView.widthAnchor.constraint(equalToConstant: 14),
-            emailEditIconView.heightAnchor.constraint(equalToConstant: 14),
+        emailEditIconView.widthAnchor.constraint(equalToConstant: 20),
+        emailEditIconView.heightAnchor.constraint(equalToConstant: 20),
 
             accountCardView.topAnchor.constraint(equalTo: emailCardView.bottomAnchor, constant: 18),
             accountCardView.leadingAnchor.constraint(equalTo: emailCardView.leadingAnchor),

@@ -32,10 +32,10 @@ final class SendMoneyRecipientCell: UITableViewCell {
         contentView.addSubview(rowView)
 
         NSLayoutConstraint.activate([
-            rowView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            rowView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             rowView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             rowView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            rowView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            rowView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4)
         ])
 
         recipientRowView = rowView

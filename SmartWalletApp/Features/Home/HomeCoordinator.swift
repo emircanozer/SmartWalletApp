@@ -62,6 +62,10 @@ class HomeCoordinator: Coordinator {
         dashboardViewController.onAnalysisTap = { [weak self] in
             self?.showExpenseAnalysis()
         }
+        marketPricesViewController.onTradeTap = { [weak self, weak walletNavigationController] in
+            guard let self, let walletNavigationController else { return }
+            self.showInvestmentTrading(in: walletNavigationController)
+        }
         assistantViewModel.onNavigationRequested = { [weak self] target in
             self?.handleAssistantNavigation(target)
         }
@@ -176,6 +180,26 @@ class HomeCoordinator: Coordinator {
         guard let controllers = rootViewController.viewControllers,
               let navigationController = controllers.first as? UINavigationController else { return }
 
+        let viewModel = InvestmentTradingViewModel(
+            walletService: walletService,
+            initialAsset: initialAsset,
+            initialDirection: initialDirection
+        )
+        let viewController = InvestmentTradingViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onReviewTrade = { [weak self] context in
+            self?.showInvestmentTradeConfirmation(context)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showInvestmentTrading(
+        in navigationController: UINavigationController,
+        initialAsset: InvestmentTradingAssetType? = nil,
+        initialDirection: InvestmentTradeDirection? = nil
+    ) {
         let viewModel = InvestmentTradingViewModel(
             walletService: walletService,
             initialAsset: initialAsset,

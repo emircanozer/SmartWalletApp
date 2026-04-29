@@ -23,7 +23,7 @@ final class SendMoneyRecipientRowView: UIControl {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        layer.cornerRadius = 18
+        layer.cornerRadius = 16
         avatarView.layer.cornerRadius = avatarView.bounds.width / 2
     }
 
@@ -67,12 +67,12 @@ final class SendMoneyRecipientRowView: UIControl {
         }
 
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: 72),
+            heightAnchor.constraint(equalToConstant: 64),
 
             avatarView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 14),
             avatarView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            avatarView.widthAnchor.constraint(equalToConstant: 36),
-            avatarView.heightAnchor.constraint(equalToConstant: 36),
+            avatarView.widthAnchor.constraint(equalToConstant: 32),
+            avatarView.heightAnchor.constraint(equalToConstant: 32),
 
             avatarLabel.centerXAnchor.constraint(equalTo: avatarView.centerXAnchor),
             avatarLabel.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor),
@@ -85,7 +85,7 @@ final class SendMoneyRecipientRowView: UIControl {
             subtitleLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor)
         ])
 
-        nameTopConstraint = nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16)
+        nameTopConstraint = nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12)
         nameCenterYConstraint = nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         nameTopConstraint?.isActive = true
     }
