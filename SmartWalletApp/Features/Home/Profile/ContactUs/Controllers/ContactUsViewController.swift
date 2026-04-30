@@ -31,7 +31,7 @@ final class ContactUsViewController: BaseViewController {
         bindViewModel()
         configureKeyboardHandling()
         contentView.apply(viewModel.makeViewData())
-        viewModel.updateForm(name: "", email: "", message: "")
+        viewModel.updateForm(name: "", message: "")
     }
 
     deinit {
@@ -44,9 +44,7 @@ extension ContactUsViewController {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.sendButton.addTarget(self, action: #selector(handleSendTap), for: .touchUpInside)
         contentView.nameField.setEditingChangedTarget(self, action: #selector(handleFormChanged))
-        contentView.emailField.setEditingChangedTarget(self, action: #selector(handleFormChanged))
         contentView.nameField.setEditingDidBeginTarget(self, action: #selector(handleNameFocus))
-        contentView.emailField.setEditingDidBeginTarget(self, action: #selector(handleEmailFocus))
         contentView.messageTextView.delegate = self
 
         installKeyboardDismissTap()
@@ -118,7 +116,6 @@ extension ContactUsViewController {
     func updateForm() {
         viewModel.updateForm(
             name: contentView.nameField.trimmedText,
-            email: contentView.emailField.trimmedText,
             message: contentView.messageText
         )
     }
@@ -131,7 +128,6 @@ extension ContactUsViewController {
         dismissKeyboard()
         viewModel.sendMessage(
             name: contentView.nameField.trimmedText,
-            email: contentView.emailField.trimmedText,
             message: contentView.messageText
         )
     }
@@ -142,10 +138,6 @@ extension ContactUsViewController {
 
     @objc func handleNameFocus() {
         contentView.scrollToVisible(contentView.nameField)
-    }
-
-    @objc func handleEmailFocus() {
-        contentView.scrollToVisible(contentView.emailField)
     }
 
     @objc func handleKeyboardWillChangeFrame(_ notification: Notification) {

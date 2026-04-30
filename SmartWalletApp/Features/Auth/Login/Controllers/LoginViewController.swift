@@ -74,7 +74,7 @@ extension LoginViewController {
     func setLoading(_ isLoading: Bool) {
         contentView.loginButton.alpha = isLoading ? 0.85 : 1
         contentView.loginButton.isEnabled = !isLoading
-        setCenteredLoading(isLoading)
+        setCenteredLoading(isLoading, backgroundColor: UIColor.black.withAlphaComponent(0.08))
     }
 
     @objc func handleBackTap() {

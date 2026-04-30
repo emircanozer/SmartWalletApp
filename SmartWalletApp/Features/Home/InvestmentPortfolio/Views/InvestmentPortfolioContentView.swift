@@ -14,7 +14,6 @@ final class InvestmentPortfolioContentView: UIView {
     private let profitLossDetailLabel = UILabel()
     private let summaryDivider = UIView()
     private let dominantShareLabel = UILabel()
-    private let dominantDotView = UIView()
     private let allocationTitleLabel = UILabel()
     private let allocationStack = UIStackView()
     private let assetsTitleLabel = UILabel()
@@ -40,7 +39,6 @@ final class InvestmentPortfolioContentView: UIView {
         super.layoutSubviews()
         summaryCard.layer.cornerRadius = 28
         assetsCard.layer.cornerRadius = 22
-        dominantDotView.layer.cornerRadius = 4
     }
 }
 
@@ -134,8 +132,6 @@ extension InvestmentPortfolioContentView {
         dominantShareLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         dominantShareLabel.textColor = AppColor.white70
 
-        dominantDotView.backgroundColor = AppColor.primaryYellow
-
         allocationTitleLabel.font = .systemFont(ofSize: 28, weight: .bold)
         allocationTitleLabel.textColor = AppColor.primaryText
 
@@ -187,8 +183,7 @@ extension InvestmentPortfolioContentView {
             profitLossLabel,
             profitLossDetailLabel,
             summaryDivider,
-            dominantShareLabel,
-            dominantDotView
+            dominantShareLabel
         ].forEach(summaryCard.addSubview)
 
         assetsCard.addSubview(assetsScrollView)
@@ -208,7 +203,6 @@ extension InvestmentPortfolioContentView {
             profitLossDetailLabel,
             summaryDivider,
             dominantShareLabel,
-            dominantDotView,
             allocationTitleLabel,
             allocationStack,
             assetsTitleLabel,
@@ -267,14 +261,8 @@ extension InvestmentPortfolioContentView {
 
             dominantShareLabel.topAnchor.constraint(equalTo: summaryDivider.bottomAnchor, constant: 18),
             dominantShareLabel.leadingAnchor.constraint(equalTo: summaryCard.leadingAnchor, constant: 18),
+            dominantShareLabel.trailingAnchor.constraint(equalTo: summaryCard.trailingAnchor, constant: -18),
             dominantShareLabel.bottomAnchor.constraint(equalTo: summaryCard.bottomAnchor, constant: -20),
-
-            dominantDotView.centerYAnchor.constraint(equalTo: dominantShareLabel.centerYAnchor),
-            dominantDotView.trailingAnchor.constraint(equalTo: summaryCard.trailingAnchor, constant: -18),
-            dominantDotView.widthAnchor.constraint(equalToConstant: 8),
-            dominantDotView.heightAnchor.constraint(equalToConstant: 8),
-
-            dominantShareLabel.trailingAnchor.constraint(equalTo: dominantDotView.leadingAnchor, constant: -8),
 
             allocationTitleLabel.topAnchor.constraint(equalTo: summaryCard.bottomAnchor, constant: 30),
             allocationTitleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),

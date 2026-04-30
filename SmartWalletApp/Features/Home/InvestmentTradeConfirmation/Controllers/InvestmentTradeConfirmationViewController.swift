@@ -37,7 +37,6 @@ final class InvestmentTradeConfirmationViewController: BaseViewController {
  extension InvestmentTradeConfirmationViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
-        contentView.secondaryButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.confirmButton.addTarget(self, action: #selector(handleConfirmTap), for: .touchUpInside)
     }
 

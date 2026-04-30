@@ -3,7 +3,6 @@ import UIKit
 final class InvestmentTradeConfirmationContentView: UIView {
     let backButton = UIButton(type: .system)
     let confirmButton = UIButton(type: .system)
-    let secondaryButton = UIButton(type: .system)
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
@@ -30,7 +29,7 @@ final class InvestmentTradeConfirmationContentView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         [cardView, noticeView].forEach { $0.layer.cornerRadius = 24 }
-        [confirmButton, secondaryButton].forEach { $0.layer.cornerRadius = 20 }
+        confirmButton.layer.cornerRadius = 20
     }
 }
 
@@ -40,7 +39,6 @@ extension InvestmentTradeConfirmationContentView {
         subtitleLabel.text = data.subtitleText
         noticeLabel.text = data.noticeText
         confirmButton.setTitle(data.confirmButtonTitle, for: .normal)
-        secondaryButton.setTitle(data.backButtonTitle, for: .normal)
 
         highlightStack.arrangedSubviews.forEach {
             highlightStack.removeArrangedSubview($0)
@@ -112,22 +110,13 @@ extension InvestmentTradeConfirmationContentView {
         confirmButton.configuration = confirmConfiguration
         confirmButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
 
-        var secondaryConfiguration = UIButton.Configuration.filled()
-        secondaryConfiguration.baseBackgroundColor = AppColor.surfaceMuted
-        secondaryConfiguration.baseForegroundColor = AppColor.primaryText
-        secondaryConfiguration.cornerStyle = .capsule
-        secondaryConfiguration.image = UIImage(systemName: "arrow.left")
-        secondaryConfiguration.imagePadding = 10
-        secondaryConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 17, leading: 24, bottom: 17, trailing: 24)
-        secondaryButton.configuration = secondaryConfiguration
-        secondaryButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
     }
 
     func buildHierarchy() {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [backButton, titleLabel, subtitleLabel, cardView, noticeView, confirmButton, secondaryButton].forEach(contentContainer.addSubview)
+        [backButton, titleLabel, subtitleLabel, cardView, noticeView, confirmButton].forEach(contentContainer.addSubview)
         [highlightStack, detailsStack].forEach(cardView.addSubview)
         [noticeIconView, noticeLabel].forEach(noticeView.addSubview)
     }
@@ -145,8 +134,7 @@ extension InvestmentTradeConfirmationContentView {
             noticeView,
             noticeIconView,
             noticeLabel,
-            confirmButton,
-            secondaryButton
+            confirmButton
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -205,12 +193,7 @@ extension InvestmentTradeConfirmationContentView {
             confirmButton.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
             confirmButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
             confirmButton.heightAnchor.constraint(equalToConstant: 56),
-
-            secondaryButton.topAnchor.constraint(equalTo: confirmButton.bottomAnchor, constant: 16),
-            secondaryButton.leadingAnchor.constraint(equalTo: confirmButton.leadingAnchor),
-            secondaryButton.trailingAnchor.constraint(equalTo: confirmButton.trailingAnchor),
-            secondaryButton.heightAnchor.constraint(equalToConstant: 56),
-            secondaryButton.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -28)
+            confirmButton.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -28)
         ])
     }
 }

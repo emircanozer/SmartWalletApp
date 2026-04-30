@@ -25,13 +25,11 @@ final class AIAssistantMessageCell: UITableViewCell {
     private var trailingConstraint: NSLayoutConstraint!
     private var timestampLeadingConstraint: NSLayoutConstraint!
     private var timestampTrailingConstraint: NSLayoutConstraint!
-    private var assistantWidthConstraint: NSLayoutConstraint!
-    private var userWidthConstraint: NSLayoutConstraint!
-    private var assistantMinWidthConstraint: NSLayoutConstraint!
-    private var userMinWidthConstraint: NSLayoutConstraint!
-    private var typingWidthConstraint: NSLayoutConstraint!
-    private var regularAssistantMinWidthConstraint: NSLayoutConstraint!
-    private var preferredAssistantWidthConstraint: NSLayoutConstraint!
+
+    private var assistantMaxWidthConstraint: NSLayoutConstraint!
+    private var userMaxWidthConstraint: NSLayoutConstraint!
+    private var assistantTypingWidthConstraint: NSLayoutConstraint!
+    private var dynamicBubbleWidthConstraint: NSLayoutConstraint?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,12 +44,17 @@ final class AIAssistantMessageCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+
         delegate = nil
         typingIndicatorView.stopAnimating()
+
+        dynamicBubbleWidthConstraint?.isActive = false
+        dynamicBubbleWidthConstraint = nil
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
         avatarView.layer.cornerRadius = avatarView.bounds.width / 2
         bubbleContainer.layer.cornerRadius = 20
         bubbleContainer.layer.cornerCurve = .continuous
@@ -68,19 +71,22 @@ extension AIAssistantMessageCell {
 
         let isAssistant = item.sender == .assistant
         let isTyping = item.kind == .typing
+
+        dynamicBubbleWidthConstraint?.isActive = false
+        dynamicBubbleWidthConstraint = nil
+
         avatarView.isHidden = !isAssistant
         rowStack.alignment = isAssistant ? .leading : .trailing
+
         leadingConstraint.isActive = isAssistant
-        assistantWidthConstraint.isActive = isAssistant
-        assistantMinWidthConstraint.isActive = isAssistant && isTyping
-        regularAssistantMinWidthConstraint.isActive = isAssistant && !isTyping
-        preferredAssistantWidthConstraint.isActive = isAssistant && !isTyping
         trailingConstraint.isActive = !isAssistant
-        userWidthConstraint.isActive = !isAssistant
-        userMinWidthConstraint.isActive = !isAssistant
+
         timestampLeadingConstraint.isActive = isAssistant
         timestampTrailingConstraint.isActive = !isAssistant
-        typingWidthConstraint.isActive = isAssistant && isTyping
+
+        assistantMaxWidthConstraint.isActive = isAssistant && !isTyping
+        userMaxWidthConstraint.isActive = !isAssistant
+        assistantTypingWidthConstraint.isActive = isAssistant && isTyping
 
         bubbleContainer.backgroundColor = isAssistant ? AppColor.whitePrimary : AppColor.warmHighlight
         bubbleContainer.layer.shadowOpacity = isAssistant ? 0.06 : 0.02
@@ -96,20 +102,24 @@ extension AIAssistantMessageCell {
             typingIndicatorView.startAnimating()
         } else {
             typingIndicatorView.stopAnimating()
+            updateBubbleWidth(for: item, isAssistant: isAssistant)
         }
 
         if let action = item.action {
             bubbleStack.spacing = 14
+
             switch action.state {
             case .pending:
                 actionsStack.isHidden = false
                 statusBadgeLabel.isHidden = true
                 acceptButton.setTitle(action.titleText, for: .normal)
                 declineButton.setTitle(action.secondaryTitleText, for: .normal)
+
             case .accepted:
                 actionsStack.isHidden = true
                 statusBadgeLabel.isHidden = false
                 statusBadgeLabel.text = "Yönlendirildi"
+
             case .declined:
                 actionsStack.isHidden = true
                 statusBadgeLabel.isHidden = false
@@ -121,9 +131,29 @@ extension AIAssistantMessageCell {
             bubbleStack.spacing = 0
         }
     }
+
+    private func updateBubbleWidth(for item: AIAssistantMessageItem, isAssistant: Bool) {
+        let screenWidth = UIScreen.main.bounds.width
+
+        let maxBubbleWidth: CGFloat = screenWidth * 0.84
+        let minBubbleWidth: CGFloat = isAssistant ? 180 : 44
+        let horizontalPadding: CGFloat = 48
+
+        let rawTextWidth = (item.text as NSString).size(
+            withAttributes: [
+                .font: messageLabel.font as Any
+            ]
+        ).width
+
+        let targetWidth = min(max(rawTextWidth + horizontalPadding, minBubbleWidth), maxBubbleWidth)
+
+        dynamicBubbleWidthConstraint = bubbleContainer.widthAnchor.constraint(equalToConstant: targetWidth)
+        dynamicBubbleWidthConstraint?.priority = .required
+        dynamicBubbleWidthConstraint?.isActive = true
+    }
 }
 
- extension AIAssistantMessageCell {
+extension AIAssistantMessageCell {
     func configureView() {
         selectionStyle = .none
         backgroundColor = .clear
@@ -135,6 +165,7 @@ extension AIAssistantMessageCell {
         rowStack.distribution = .fill
 
         avatarView.backgroundColor = AppColor.surfaceWarmSoft
+
         avatarIconView.image = UIImage(systemName: "apple.intelligence")
         avatarIconView.tintColor = AppColor.warmActionText
         avatarIconView.contentMode = .scaleAspectFit
@@ -145,9 +176,11 @@ extension AIAssistantMessageCell {
         messageLabel.font = .systemFont(ofSize: 17, weight: .medium)
         messageLabel.textColor = AppColor.primaryText
         messageLabel.numberOfLines = 0
-        messageLabel.lineBreakMode = .byWordWrapping
+        messageLabel.lineBreakMode = .byCharWrapping
+
         messageLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        messageLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        messageLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        messageLabel.setContentHuggingPriority(.required, for: .horizontal)
 
         actionsStack.axis = .horizontal
         actionsStack.spacing = 10
@@ -168,9 +201,9 @@ extension AIAssistantMessageCell {
         timestampLabel.textColor = AppColor.secondaryText
         timestampLabel.textAlignment = .left
 
-        bubbleContainer.setContentCompressionResistancePriority(.required, for: .horizontal)
-        bubbleContainer.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         bubbleContainer.setContentCompressionResistancePriority(.required, for: .vertical)
+        bubbleContainer.setContentCompressionResistancePriority(.required, for: .horizontal)
+        bubbleContainer.setContentHuggingPriority(.required, for: .horizontal)
     }
 
     func configureButton(_ button: UIButton, backgroundColor: UIColor, titleColor: UIColor) {
@@ -182,14 +215,25 @@ extension AIAssistantMessageCell {
 
     func buildHierarchy() {
         contentView.addSubview(rowStack)
+
         rowStack.addArrangedSubview(avatarView)
         rowStack.addArrangedSubview(bubbleContainer)
 
         avatarView.addSubview(avatarIconView)
         bubbleContainer.addSubview(bubbleStack)
-        [messageLabel, typingIndicatorView, actionsStack, statusBadgeLabel].forEach(bubbleStack.addArrangedSubview)
+
+        [
+            messageLabel,
+            typingIndicatorView,
+            actionsStack,
+            statusBadgeLabel
+        ].forEach {
+            bubbleStack.addArrangedSubview($0)
+        }
+
         actionsStack.addArrangedSubview(acceptButton)
         actionsStack.addArrangedSubview(declineButton)
+
         contentView.addSubview(timestampLabel)
 
         acceptButton.addTarget(self, action: #selector(handleAcceptTap), for: .touchUpInside)
@@ -205,25 +249,56 @@ extension AIAssistantMessageCell {
             bubbleStack,
             timestampLabel,
             typingIndicatorView
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
-        leadingConstraint = rowStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20)
-        trailingConstraint = rowStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20)
-        timestampLeadingConstraint = timestampLabel.leadingAnchor.constraint(equalTo: bubbleContainer.leadingAnchor, constant: 4)
-        timestampTrailingConstraint = timestampLabel.trailingAnchor.constraint(equalTo: bubbleContainer.trailingAnchor, constant: -4)
-        assistantWidthConstraint = bubbleContainer.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.84)
-        userWidthConstraint = bubbleContainer.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.8)
-        assistantMinWidthConstraint = bubbleContainer.widthAnchor.constraint(equalToConstant: 96)
-        regularAssistantMinWidthConstraint = bubbleContainer.widthAnchor.constraint(greaterThanOrEqualToConstant: 220)
-        preferredAssistantWidthConstraint = bubbleContainer.widthAnchor.constraint(equalToConstant: 244)
-        preferredAssistantWidthConstraint.priority = .defaultHigh
-        userMinWidthConstraint = bubbleContainer.widthAnchor.constraint(greaterThanOrEqualToConstant: 88)
-        typingWidthConstraint = bubbleContainer.widthAnchor.constraint(lessThanOrEqualToConstant: 98)
+        leadingConstraint = rowStack.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: 20
+        )
+
+        trailingConstraint = rowStack.trailingAnchor.constraint(
+            equalTo: contentView.trailingAnchor,
+            constant: -20
+        )
+
+        timestampLeadingConstraint = timestampLabel.leadingAnchor.constraint(
+            equalTo: bubbleContainer.leadingAnchor,
+            constant: 4
+        )
+
+        timestampTrailingConstraint = timestampLabel.trailingAnchor.constraint(
+            equalTo: bubbleContainer.trailingAnchor,
+            constant: -4
+        )
+
+        assistantMaxWidthConstraint = bubbleContainer.widthAnchor.constraint(
+            lessThanOrEqualTo: contentView.widthAnchor,
+            multiplier: 0.84
+        )
+
+        userMaxWidthConstraint = bubbleContainer.widthAnchor.constraint(
+            lessThanOrEqualTo: contentView.widthAnchor,
+            multiplier: 0.84
+        )
+
+        assistantTypingWidthConstraint = bubbleContainer.widthAnchor.constraint(
+            equalToConstant: 96
+        )
 
         NSLayoutConstraint.activate([
             rowStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            rowStack.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -20),
-            rowStack.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor, constant: 20),
+
+            rowStack.leadingAnchor.constraint(
+                greaterThanOrEqualTo: contentView.leadingAnchor,
+                constant: 20
+            ),
+
+            rowStack.trailingAnchor.constraint(
+                lessThanOrEqualTo: contentView.trailingAnchor,
+                constant: -20
+            ),
 
             avatarView.widthAnchor.constraint(equalToConstant: 28),
             avatarView.heightAnchor.constraint(equalToConstant: 28),
@@ -240,6 +315,7 @@ extension AIAssistantMessageCell {
 
             typingIndicatorView.heightAnchor.constraint(equalToConstant: 20),
             typingIndicatorView.widthAnchor.constraint(equalToConstant: 44),
+
             statusBadgeLabel.heightAnchor.constraint(equalToConstant: 32),
 
             timestampLabel.topAnchor.constraint(equalTo: rowStack.bottomAnchor, constant: 6),
@@ -273,16 +349,20 @@ private final class AIAssistantTypingIndicatorView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        dots.forEach { $0.layer.cornerRadius = $0.bounds.width / 2 }
+
+        dots.forEach {
+            $0.layer.cornerRadius = $0.bounds.width / 2
+        }
     }
 }
 
- extension AIAssistantTypingIndicatorView {
+extension AIAssistantTypingIndicatorView {
     func configureView() {
         dotsStack.axis = .horizontal
         dotsStack.spacing = 6
         dotsStack.alignment = .center
         dotsStack.distribution = .equalSpacing
+
         dots.forEach {
             $0.backgroundColor = AppColor.secondaryText
             $0.alpha = 0.35
@@ -291,11 +371,21 @@ private final class AIAssistantTypingIndicatorView: UIView {
 
     func buildHierarchy() {
         addSubview(dotsStack)
-        dots.forEach(dotsStack.addArrangedSubview)
+
+        dots.forEach {
+            dotsStack.addArrangedSubview($0)
+        }
     }
 
     func setupLayout() {
-        [dotsStack, dots[0], dots[1], dots[2]].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            dotsStack,
+            dots[0],
+            dots[1],
+            dots[2]
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             dotsStack.topAnchor.constraint(equalTo: topAnchor),
@@ -314,6 +404,7 @@ private final class AIAssistantTypingIndicatorView: UIView {
     func startAnimating() {
         for (index, dot) in dots.enumerated() {
             let delay = Double(index) * 0.18
+
             let animation = CABasicAnimation(keyPath: "opacity")
             animation.fromValue = 0.25
             animation.toValue = 1.0
@@ -321,11 +412,14 @@ private final class AIAssistantTypingIndicatorView: UIView {
             animation.autoreverses = true
             animation.repeatCount = .infinity
             animation.beginTime = CACurrentMediaTime() + delay
+
             dot.layer.add(animation, forKey: "typingOpacity")
         }
     }
 
     func stopAnimating() {
-        dots.forEach { $0.layer.removeAnimation(forKey: "typingOpacity") }
+        dots.forEach {
+            $0.layer.removeAnimation(forKey: "typingOpacity")
+        }
     }
 }

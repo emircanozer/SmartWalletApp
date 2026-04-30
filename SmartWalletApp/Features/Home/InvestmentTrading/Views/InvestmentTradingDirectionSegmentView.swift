@@ -70,10 +70,9 @@ extension InvestmentTradingDirectionSegmentView {
     }
 
     func applyStyle(to button: UIButton, title: String, isSelected: Bool) {
-        var configuration = UIButton.Configuration.plain()
-        configuration.title = title
-        configuration.baseForegroundColor = isSelected ? AppColor.accentOlive : AppColor.secondaryText
-        button.configuration = configuration
+        button.configuration = nil
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(isSelected ? AppColor.accentOlive : AppColor.secondaryText, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: isSelected ? .bold : .semibold)
         button.backgroundColor = isSelected ? AppColor.whitePrimary : .clear
     }

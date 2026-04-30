@@ -12,8 +12,6 @@ struct ContactUsViewData {
     let subtitleText: String
     let nameTitleText: String
     let namePlaceholderText: String
-    let emailTitleText: String
-    let emailPlaceholderText: String
     let messageTitleText: String
     let messagePlaceholderText: String
     let sendButtonTitleText: String

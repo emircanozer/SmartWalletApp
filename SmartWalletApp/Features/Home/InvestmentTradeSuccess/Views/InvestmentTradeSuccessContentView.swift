@@ -2,7 +2,6 @@ import UIKit
 
 final class InvestmentTradeSuccessContentView: UIView {
     let closeButton = UIButton(type: .system)
-    let primaryButton = UIButton(type: .system)
     let secondaryButton = UIButton(type: .system)
 
     private let scrollView = UIScrollView()
@@ -45,7 +44,7 @@ final class InvestmentTradeSuccessContentView: UIView {
         balanceContainerView.layer.cornerRadius = 16
         statusPillView.layer.cornerRadius = 16
         statusDotView.layer.cornerRadius = 4
-        [primaryButton, secondaryButton].forEach { $0.layer.cornerRadius = 20 }
+        secondaryButton.layer.cornerRadius = 20
     }
 }
 
@@ -60,7 +59,6 @@ extension InvestmentTradeSuccessContentView {
         totalValueLabel.text = data.totalAmountText
         balanceValueLabel.text = data.resultingBalanceText
         statusLabel.text = data.statusPillText
-        primaryButton.setTitle(data.primaryButtonTitle, for: .normal)
         secondaryButton.setTitle(data.secondaryButtonTitle, for: .normal)
     }
 }
@@ -71,8 +69,8 @@ extension InvestmentTradeSuccessContentView {
 
         scrollView.showsVerticalScrollIndicator = false
 
-        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        closeButton.tintColor = AppColor.secondaryText
+        closeButton.setImage(UIImage(systemName: "house.fill"), for: .normal)
+        closeButton.tintColor = AppColor.accentOlive
 
         headerTitleLabel.font = .systemFont(ofSize: 17, weight: .bold)
         headerTitleLabel.textColor = AppColor.primaryText
@@ -131,17 +129,6 @@ extension InvestmentTradeSuccessContentView {
         statusLabel.font = .systemFont(ofSize: 12, weight: .bold)
         statusLabel.textColor = AppColor.secondaryText
 
-        var primaryConfiguration = UIButton.Configuration.filled()
-        primaryConfiguration.baseBackgroundColor = AppColor.primaryYellow
-        primaryConfiguration.baseForegroundColor = AppColor.primaryText
-        primaryConfiguration.cornerStyle = .capsule
-        primaryConfiguration.image = UIImage(systemName: "arrow.right")
-        primaryConfiguration.imagePlacement = .trailing
-        primaryConfiguration.imagePadding = 10
-        primaryConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 17, leading: 24, bottom: 17, trailing: 24)
-        primaryButton.configuration = primaryConfiguration
-        primaryButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
-
         var secondaryConfiguration = UIButton.Configuration.filled()
         secondaryConfiguration.baseBackgroundColor = AppColor.whitePrimary
         secondaryConfiguration.baseForegroundColor = AppColor.primaryText
@@ -155,7 +142,7 @@ extension InvestmentTradeSuccessContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [closeButton, headerTitleLabel, successImageView, titleLabel, subtitleLabel, detailCard, statusPillView, primaryButton, secondaryButton].forEach(contentContainer.addSubview)
+        [closeButton, headerTitleLabel, successImageView, titleLabel, subtitleLabel, detailCard, statusPillView, secondaryButton].forEach(contentContainer.addSubview)
         [assetTitleLabel, assetValueLabel, directionTitleLabel, directionValueLabel, topDividerView, amountTitleLabel, amountValueLabel, totalTitleLabel, totalValueLabel, balanceContainerView].forEach(detailCard.addSubview)
         [balanceTitleLabel, balanceValueLabel].forEach(balanceContainerView.addSubview)
         [statusDotView, statusLabel].forEach(statusPillView.addSubview)
@@ -167,7 +154,7 @@ extension InvestmentTradeSuccessContentView {
             titleLabel, subtitleLabel, detailCard, assetTitleLabel, assetValueLabel, directionTitleLabel,
             directionValueLabel, topDividerView, amountTitleLabel, amountValueLabel, totalTitleLabel,
             totalValueLabel, balanceContainerView, balanceTitleLabel, balanceValueLabel, statusPillView,
-            statusDotView, statusLabel, primaryButton, secondaryButton
+            statusDotView, statusLabel, secondaryButton
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -183,7 +170,7 @@ extension InvestmentTradeSuccessContentView {
             contentContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
             closeButton.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 8),
-            closeButton.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 18),
+            closeButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -18),
             closeButton.widthAnchor.constraint(equalToConstant: 28),
             closeButton.heightAnchor.constraint(equalToConstant: 28),
 
@@ -266,14 +253,9 @@ extension InvestmentTradeSuccessContentView {
             statusLabel.trailingAnchor.constraint(equalTo: statusPillView.trailingAnchor, constant: -12),
             statusLabel.bottomAnchor.constraint(equalTo: statusPillView.bottomAnchor, constant: -8),
 
-            primaryButton.topAnchor.constraint(equalTo: statusPillView.bottomAnchor, constant: 28),
-            primaryButton.leadingAnchor.constraint(equalTo: detailCard.leadingAnchor),
-            primaryButton.trailingAnchor.constraint(equalTo: detailCard.trailingAnchor),
-            primaryButton.heightAnchor.constraint(equalToConstant: 56),
-
-            secondaryButton.topAnchor.constraint(equalTo: primaryButton.bottomAnchor, constant: 16),
-            secondaryButton.leadingAnchor.constraint(equalTo: primaryButton.leadingAnchor),
-            secondaryButton.trailingAnchor.constraint(equalTo: primaryButton.trailingAnchor),
+            secondaryButton.topAnchor.constraint(equalTo: statusPillView.bottomAnchor, constant: 28),
+            secondaryButton.leadingAnchor.constraint(equalTo: detailCard.leadingAnchor),
+            secondaryButton.trailingAnchor.constraint(equalTo: detailCard.trailingAnchor),
             secondaryButton.heightAnchor.constraint(equalToConstant: 56),
             secondaryButton.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -28)
         ])

@@ -26,7 +26,7 @@ extension UIViewController {
 
         let overlay = UIView()
         overlay.translatesAutoresizingMaskIntoConstraints = false
-        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.08)
+        overlay.backgroundColor = AppColor.appBackground
         overlay.isHidden = true
 
         // indicator
@@ -55,8 +55,9 @@ extension UIViewController {
     // view üstüne yarı saydam bir overlay ekliyor
     //ortada UIActivityIndicatorView(style: .large) gösteriyor
 
-    func setCenteredLoading(_ isLoading: Bool) {
+    func setCenteredLoading(_ isLoading: Bool, backgroundColor: UIColor = AppColor.appBackground) {
         let overlay = loadingOverlayView
+        overlay.backgroundColor = backgroundColor
 
         if overlay.superview == nil {
             view.addSubview(overlay)

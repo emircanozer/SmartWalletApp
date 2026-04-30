@@ -18,6 +18,7 @@ class TransactionsListContentView: UIView {
     private let summaryIconContainer = UIView()
     private let summaryIconView = UIImageView()
     private let emptyStateView = EmptyStateView()
+    private var summaryIconWidthConstraint: NSLayoutConstraint?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,6 +64,7 @@ extension TransactionsListContentView {
         summaryIconContainer.backgroundColor = AppColor.titleDark
         summaryIconView.tintColor = AppColor.accentGold
         summaryIconView.contentMode = .scaleAspectFit
+        summaryIconContainer.isHidden = true
 
         dateFilterButton.backgroundColor = AppColor.primaryYellow
         dateFilterButton.setTitleColor(AppColor.primaryText, for: .normal)
@@ -127,6 +129,8 @@ extension TransactionsListContentView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
+        summaryIconWidthConstraint = summaryIconContainer.widthAnchor.constraint(equalToConstant: 0)
+
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
@@ -163,7 +167,7 @@ extension TransactionsListContentView {
 
             summaryIconContainer.centerYAnchor.constraint(equalTo: summaryCard.centerYAnchor),
             summaryIconContainer.trailingAnchor.constraint(equalTo: summaryCard.trailingAnchor, constant: -18),
-            summaryIconContainer.widthAnchor.constraint(equalToConstant: 42),
+            summaryIconWidthConstraint!,
             summaryIconContainer.heightAnchor.constraint(equalToConstant: 42),
 
             summaryIconView.centerXAnchor.constraint(equalTo: summaryIconContainer.centerXAnchor),
@@ -191,7 +195,6 @@ extension TransactionsListContentView {
         expenseFilterButton.setTitle(TransactionsFilterType.expense.title, for: .normal)
         summaryTitleLabel.text = "TOPLAM HAREKET"
         summaryAmountLabel.text = "₺0"
-        summaryIconView.image = UIImage(systemName: "arrow.down.right")
     }
 
     func applyCornerRadius() {
@@ -242,7 +245,6 @@ extension TransactionsListContentView {
         summaryAmountLabel.textColor = isPositive
             ? AppColor.accentGold
             : AppColor.warningOrange
-        summaryIconView.image = UIImage(systemName: showsPrefix ? (isPositive ? "arrow.down.left" : "arrow.up.right") : "equal")
     }
 
     func updateDateFilterTitle(startDate: Date, endDate: Date) {

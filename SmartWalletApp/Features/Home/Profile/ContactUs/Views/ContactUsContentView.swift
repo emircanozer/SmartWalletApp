@@ -3,7 +3,6 @@ import UIKit
 final class ContactUsContentView: UIView {
     let backButton = UIButton(type: .system)
     let nameField = AuthInputFieldView(title: "", placeholder: "", iconName: "person")
-    let emailField = AuthInputFieldView(title: "", placeholder: "", iconName: "envelope")
     let messageTextView = UITextView()
     let sendButton = UIButton(type: .system)
 
@@ -13,7 +12,6 @@ final class ContactUsContentView: UIView {
     private let subtitleLabel = UILabel()
     private let formCardView = UIView()
     private let nameTitleLabel = UILabel()
-    private let emailTitleLabel = UILabel()
     private let messageTitleLabel = UILabel()
     private let messageContainerView = UIView()
     private let messagePlaceholderLabel = UILabel()
@@ -47,14 +45,11 @@ extension ContactUsContentView {
         subtitleLabel.text = data.subtitleText
         nameTitleLabel.text = data.nameTitleText
         nameField.setPlaceholder(data.namePlaceholderText)
-        emailTitleLabel.text = data.emailTitleText
-        emailField.setPlaceholder(data.emailPlaceholderText)
         messageTitleLabel.text = data.messageTitleText
         messagePlaceholderLabel.text = data.messagePlaceholderText
         sendButton.setTitle(data.sendButtonTitleText, for: .normal)
 
         nameField.setText("")
-        emailField.setText("")
     }
 
     func setSendEnabled(_ isEnabled: Bool) {
@@ -102,10 +97,8 @@ extension ContactUsContentView {
         formCardView.layer.shadowOffset = CGSize(width: 0, height: 8)
 
         nameField.setAutocapitalizationType(.words)
-        emailField.setKeyboardType(.emailAddress)
-        emailField.setTextContentType(.emailAddress)
 
-        [nameTitleLabel, emailTitleLabel, messageTitleLabel].forEach {
+        [nameTitleLabel, messageTitleLabel].forEach {
             $0.font = .systemFont(ofSize: 13, weight: .bold)
             $0.textColor = AppColor.fieldTitleText
         }
@@ -141,8 +134,6 @@ extension ContactUsContentView {
         [
             nameTitleLabel,
             nameField,
-            emailTitleLabel,
-            emailField,
             messageTitleLabel,
             messageContainerView
         ].forEach(formCardView.addSubview)
@@ -160,8 +151,6 @@ extension ContactUsContentView {
             formCardView,
             nameTitleLabel,
             nameField,
-            emailTitleLabel,
-            emailField,
             messageTitleLabel,
             messageContainerView,
             messageTextView,
@@ -206,15 +195,7 @@ extension ContactUsContentView {
             nameField.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             nameField.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
-            emailTitleLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 14),
-            emailTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
-            emailTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
-
-            emailField.topAnchor.constraint(equalTo: emailTitleLabel.bottomAnchor, constant: 8),
-            emailField.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
-            emailField.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
-
-            messageTitleLabel.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 14),
+            messageTitleLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 14),
             messageTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             messageTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 

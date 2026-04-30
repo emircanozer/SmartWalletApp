@@ -31,6 +31,7 @@ class DashboardContentView: UIView {
         .init(type: .investmentPortfolio, title: "YATIRIM PORTFÖYÜ", iconName: "chart.pie", isHighlighted: false),
         .init(type: .analysis, title: "HARCAMA ANALİZİ", iconName: "chart.bar.horizontal.page", isHighlighted: false)
     ]
+    private var hasLoadedDashboardData = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,6 +39,7 @@ class DashboardContentView: UIView {
         buildHierarchy()
         setupLayout()
         applyContent()
+        setMainContentHidden(true)
     }
 
     required init?(coder: NSCoder) {
@@ -224,8 +226,8 @@ extension DashboardContentView {
             tableView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: 0),
             tableView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -20),
 
-            loadingIndicator.centerXAnchor.constraint(equalTo: balanceCard.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: balanceCard.centerYAnchor)
+            loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
 
         tableHeightConstraint?.isActive = true
@@ -254,15 +256,20 @@ extension DashboardContentView {
 
     // controllerdan gelen veriyi basıyoruz
     func applyData(_ data: DashboardViewData) {
+        hasLoadedDashboardData = true
         greetingLabel.text = data.greetingText
         ibanLabel.text = data.ibanText
         balanceValueLabel.text = data.balanceText
         balanceCurrencyLabel.text = data.currencyText
         updateTransactionsHeight(count: data.previewTransactions.count)
+        setMainContentHidden(false)
     }
 
     func setLoading(_ isLoading: Bool) {
         if isLoading {
+            if !hasLoadedDashboardData {
+                setMainContentHidden(true)
+            }
             loadingIndicator.startAnimating()
         } else {
             loadingIndicator.stopAnimating()
@@ -278,5 +285,19 @@ extension DashboardContentView {
 
     func applyCornerRadius() {
         balanceCard.layer.cornerRadius = 28
+    }
+
+    private func setMainContentHidden(_ isHidden: Bool) {
+        [
+            headerTitleLabel,
+            greetingLabel,
+            balanceCard,
+            quickActionsStack,
+            sectionTitleLabel,
+            seeAllButton,
+            tableView
+        ].forEach {
+            $0.isHidden = isHidden
+        }
     }
 }

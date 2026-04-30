@@ -13,31 +13,27 @@ extension ContactUsViewModel {
             subtitleText: "Sorun, öneri veya geri bildiriminizi bize iletin.",
             nameTitleText: "Ad Soyad",
             namePlaceholderText: "Adınızı ve soyadınızı yazın",
-            emailTitleText: "E-posta",
-            emailPlaceholderText: "E-posta adresinizi yazın",
             messageTitleText: "Mesajınız",
             messagePlaceholderText: "Bize iletmek istediğiniz mesajı yazın",
             sendButtonTitleText: "Mesaj Gönder"
         )
     }
 
-    func updateForm(name: String, email: String, message: String) {
-        onStateChange?(.formUpdated(isSendEnabled: isFormValid(name: name, email: email, message: message)))
+    func updateForm(name: String, message: String) {
+        onStateChange?(.formUpdated(isSendEnabled: isFormValid(name: name, message: message)))
     }
 
-    func sendMessage(name: String, email: String, message: String) {
+    func sendMessage(name: String, message: String) {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedMessage = message.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        guard isFormValid(name: trimmedName, email: trimmedEmail, message: trimmedMessage) else {
-            onStateChange?(.failure("Lütfen ad soyad, e-posta ve mesaj alanlarını doldurun."))
+        guard isFormValid(name: trimmedName, message: trimmedMessage) else {
+            onStateChange?(.failure("Lütfen ad soyad ve mesaj alanlarını doldurun."))
             return
         }
 
         let body = """
         Ad Soyad: \(trimmedName)
-        E-posta: \(trimmedEmail)
 
         Mesaj:
         \(trimmedMessage)
@@ -54,9 +50,8 @@ extension ContactUsViewModel {
         )
     }
 
-    private func isFormValid(name: String, email: String, message: String) -> Bool {
+    private func isFormValid(name: String, message: String) -> Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            && email.trimmingCharacters(in: .whitespacesAndNewlines).contains("@")
             && !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }

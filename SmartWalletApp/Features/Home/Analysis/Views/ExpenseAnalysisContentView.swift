@@ -88,6 +88,7 @@ extension ExpenseAnalysisContentView {
 
     func setAIInsightLoading(_ isLoading: Bool) {
         if isLoading {
+            aiTitleLabel.text = "YAPAY ZEKA ANALİZİ"
             aiBodyLabel.isHidden = true
             aiLoadingIndicator.startAnimating()
         } else {
@@ -168,8 +169,10 @@ extension ExpenseAnalysisContentView {
         aiCard.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
         aiCard.layer.borderWidth = 1
 
+        aiTitleLabel.text = "YAPAY ZEKA ANALİZİ"
         aiTitleLabel.font = .systemFont(ofSize: 13, weight: .bold)
         aiTitleLabel.textColor = AppColor.warmActionText
+        aiTitleLabel.textAlignment = .left
 
         aiBodyLabel.font = .systemFont(ofSize: 14, weight: .medium)
         aiBodyLabel.textColor = AppColor.primaryText
@@ -249,6 +252,7 @@ extension ExpenseAnalysisContentView {
             aiCard,
             aiTitleLabel,
             aiBodyLabel,
+            aiLoadingIndicator,
             loadingIndicator
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -315,16 +319,17 @@ extension ExpenseAnalysisContentView {
             aiCard.heightAnchor.constraint(greaterThanOrEqualToConstant: 120),
             aiCard.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -24),
 
-            aiTitleLabel.topAnchor.constraint(equalTo: aiCard.topAnchor, constant: 16),
-            aiTitleLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 18),
-            aiTitleLabel.trailingAnchor.constraint(equalTo: aiCard.trailingAnchor, constant: -18),
+            aiTitleLabel.topAnchor.constraint(equalTo: aiCard.topAnchor, constant: 12),
+            aiTitleLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 16),
+            aiTitleLabel.trailingAnchor.constraint(equalTo: aiCard.trailingAnchor, constant: -16),
 
             aiLoadingIndicator.centerXAnchor.constraint(equalTo: aiCard.centerXAnchor),
-            aiLoadingIndicator.centerYAnchor.constraint(equalTo: aiCard.centerYAnchor),
+            aiLoadingIndicator.topAnchor.constraint(greaterThanOrEqualTo: aiTitleLabel.bottomAnchor, constant: 14),
+            aiLoadingIndicator.centerYAnchor.constraint(equalTo: aiCard.centerYAnchor, constant: 6),
 
-            aiBodyLabel.topAnchor.constraint(equalTo: aiTitleLabel.bottomAnchor, constant: 10),
-            aiBodyLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 18),
-            aiBodyLabel.trailingAnchor.constraint(equalTo: aiCard.trailingAnchor, constant: -18),
+            aiBodyLabel.topAnchor.constraint(equalTo: aiTitleLabel.bottomAnchor, constant: 12),
+            aiBodyLabel.leadingAnchor.constraint(equalTo: aiCard.leadingAnchor, constant: 16),
+            aiBodyLabel.trailingAnchor.constraint(equalTo: aiCard.trailingAnchor, constant: -16),
             aiBodyLabel.bottomAnchor.constraint(equalTo: aiCard.bottomAnchor, constant: -16),
 
             emptyStateView.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -24),

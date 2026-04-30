@@ -53,8 +53,7 @@ extension AIAssistantViewController {
     }
 
     func bindActions() {
-        contentView.messageTextField.addTarget(self, action: #selector(handleDraftChanged), for: .editingChanged)
-        contentView.messageTextField.addTarget(self, action: #selector(handleReturnTap), for: .editingDidEndOnExit)
+        contentView.messageTextView.delegate = self
         contentView.sendButton.addTarget(self, action: #selector(handleSendTap), for: .touchUpInside)
     }
 
@@ -87,7 +86,7 @@ extension AIAssistantViewController {
     }
 
     @objc func handleDraftChanged() {
-        viewModel.updateDraft(contentView.messageTextField.text ?? "")
+        viewModel.updateDraft(contentView.messageTextView.text ?? "")
     }
 
     @objc func handleReturnTap() {
@@ -95,8 +94,20 @@ extension AIAssistantViewController {
     }
 
     @objc func handleSendTap() {
-        let message = contentView.messageTextField.text ?? ""
-        contentView.messageTextField.text = ""
+        contentView.endEditing(true)
+        let message = contentView.messageTextView.text ?? ""
+        contentView.messageTextView.text = ""
+        contentView.apply(
+            AIAssistantViewData(
+                titleText: "SmartWallet AI",
+                subtitleText: "Akıllı Finansal Asistan",
+                placeholderText: "SmartWallet AI’a mesaj yaz...",
+                sendButtonImageName: "arrow.up",
+                messages: currentMessages,
+                draftText: "",
+                isSendEnabled: false
+            )
+        )
         viewModel.updateDraft("")
         Task {
             await viewModel.sendMessage(message)
@@ -139,6 +150,25 @@ extension AIAssistantViewController: UITableViewDataSource, UITableViewDelegate 
 
             return UIMenu(title: "", children: [copyAction])
         }
+    }
+}
+
+extension AIAssistantViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        handleDraftChanged()
+    }
+
+    func textView(
+        _ textView: UITextView,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool {
+        if text == "\n" {
+            handleSendTap()
+            return false
+        }
+
+        return true
     }
 }
 

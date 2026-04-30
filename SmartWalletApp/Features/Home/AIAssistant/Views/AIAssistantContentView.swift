@@ -2,7 +2,7 @@ import UIKit
 
 final class AIAssistantContentView: UIView {
     let tableView = UITableView(frame: .zero, style: .plain)
-    let messageTextField = UITextField()
+    let messageTextView = UITextView()
     let sendButton = UIButton(type: .system)
 
     private let topPanel = UIView()
@@ -11,6 +11,7 @@ final class AIAssistantContentView: UIView {
     private let headerBadgeLabel = UILabel()
     private let inputContainer = UIView()
     private let inputShadowView = UIView()
+    private let placeholderLabel = UILabel()
     private let keyboardTapGesture = UITapGestureRecognizer()
 
     override init(frame: CGRect) {
@@ -26,9 +27,9 @@ final class AIAssistantContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        inputContainer.layer.cornerRadius = inputContainer.bounds.height / 2
-        inputShadowView.layer.cornerRadius = inputShadowView.bounds.height / 2
-        sendButton.layer.cornerRadius = sendButton.bounds.height / 2
+        inputContainer.layer.cornerRadius = 24
+        inputShadowView.layer.cornerRadius = 24
+        sendButton.layer.cornerRadius = 18
     }
 }
 
@@ -36,15 +37,11 @@ extension AIAssistantContentView {
     func apply(_ data: AIAssistantViewData) {
         headerTitleLabel.text = data.titleText
         headerSubtitleLabel.text = data.subtitleText
-        messageTextField.attributedPlaceholder = NSAttributedString(
-            string: data.placeholderText,
-            attributes: [
-                .foregroundColor: AppColor.secondaryText
-            ]
-        )
-        if messageTextField.text != data.draftText {
-            messageTextField.text = data.draftText
+        placeholderLabel.text = data.placeholderText
+        if messageTextView.text != data.draftText {
+            messageTextView.text = data.draftText
         }
+        placeholderLabel.isHidden = !data.draftText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         sendButton.setImage(UIImage(systemName: data.sendButtonImageName), for: .normal)
         sendButton.isEnabled = data.isSendEnabled
         sendButton.alpha = data.isSendEnabled ? 1 : 0.65
@@ -104,14 +101,28 @@ extension AIAssistantContentView {
         inputContainer.layer.borderColor = AppColor.borderSoft.cgColor
         inputContainer.layer.cornerCurve = .continuous
 
-        messageTextField.font = .systemFont(ofSize: 16, weight: .medium)
-        messageTextField.textColor = AppColor.primaryText
-        messageTextField.tintColor = AppColor.primaryYellow
-        messageTextField.borderStyle = .none
-        messageTextField.returnKeyType = .send
+        messageTextView.font = .systemFont(ofSize: 16, weight: .medium)
+        messageTextView.textColor = AppColor.primaryText
+        messageTextView.tintColor = AppColor.primaryYellow
+        messageTextView.backgroundColor = .clear
+        messageTextView.autocorrectionType = .default
+        messageTextView.spellCheckingType = .no
+        messageTextView.smartInsertDeleteType = .no
+        messageTextView.smartQuotesType = .no
+        messageTextView.smartDashesType = .no
+        messageTextView.returnKeyType = .send
+        messageTextView.textAlignment = .left
+        messageTextView.isScrollEnabled = false
+        messageTextView.textContainerInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        messageTextView.textContainer.lineFragmentPadding = 0
+
+        placeholderLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        placeholderLabel.textColor = AppColor.secondaryText
+        placeholderLabel.numberOfLines = 1
 
         sendButton.backgroundColor = AppColor.primaryYellow
         sendButton.tintColor = AppColor.primaryText
+        sendButton.layer.cornerCurve = .continuous
     }
 
     func buildHierarchy() {
@@ -122,7 +133,8 @@ extension AIAssistantContentView {
         addSubview(tableView)
         addSubview(inputShadowView)
         inputShadowView.addSubview(inputContainer)
-        inputContainer.addSubview(messageTextField)
+        inputContainer.addSubview(messageTextView)
+        inputContainer.addSubview(placeholderLabel)
         inputContainer.addSubview(sendButton)
     }
 
@@ -135,7 +147,8 @@ extension AIAssistantContentView {
             tableView,
             inputShadowView,
             inputContainer,
-            messageTextField,
+            messageTextView,
+            placeholderLabel,
             sendButton
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -169,16 +182,21 @@ extension AIAssistantContentView {
             inputContainer.leadingAnchor.constraint(equalTo: inputShadowView.leadingAnchor),
             inputContainer.trailingAnchor.constraint(equalTo: inputShadowView.trailingAnchor),
             inputContainer.bottomAnchor.constraint(equalTo: inputShadowView.bottomAnchor),
-            inputContainer.heightAnchor.constraint(equalToConstant: 60),
+            inputContainer.heightAnchor.constraint(equalToConstant: 62),
 
             sendButton.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
             sendButton.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor, constant: -8),
-            sendButton.widthAnchor.constraint(equalToConstant: 44),
-            sendButton.heightAnchor.constraint(equalToConstant: 44),
+            sendButton.widthAnchor.constraint(equalToConstant: 46),
+            sendButton.heightAnchor.constraint(equalToConstant: 46),
 
-            messageTextField.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor, constant: 18),
-            messageTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -12),
-            messageTextField.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
+            messageTextView.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor, constant: 20),
+            messageTextView.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -12),
+            messageTextView.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
+            messageTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 24),
+
+            placeholderLabel.leadingAnchor.constraint(equalTo: messageTextView.leadingAnchor),
+            placeholderLabel.trailingAnchor.constraint(lessThanOrEqualTo: messageTextView.trailingAnchor),
+            placeholderLabel.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
 
             tableView.topAnchor.constraint(equalTo: topPanel.bottomAnchor, constant: 10),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),

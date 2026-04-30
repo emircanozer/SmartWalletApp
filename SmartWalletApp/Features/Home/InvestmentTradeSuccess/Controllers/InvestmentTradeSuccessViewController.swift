@@ -36,8 +36,7 @@ final class InvestmentTradeSuccessViewController: UIViewController {
 
  extension InvestmentTradeSuccessViewController {
     func bindActions() {
-        contentView.closeButton.addTarget(self, action: #selector(handleCloseTap), for: .touchUpInside)
-        contentView.primaryButton.addTarget(self, action: #selector(handleReturnHomeTap), for: .touchUpInside)
+        contentView.closeButton.addTarget(self, action: #selector(handleReturnHomeTap), for: .touchUpInside)
         contentView.secondaryButton.addTarget(self, action: #selector(handleHistoryTap), for: .touchUpInside)
     }
 

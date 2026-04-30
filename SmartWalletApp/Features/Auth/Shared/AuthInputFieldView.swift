@@ -11,6 +11,7 @@ class AuthInputFieldView: UIView {
     private let trailingButton = UIButton(type: .system)
     private let helperLabel = UILabel()
     private let placeholderText: String
+    private let isSecureField: Bool
 
     init(
         title: String,
@@ -22,6 +23,7 @@ class AuthInputFieldView: UIView {
         isSecure: Bool = false
     ) {
         self.placeholderText = placeholder
+        self.isSecureField = isSecure
         super.init(frame: .zero)
 
         titleLabel.text = title
@@ -68,6 +70,7 @@ class AuthInputFieldView: UIView {
 
     func toggleSecureEntry() {
         textField.isSecureTextEntry.toggle()
+        updateTrailingSecureIconIfNeeded()
     }
 
     func setKeyboardType(_ keyboardType: UIKeyboardType) {
@@ -139,8 +142,16 @@ class AuthInputFieldView: UIView {
         )
 
         trailingButton.tintColor = AppColor.iconMuted
+        trailingButton.setPreferredSymbolConfiguration(
+            UIImage.SymbolConfiguration(pointSize: 18, weight: .medium),
+            forImageIn: .normal
+        )
         trailingButton.setImage(trailingIconName == nil ? nil : UIImage(systemName: trailingIconName!), for: .normal)
         trailingButton.isHidden = trailingIconName == nil
+        trailingButton.contentHorizontalAlignment = .center
+        trailingButton.contentVerticalAlignment = .center
+
+        updateTrailingSecureIconIfNeeded()
 
         helperLabel.font = .systemFont(ofSize: 12, weight: .medium)
         helperLabel.textColor = AppColor.helperText
@@ -184,13 +195,19 @@ class AuthInputFieldView: UIView {
             leadingImageView.widthAnchor.constraint(equalToConstant: 18),
             leadingImageView.heightAnchor.constraint(equalToConstant: 18),
 
-            trailingButton.widthAnchor.constraint(equalToConstant: 22),
-            trailingButton.heightAnchor.constraint(equalToConstant: 22),
+            trailingButton.widthAnchor.constraint(equalToConstant: 28),
+            trailingButton.heightAnchor.constraint(equalToConstant: 28),
 
             helperLabel.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 8),
             helperLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             helperLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             helperLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+
+    private func updateTrailingSecureIconIfNeeded() {
+        guard isSecureField, !trailingButton.isHidden else { return }
+        let iconName = textField.isSecureTextEntry ? "eye" : "eye.slash"
+        trailingButton.setImage(UIImage(systemName: iconName), for: .normal)
     }
 }
