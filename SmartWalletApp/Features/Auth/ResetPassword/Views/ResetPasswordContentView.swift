@@ -131,7 +131,7 @@ extension ResetPasswordContentView {
 
             heroImageView.topAnchor.constraint(equalTo: brandLabel.bottomAnchor, constant: 40),
             heroImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            heroImageView.widthAnchor.constraint(equalToConstant: 330),
+            heroImageView.widthAnchor.constraint(lessThanOrEqualTo: contentContainer.widthAnchor, constant: -48),
             heroImageView.heightAnchor.constraint(equalToConstant: 192),
 
             titleLabel.topAnchor.constraint(equalTo: heroImageView.bottomAnchor, constant: 28),

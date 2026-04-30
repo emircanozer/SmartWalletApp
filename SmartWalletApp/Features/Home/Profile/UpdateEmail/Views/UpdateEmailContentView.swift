@@ -272,7 +272,7 @@ extension UpdateEmailContentView {
 
             infoImageView.topAnchor.constraint(equalTo: confirmEmailErrorLabel.bottomAnchor, constant: 18),
             infoImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            infoImageView.widthAnchor.constraint(equalToConstant: 330),
+            infoImageView.widthAnchor.constraint(lessThanOrEqualTo: contentContainer.widthAnchor, constant: -64),
             infoImageView.heightAnchor.constraint(equalToConstant: 75),
 
             sendButton.topAnchor.constraint(equalTo: infoImageView.bottomAnchor, constant: 46),

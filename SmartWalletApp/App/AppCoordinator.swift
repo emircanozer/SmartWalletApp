@@ -22,8 +22,23 @@ class AppCoordinator: Coordinator {
         self.window = window
     }
 
-    //   //token kontrolü flowu belirler
     func start() {
+        showSplashFlow()
+    }
+
+    private func showSplashFlow() {
+        let splashCoordinator = SplashCoordinator()
+        splashCoordinator.onFinished = { [weak self] in
+            self?.continueAfterSplash()
+        }
+        children = [splashCoordinator]
+        window.backgroundColor = AppColor.appBackground
+        window.rootViewController = splashCoordinator.rootViewController
+        window.makeKeyAndVisible()
+        splashCoordinator.start()
+    }
+
+    private func continueAfterSplash() {
         try? tokenStore.clearTokens() // tokenleri siliyor
         if tokenStore.accessToken?.isEmpty == false {
             showHomeFlow()

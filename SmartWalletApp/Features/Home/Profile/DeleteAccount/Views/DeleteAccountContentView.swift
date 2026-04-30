@@ -184,7 +184,7 @@ extension DeleteAccountContentView {
 
             warningImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 2),
             warningImageView.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            warningImageView.widthAnchor.constraint(equalToConstant: 400),
+            warningImageView.widthAnchor.constraint(lessThanOrEqualTo: contentContainer.widthAnchor, constant: -48),
             warningImageView.heightAnchor.constraint(equalToConstant: 300),
 
             deletedItemsTitleLabel.topAnchor.constraint(equalTo: warningImageView.bottomAnchor, constant: -8),
