@@ -10,9 +10,6 @@ struct FinancialGoalsViewData {
     let completionText: String
     let remainingAmountText: String
     let progress: CGFloat
-    let aiSuggestionTitleText: String
-    let aiSuggestionHeadlineText: String
-    let aiSuggestionBodyText: String
     let sectionTitleText: String
     let items: [FinancialGoalItemViewData]
 }

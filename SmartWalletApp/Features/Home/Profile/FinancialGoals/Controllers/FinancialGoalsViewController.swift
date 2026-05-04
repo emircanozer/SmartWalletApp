@@ -28,7 +28,9 @@ final class FinancialGoalsViewController: BaseViewController {
         enableInteractivePopGesture()
         bindActions()
         bindViewModel()
-        viewModel.load()
+        Task { [weak self] in
+            await self?.viewModel.load()
+        }
     }
 }
 
@@ -63,6 +65,9 @@ extension FinancialGoalsViewController {
     private func bindViewModel() {
         viewModel.onStateChange = { [weak self] data in
             self?.contentView.apply(data)
+        }
+        viewModel.onError = { [weak self] message in
+            self?.showAlert(message: message)
         }
     }
 

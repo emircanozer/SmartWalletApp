@@ -53,6 +53,14 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.aiAdvice, as: WalletAIAdviceResponse.self)
     }
 
+    func fetchFinancialGoals() async throws -> [FinancialGoalResponse] {
+        try await apiClient.send(WalletEndpoint.financialGoals, as: [FinancialGoalResponse].self)
+    }
+
+    func fetchFinancialGoalsSummary(userID: UUID) async throws -> FinancialGoalSummaryResponse {
+        try await apiClient.send(WalletEndpoint.financialGoalsSummary(userID: userID), as: FinancialGoalSummaryResponse.self)
+    }
+
     func fetchPortfolioSummary() async throws -> PortfolioSummaryResponse {
         try await apiClient.send(WalletEndpoint.portfolioSummary, as: PortfolioSummaryResponse.self)
     }
@@ -105,6 +113,8 @@ final class WalletService {
     case ownerName(iban: String)
     case analysis
     case aiAdvice
+    case financialGoals
+    case financialGoalsSummary(userID: UUID)
     case portfolioSummary
     case portfolioPrices
     case investmentHistory
@@ -133,6 +143,10 @@ final class WalletService {
             return "/api/Wallets/analysis"
         case .aiAdvice:
             return "/api/Wallets/ai-advice"
+        case .financialGoals:
+            return "/api/FinancialGoals/financial-goals"
+        case .financialGoalsSummary(let userID):
+            return "/api/FinancialGoals/summary/\(userID.uuidString.lowercased())"
         case .portfolioSummary:
             return "/api/Portfolios/summary"
         case .portfolioPrices:

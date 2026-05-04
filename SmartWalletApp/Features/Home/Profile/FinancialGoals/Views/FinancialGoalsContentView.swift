@@ -21,12 +21,6 @@ final class FinancialGoalsContentView: UIView {
     private let progressFillView = UIView()
     private let completionLabel = UILabel()
     private let remainingLabel = UILabel()
-    private let aiCardView = UIView()
-    private let aiBadgeView = UIView()
-    private let aiBadgeIconView = UIImageView()
-    private let aiTitleLabel = UILabel()
-    private let aiHeadlineLabel = UILabel()
-    private let aiBodyLabel = UILabel()
     private let sectionTitleLabel = UILabel()
     private let goalsStackView = UIStackView()
     private var progressWidthConstraint: NSLayoutConstraint?
@@ -44,10 +38,10 @@ final class FinancialGoalsContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        [summaryCardView, aiCardView].forEach {
+        [summaryCardView].forEach {
             $0.layer.cornerRadius = 22
         }
-        [summaryIconContainer, aiBadgeView].forEach {
+        [summaryIconContainer].forEach {
             $0.layer.cornerRadius = 14
         }
         createGoalButton.layer.cornerRadius = createGoalButton.bounds.height / 2
@@ -64,9 +58,6 @@ extension FinancialGoalsContentView {
         totalTargetLabel.text = "/ \(data.totalTargetAmountText)"
         completionLabel.text = data.completionText
         remainingLabel.text = data.remainingAmountText
-        aiTitleLabel.text = data.aiSuggestionTitleText
-        aiHeadlineLabel.text = data.aiSuggestionHeadlineText
-        aiBodyLabel.text = data.aiSuggestionBodyText
         sectionTitleLabel.text = data.sectionTitleText
         progressFillView.accessibilityValue = "\(data.progress)"
 
@@ -106,7 +97,7 @@ extension FinancialGoalsContentView {
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         subtitleLabel.textColor = AppColor.bodyText
 
-        [summaryCardView, aiCardView].forEach {
+        [summaryCardView].forEach {
             $0.backgroundColor = AppColor.whitePrimary
         }
 
@@ -143,26 +134,6 @@ extension FinancialGoalsContentView {
         remainingLabel.textColor = AppColor.bodyText
         remainingLabel.textAlignment = .right
 
-        aiCardView.layer.borderWidth = 1
-        aiCardView.layer.borderColor = UIColor(red: 0.81, green: 0.92, blue: 0.96, alpha: 1.0).cgColor
-
-        aiBadgeView.backgroundColor = UIColor(red: 0.91, green: 0.96, blue: 0.97, alpha: 1.0)
-        aiBadgeIconView.image = UIImage(systemName: "sparkles")
-        aiBadgeIconView.tintColor = UIColor(red: 0.1, green: 0.45, blue: 0.5, alpha: 1.0)
-        aiBadgeIconView.contentMode = .scaleAspectFit
-
-        aiTitleLabel.font = .systemFont(ofSize: 14, weight: .bold)
-        aiTitleLabel.textColor = AppColor.accentOlive
-
-        aiHeadlineLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        aiHeadlineLabel.textColor = AppColor.primaryText
-        aiHeadlineLabel.numberOfLines = 0
-
-        aiBodyLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        aiBodyLabel.textColor = AppColor.bodyText
-        aiBodyLabel.numberOfLines = 0
-        aiBodyLabel.setLineSpacing(5)
-
         sectionTitleLabel.font = .systemFont(ofSize: 14, weight: .bold)
         sectionTitleLabel.textColor = AppColor.secondaryText
         sectionTitleLabel.letterSpacing = 2
@@ -188,7 +159,6 @@ extension FinancialGoalsContentView {
             titleLabel,
             subtitleLabel,
             summaryCardView,
-            aiCardView,
             sectionTitleLabel,
             goalsStackView
         ].forEach(contentContainer.addSubview)
@@ -206,9 +176,6 @@ extension FinancialGoalsContentView {
 
         summaryIconContainer.addSubview(summaryIconView)
         progressTrackView.addSubview(progressFillView)
-
-        [aiBadgeView, aiTitleLabel, aiHeadlineLabel, aiBodyLabel].forEach(aiCardView.addSubview)
-        aiBadgeView.addSubview(aiBadgeIconView)
 
         createGoalButton.addTarget(self, action: #selector(handleCreateGoalTap), for: .touchUpInside)
     }
@@ -230,12 +197,6 @@ extension FinancialGoalsContentView {
             progressFillView,
             completionLabel,
             remainingLabel,
-            aiCardView,
-            aiBadgeView,
-            aiBadgeIconView,
-            aiTitleLabel,
-            aiHeadlineLabel,
-            aiBodyLabel,
             sectionTitleLabel,
             goalsStackView,
             createGoalButton
@@ -307,40 +268,13 @@ extension FinancialGoalsContentView {
             remainingLabel.centerYAnchor.constraint(equalTo: completionLabel.centerYAnchor),
             remainingLabel.trailingAnchor.constraint(equalTo: progressTrackView.trailingAnchor),
 
-            aiCardView.topAnchor.constraint(equalTo: summaryCardView.bottomAnchor, constant: 28),
-            aiCardView.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor),
-            aiCardView.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
-
-            aiBadgeView.topAnchor.constraint(equalTo: aiCardView.topAnchor, constant: 24),
-            aiBadgeView.leadingAnchor.constraint(equalTo: aiCardView.leadingAnchor, constant: 20),
-            aiBadgeView.widthAnchor.constraint(equalToConstant: 44),
-            aiBadgeView.heightAnchor.constraint(equalToConstant: 44),
-
-            aiBadgeIconView.centerXAnchor.constraint(equalTo: aiBadgeView.centerXAnchor),
-            aiBadgeIconView.centerYAnchor.constraint(equalTo: aiBadgeView.centerYAnchor),
-            aiBadgeIconView.widthAnchor.constraint(equalToConstant: 20),
-            aiBadgeIconView.heightAnchor.constraint(equalToConstant: 20),
-
-            aiTitleLabel.topAnchor.constraint(equalTo: aiCardView.topAnchor, constant: 26),
-            aiTitleLabel.leadingAnchor.constraint(equalTo: aiBadgeView.trailingAnchor, constant: 16),
-            aiTitleLabel.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor, constant: -20),
-
-            aiHeadlineLabel.topAnchor.constraint(equalTo: aiTitleLabel.bottomAnchor, constant: 12),
-            aiHeadlineLabel.leadingAnchor.constraint(equalTo: aiTitleLabel.leadingAnchor),
-            aiHeadlineLabel.trailingAnchor.constraint(equalTo: aiTitleLabel.trailingAnchor),
-
-            aiBodyLabel.topAnchor.constraint(equalTo: aiHeadlineLabel.bottomAnchor, constant: 14),
-            aiBodyLabel.leadingAnchor.constraint(equalTo: aiTitleLabel.leadingAnchor),
-            aiBodyLabel.trailingAnchor.constraint(equalTo: aiTitleLabel.trailingAnchor),
-            aiBodyLabel.bottomAnchor.constraint(equalTo: aiCardView.bottomAnchor, constant: -24),
-
-            sectionTitleLabel.topAnchor.constraint(equalTo: aiCardView.bottomAnchor, constant: 28),
-            sectionTitleLabel.leadingAnchor.constraint(equalTo: aiCardView.leadingAnchor),
-            sectionTitleLabel.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor),
+            sectionTitleLabel.topAnchor.constraint(equalTo: summaryCardView.bottomAnchor, constant: 28),
+            sectionTitleLabel.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor),
+            sectionTitleLabel.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
 
             goalsStackView.topAnchor.constraint(equalTo: sectionTitleLabel.bottomAnchor, constant: 18),
-            goalsStackView.leadingAnchor.constraint(equalTo: aiCardView.leadingAnchor),
-            goalsStackView.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor),
+            goalsStackView.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor),
+            goalsStackView.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
             goalsStackView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -112),
 
             createGoalButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -24),

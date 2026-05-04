@@ -3,13 +3,44 @@ import UIKit
 
 final class FinancialGoalsViewModel {
     var onStateChange: ((FinancialGoalsViewData) -> Void)?
+    var onError: ((String) -> Void)?
 
-    private var goals: [FinancialGoalRecord] = FinancialGoalsViewModel.makeMockGoals()
+    private let walletService: WalletService
+    private let tokenStore: TokenStore
+    private var goals: [FinancialGoalRecord] = []
+    private var summary: FinancialGoalSummaryResponse?
+
+    init(walletService: WalletService, tokenStore: TokenStore) {
+        self.walletService = walletService
+        self.tokenStore = tokenStore
+    }
 }
 
 extension FinancialGoalsViewModel {
-    func load() {
-        emitState()
+    @MainActor
+    func load() async {
+        guard let userID = currentUserID else {
+            goals = []
+            summary = nil
+            emitState()
+            onError?("Kullanici bilgisi alinamadi. Lutfen tekrar giris yapin.")
+            return
+        }
+
+        do {
+            async let goalsResponse = walletService.fetchFinancialGoals()
+            async let summaryResponse = walletService.fetchFinancialGoalsSummary(userID: userID)
+
+            let (fetchedGoals, fetchedSummary) = try await (goalsResponse, summaryResponse)
+            goals = fetchedGoals.map(mapGoalResponse)
+            summary = fetchedSummary
+            emitState()
+        } catch {
+            goals = []
+            summary = nil
+            emitState()
+            onError?("Finansal hedefler alinamadi. Lutfen tekrar deneyin.")
+        }
     }
 
     func goalRecord(for id: UUID) -> FinancialGoalRecord? {
@@ -68,26 +99,22 @@ extension FinancialGoalsViewModel {
     }
 
     func makeViewData() -> FinancialGoalsViewData {
-        let totalSaved = goals.reduce(Decimal.zero) { $0 + $1.savedAmount }
-        let totalTarget = goals.reduce(Decimal.zero) { $0 + $1.targetAmount }
-        let progress = totalTarget > .zero
-            ? min(1, CGFloat(NSDecimalNumber(decimal: totalSaved / totalTarget).doubleValue))
-            : 0
+        let totalSaved = summary?.totalSavedAmount ?? .zero
+        let totalTarget = summary?.totalTargetAmount ?? .zero
+        let totalGoalCount = summary?.totalGoalCount ?? goals.count
+        let completionPercent = summary?.completionPercentage ?? 0
+        let progress = CGFloat(completionPercent) / 100
         let remaining = max(totalTarget - totalSaved, .zero)
-        let completionPercent = Int((progress * 100).rounded())
 
         return FinancialGoalsViewData(
             titleText: "Finansal Hedefler",
             subtitleText: "Toplam birikim ilerlemen",
-            totalGoalCountText: "TOPLAM HEDEF: \(goals.count)",
+            totalGoalCountText: "TOPLAM HEDEF: \(totalGoalCount)",
             totalSavedAmountText: AppNumberTextFormatter.prefixedLira(totalSaved, minimumFractionDigits: 0, maximumFractionDigits: 0),
             totalTargetAmountText: AppNumberTextFormatter.prefixedLira(totalTarget, minimumFractionDigits: 0, maximumFractionDigits: 0),
             completionText: "%\(completionPercent) Tamamlandi",
             remainingAmountText: AppNumberTextFormatter.prefixedLira(remaining, minimumFractionDigits: 0, maximumFractionDigits: 0) + " kaldi",
             progress: progress,
-            aiSuggestionTitleText: "AI ONERISI",
-            aiSuggestionHeadlineText: "Kisa vadeli hedeflerin icin mevcut birikimin yetersiz.",
-            aiSuggestionBodyText: "Tatil hedefin icin \(AppNumberTextFormatter.prefixedLira(Decimal(38_000), minimumFractionDigits: 0, maximumFractionDigits: 0)) birikim yapmalisin. Kisa vadeli hedefe odaklanip uzun vadeli hedefi ertelemen onerilir.",
             sectionTitleText: "HEDEFLERIN",
             items: goals.map(mapGoal)
         )
@@ -110,31 +137,61 @@ extension FinancialGoalsViewModel {
         )
     }
 
-    static func makeMockGoals() -> [FinancialGoalRecord] {
-        [
-            FinancialGoalRecord(
-                id: UUID(),
-                title: "iPhone 15 Pro",
-                targetAmount: Decimal(120_000),
-                savedAmount: Decimal(8_000),
-                deadline: Calendar.current.date(from: DateComponents(year: 2026, month: 8, day: 30)) ?? Date(),
-                note: "Yil sonuna kadar almayi planliyorum.",
-                iconName: "iphone.gen3",
-                iconTintColor: AppColor.navigationTint,
-                iconBackgroundColor: AppColor.surfaceMuted
-            ),
-            FinancialGoalRecord(
-                id: UUID(),
-                title: "Tatil",
-                targetAmount: Decimal(50_000),
-                savedAmount: Decimal(12_000),
-                deadline: Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 1)) ?? Date(),
-                note: "Yaz tatili icin birikim.",
-                iconName: "sun.max",
-                iconTintColor: AppColor.navigationTint,
-                iconBackgroundColor: AppColor.surfaceMuted
-            )
+    func mapGoalResponse(_ goal: FinancialGoalResponse) -> FinancialGoalRecord {
+        let icon = suggestedIcon(for: goal.title)
+        return FinancialGoalRecord(
+            id: goal.id,
+            title: goal.title,
+            targetAmount: goal.targetAmount,
+            savedAmount: goal.currentAmount,
+            deadline: AppDateTextFormatter.parseServerDate(goal.targetDate),
+            note: nil,
+            iconName: icon.name,
+            iconTintColor: icon.tint,
+            iconBackgroundColor: icon.background
+        )
+    }
+
+    var currentUserID: UUID? {
+        guard let token = tokenStore.accessToken else { return nil }
+        return decodeUserID(from: token)
+    }
+
+    func decodeUserID(from token: String) -> UUID? {
+        let segments = token.split(separator: ".")
+        guard segments.count >= 2 else { return nil }
+
+        var payload = String(segments[1])
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+
+        let remainder = payload.count % 4
+        if remainder != 0 {
+            payload += String(repeating: "=", count: 4 - remainder)
+        }
+
+        guard let data = Data(base64Encoded: payload),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        let candidateKeys = [
+            "nameid",
+            "nameidentifier",
+            "sub",
+            "userId",
+            "userid",
+            "id",
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
         ]
+
+        for key in candidateKeys {
+            if let value = json[key] as? String, let uuid = UUID(uuidString: value) {
+                return uuid
+            }
+        }
+
+        return nil
     }
 
     func suggestedIcon(for title: String) -> (name: String, tint: UIColor, background: UIColor) {
