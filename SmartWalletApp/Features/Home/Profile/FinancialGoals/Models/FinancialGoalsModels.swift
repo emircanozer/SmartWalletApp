@@ -33,6 +33,7 @@ struct FinancialGoalDraft {
     let title: String
     let targetAmount: Decimal
     let deadline: Date
+    let note: String?
 }
 
 struct FinancialGoalRecord {
@@ -41,6 +42,7 @@ struct FinancialGoalRecord {
     let targetAmount: Decimal
     let savedAmount: Decimal
     let deadline: Date
+    let note: String?
     let iconName: String
     let iconTintColor: UIColor
     let iconBackgroundColor: UIColor

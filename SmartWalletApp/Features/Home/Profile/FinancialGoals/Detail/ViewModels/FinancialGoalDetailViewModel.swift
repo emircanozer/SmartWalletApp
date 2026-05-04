@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 final class FinancialGoalDetailViewModel {
-    private let goal: FinancialGoalRecord
+    private var goal: FinancialGoalRecord
 
     init(goal: FinancialGoalRecord) {
         self.goal = goal
@@ -10,6 +10,28 @@ final class FinancialGoalDetailViewModel {
 }
 
 extension FinancialGoalDetailViewModel {
+    var goalRecord: FinancialGoalRecord {
+        goal
+    }
+
+    func replaceGoal(with updatedGoal: FinancialGoalRecord) {
+        goal = updatedGoal
+    }
+
+    func addContribution(_ amount: Decimal) {
+        goal = FinancialGoalRecord(
+            id: goal.id,
+            title: goal.title,
+            targetAmount: goal.targetAmount,
+            savedAmount: goal.savedAmount + amount,
+            deadline: goal.deadline,
+            note: goal.note,
+            iconName: goal.iconName,
+            iconTintColor: goal.iconTintColor,
+            iconBackgroundColor: goal.iconBackgroundColor
+        )
+    }
+
     func makeViewData() -> FinancialGoalDetailViewData {
         let progress = goal.targetAmount > .zero
             ? min(1, CGFloat(NSDecimalNumber(decimal: goal.savedAmount / goal.targetAmount).doubleValue))

@@ -1,3 +1,4 @@
+import Foundation
 import UIKit
 
 final class FinancialGoalsViewController: BaseViewController {
@@ -34,6 +35,18 @@ final class FinancialGoalsViewController: BaseViewController {
 extension FinancialGoalsViewController {
     func addGoal(_ draft: FinancialGoalDraft) {
         viewModel.addGoal(draft)
+    }
+
+    func addContribution(to goalID: UUID, amount: Decimal) {
+        viewModel.addContribution(to: goalID, amount: amount)
+    }
+
+    func updateGoal(_ goal: FinancialGoalRecord) {
+        viewModel.updateGoal(goal)
+    }
+
+    func deleteGoal(id: UUID) {
+        viewModel.deleteGoal(id: id)
     }
 
     private func bindActions() {

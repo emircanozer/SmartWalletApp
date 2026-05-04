@@ -1,7 +1,10 @@
+import Foundation
 import UIKit
 
 final class FinancialGoalDetailViewController: BaseViewController {
     var onBack: (() -> Void)?
+    var onAddMoney: ((FinancialGoalRecord, FinancialGoalDetailViewController) -> Void)?
+    var onEdit: ((FinancialGoalRecord, FinancialGoalDetailViewController) -> Void)?
 
     private let viewModel: FinancialGoalDetailViewModel
     private let contentView = FinancialGoalDetailContentView()
@@ -28,12 +31,32 @@ final class FinancialGoalDetailViewController: BaseViewController {
     }
 }
 
- extension FinancialGoalDetailViewController {
+extension FinancialGoalDetailViewController {
+    func applyContribution(_ amount: Decimal) {
+        viewModel.addContribution(amount)
+        contentView.apply(viewModel.makeViewData())
+    }
+
+    func applyUpdatedGoal(_ goal: FinancialGoalRecord) {
+        viewModel.replaceGoal(with: goal)
+        contentView.apply(viewModel.makeViewData())
+    }
+
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
+        contentView.addMoneyButton.addTarget(self, action: #selector(handleAddMoneyTap), for: .touchUpInside)
+        contentView.editButton.addTarget(self, action: #selector(handleEditTap), for: .touchUpInside)
     }
 
     @objc func handleBackTap() {
         onBack?()
+    }
+
+    @objc func handleAddMoneyTap() {
+        onAddMoney?(viewModel.goalRecord, self)
+    }
+
+    @objc func handleEditTap() {
+        onEdit?(viewModel.goalRecord, self)
     }
 }

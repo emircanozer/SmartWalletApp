@@ -54,7 +54,7 @@ extension CreateFinancialGoalViewModel {
             return "Lutfen son tarihi secin."
         }
 
-        onGoalCreated?(FinancialGoalDraft(title: title, targetAmount: amount, deadline: selectedDate))
+        onGoalCreated?(FinancialGoalDraft(title: title, targetAmount: amount, deadline: selectedDate, note: nil))
         return nil
     }
 }

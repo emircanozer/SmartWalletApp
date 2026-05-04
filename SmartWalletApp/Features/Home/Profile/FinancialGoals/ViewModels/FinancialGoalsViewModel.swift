@@ -16,6 +16,34 @@ extension FinancialGoalsViewModel {
         goals.first { $0.id == id }
     }
 
+    func addContribution(to id: UUID, amount: Decimal) {
+        guard let index = goals.firstIndex(where: { $0.id == id }) else { return }
+        let goal = goals[index]
+        goals[index] = FinancialGoalRecord(
+            id: goal.id,
+            title: goal.title,
+            targetAmount: goal.targetAmount,
+            savedAmount: goal.savedAmount + amount,
+            deadline: goal.deadline,
+            note: goal.note,
+            iconName: goal.iconName,
+            iconTintColor: goal.iconTintColor,
+            iconBackgroundColor: goal.iconBackgroundColor
+        )
+        emitState()
+    }
+
+    func updateGoal(_ updatedGoal: FinancialGoalRecord) {
+        guard let index = goals.firstIndex(where: { $0.id == updatedGoal.id }) else { return }
+        goals[index] = updatedGoal
+        emitState()
+    }
+
+    func deleteGoal(id: UUID) {
+        goals.removeAll { $0.id == id }
+        emitState()
+    }
+
     func addGoal(_ draft: FinancialGoalDraft) {
         let icon = suggestedIcon(for: draft.title)
         let newGoal = FinancialGoalRecord(
@@ -24,6 +52,7 @@ extension FinancialGoalsViewModel {
             targetAmount: draft.targetAmount,
             savedAmount: .zero,
             deadline: draft.deadline,
+            note: draft.note,
             iconName: icon.name,
             iconTintColor: icon.tint,
             iconBackgroundColor: icon.background
@@ -89,6 +118,7 @@ extension FinancialGoalsViewModel {
                 targetAmount: Decimal(120_000),
                 savedAmount: Decimal(8_000),
                 deadline: Calendar.current.date(from: DateComponents(year: 2026, month: 8, day: 30)) ?? Date(),
+                note: "Yil sonuna kadar almayi planliyorum.",
                 iconName: "iphone.gen3",
                 iconTintColor: AppColor.navigationTint,
                 iconBackgroundColor: AppColor.surfaceMuted
@@ -99,6 +129,7 @@ extension FinancialGoalsViewModel {
                 targetAmount: Decimal(50_000),
                 savedAmount: Decimal(12_000),
                 deadline: Calendar.current.date(from: DateComponents(year: 2026, month: 7, day: 1)) ?? Date(),
+                note: "Yaz tatili icin birikim.",
                 iconName: "sun.max",
                 iconTintColor: AppColor.navigationTint,
                 iconBackgroundColor: AppColor.surfaceMuted

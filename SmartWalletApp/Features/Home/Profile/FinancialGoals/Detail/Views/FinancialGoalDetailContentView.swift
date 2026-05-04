@@ -2,6 +2,8 @@ import UIKit
 
 final class FinancialGoalDetailContentView: UIView {
     let backButton = UIButton(type: .system)
+    let addMoneyButton = UIButton(type: .system)
+    let editButton = UIButton(type: .system)
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
@@ -20,8 +22,6 @@ final class FinancialGoalDetailContentView: UIView {
     private let progressLabel = UILabel()
     private let daysLabel = UILabel()
     private let actionStackView = UIStackView()
-    private let addMoneyButton = UIButton(type: .system)
-    private let editButton = UIButton(type: .system)
     private let aiCardView = UIView()
     private let aiIconContainerView = UIView()
     private let aiIconView = UIImageView()
@@ -165,8 +165,6 @@ extension FinancialGoalDetailContentView {
         addMoneyConfiguration.imagePadding = 8
         addMoneyConfiguration.baseForegroundColor = AppColor.authHeadingText
         addMoneyButton.configuration = addMoneyConfiguration
-        addMoneyButton.isUserInteractionEnabled = false
-
         editButton.backgroundColor = AppColor.whitePrimary
         editButton.layer.borderWidth = 1
         editButton.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
@@ -177,7 +175,6 @@ extension FinancialGoalDetailContentView {
         editConfiguration.imagePadding = 8
         editConfiguration.baseForegroundColor = AppColor.primaryText
         editButton.configuration = editConfiguration
-        editButton.isUserInteractionEnabled = false
 
         aiIconContainerView.backgroundColor = AppColor.surfaceMuted
         aiIconView.image = UIImage(systemName: "sparkles")
