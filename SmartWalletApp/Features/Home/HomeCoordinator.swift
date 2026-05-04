@@ -379,6 +379,10 @@ class HomeCoordinator: Coordinator {
             guard let self, let navigationController, let viewController else { return }
             self.showCreateFinancialGoal(from: viewController, in: navigationController)
         }
+        viewController.onGoalSelected = { [weak self, weak navigationController] goal in
+            guard let self, let navigationController else { return }
+            self.showFinancialGoalDetail(goal, in: navigationController)
+        }
         navigationController.pushViewController(viewController, animated: true)
     }
 
@@ -393,6 +397,18 @@ class HomeCoordinator: Coordinator {
         }
         viewModel.onGoalCreated = { [weak financialGoalsViewController] draft in
             financialGoalsViewController?.addGoal(draft)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showFinancialGoalDetail(
+        _ goal: FinancialGoalRecord,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = FinancialGoalDetailViewModel(goal: goal)
+        let viewController = FinancialGoalDetailViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
         }
         navigationController.pushViewController(viewController, animated: true)
     }

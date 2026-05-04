@@ -3,6 +3,7 @@ import UIKit
 final class FinancialGoalsViewController: BaseViewController {
     var onBack: (() -> Void)?
     var onCreateGoalRequested: (() -> Void)?
+    var onGoalSelected: ((FinancialGoalRecord) -> Void)?
 
     private let viewModel: FinancialGoalsViewModel
     private let contentView = FinancialGoalsContentView()
@@ -39,6 +40,10 @@ extension FinancialGoalsViewController {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.onCreateGoalTap = { [weak self] in
             self?.onCreateGoalRequested?()
+        }
+        contentView.onGoalSelected = { [weak self] id in
+            guard let self, let goal = self.viewModel.goalRecord(for: id) else { return }
+            self.onGoalSelected?(goal)
         }
     }
 

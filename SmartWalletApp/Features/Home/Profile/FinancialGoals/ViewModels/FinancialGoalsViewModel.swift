@@ -12,6 +12,10 @@ extension FinancialGoalsViewModel {
         emitState()
     }
 
+    func goalRecord(for id: UUID) -> FinancialGoalRecord? {
+        goals.first { $0.id == id }
+    }
+
     func addGoal(_ draft: FinancialGoalDraft) {
         let icon = suggestedIcon(for: draft.title)
         let newGoal = FinancialGoalRecord(
@@ -56,7 +60,6 @@ extension FinancialGoalsViewModel {
             aiSuggestionHeadlineText: "Kisa vadeli hedeflerin icin mevcut birikimin yetersiz.",
             aiSuggestionBodyText: "Tatil hedefin icin \(AppNumberTextFormatter.prefixedLira(Decimal(38_000), minimumFractionDigits: 0, maximumFractionDigits: 0)) birikim yapmalisin. Kisa vadeli hedefe odaklanip uzun vadeli hedefi ertelemen onerilir.",
             sectionTitleText: "HEDEFLERIN",
-            createGoalTitleText: "Yeni Hedef Olustur",
             items: goals.map(mapGoal)
         )
     }

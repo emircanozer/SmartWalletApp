@@ -5,6 +5,7 @@ final class FinancialGoalsContentView: UIView {
     let createGoalButton = UIButton(type: .system)
 
     var onCreateGoalTap: (() -> Void)?
+    var onGoalSelected: ((UUID) -> Void)?
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
@@ -75,7 +76,11 @@ extension FinancialGoalsContentView {
         }
 
         data.items.forEach { item in
-            goalsStackView.addArrangedSubview(FinancialGoalCardView(item: item))
+            let cardView = FinancialGoalCardView(item: item)
+            cardView.onTap = { [weak self] id in
+                self?.onGoalSelected?(id)
+            }
+            goalsStackView.addArrangedSubview(cardView)
         }
 
         progressWidthConstraint?.isActive = false
@@ -357,7 +362,10 @@ extension FinancialGoalsContentView {
     }
 }
 private final class FinancialGoalCardView: UIView {
+    var onTap: ((UUID) -> Void)?
+
     init(item: FinancialGoalItemViewData) {
+        self.itemID = item.id
         super.init(frame: .zero)
         configureView()
         apply(item)
@@ -379,7 +387,9 @@ private final class FinancialGoalCardView: UIView {
     private let targetAmountLabel = UILabel()
     private let progressTrackView = UIView()
     private let progressFillView = UIView()
+    private let tapButton = UIButton(type: .custom)
     private var progressWidthConstraint: NSLayoutConstraint?
+    private let itemID: UUID
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -417,6 +427,9 @@ private final class FinancialGoalCardView: UIView {
 
         progressTrackView.backgroundColor = AppColor.divider
         progressFillView.backgroundColor = AppColor.primaryYellow
+
+        tapButton.backgroundColor = .clear
+        tapButton.accessibilityTraits = .button
     }
 
     private func apply(_ item: FinancialGoalItemViewData) {
@@ -432,9 +445,10 @@ private final class FinancialGoalCardView: UIView {
 
     private func buildHierarchy() {
         addSubview(cardView)
-        [iconContainerView, titleLabel, deadlineLabel, chevronView, currentAmountLabel, targetAmountLabel, progressTrackView].forEach(cardView.addSubview)
+        [iconContainerView, titleLabel, deadlineLabel, chevronView, currentAmountLabel, targetAmountLabel, progressTrackView, tapButton].forEach(cardView.addSubview)
         iconContainerView.addSubview(iconView)
         progressTrackView.addSubview(progressFillView)
+        tapButton.addTarget(self, action: #selector(handleTap), for: .touchUpInside)
     }
 
     private func setupLayout() {
@@ -448,7 +462,8 @@ private final class FinancialGoalCardView: UIView {
             currentAmountLabel,
             targetAmountLabel,
             progressTrackView,
-            progressFillView
+            progressFillView,
+            tapButton
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -494,9 +509,18 @@ private final class FinancialGoalCardView: UIView {
 
             progressFillView.topAnchor.constraint(equalTo: progressTrackView.topAnchor),
             progressFillView.leadingAnchor.constraint(equalTo: progressTrackView.leadingAnchor),
-            progressFillView.bottomAnchor.constraint(equalTo: progressTrackView.bottomAnchor)
+            progressFillView.bottomAnchor.constraint(equalTo: progressTrackView.bottomAnchor),
+
+            tapButton.topAnchor.constraint(equalTo: cardView.topAnchor),
+            tapButton.leadingAnchor.constraint(equalTo: cardView.leadingAnchor),
+            tapButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor),
+            tapButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor)
         ])
 
         progressWidthConstraint?.isActive = true
+    }
+
+    @objc private func handleTap() {
+        onTap?(itemID)
     }
 }

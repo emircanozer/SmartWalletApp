@@ -14,7 +14,6 @@ struct FinancialGoalsViewData {
     let aiSuggestionHeadlineText: String
     let aiSuggestionBodyText: String
     let sectionTitleText: String
-    let createGoalTitleText: String
     let items: [FinancialGoalItemViewData]
 }
 
