@@ -41,7 +41,7 @@ extension SplashContentView {
     }
 }
 
-private extension SplashContentView {
+ extension SplashContentView {
     func configureView() {
         backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.98, alpha: 1.0)
 

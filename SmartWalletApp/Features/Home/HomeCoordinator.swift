@@ -342,6 +342,11 @@ class HomeCoordinator: Coordinator {
             return
         }
 
+        if action == .financialGoals {
+            showFinancialGoals()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -358,6 +363,36 @@ class HomeCoordinator: Coordinator {
         let viewController = PrivacyViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showFinancialGoals() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = FinancialGoalsViewModel()
+        let viewController = FinancialGoalsViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onCreateGoalRequested = { [weak self, weak navigationController, weak viewController] in
+            guard let self, let navigationController, let viewController else { return }
+            self.showCreateFinancialGoal(from: viewController, in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showCreateFinancialGoal(
+        from financialGoalsViewController: FinancialGoalsViewController,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = CreateFinancialGoalViewModel()
+        let viewController = CreateFinancialGoalViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewModel.onGoalCreated = { [weak financialGoalsViewController] draft in
+            financialGoalsViewController?.addGoal(draft)
         }
         navigationController.pushViewController(viewController, animated: true)
     }
