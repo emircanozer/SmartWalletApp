@@ -1,3 +1,4 @@
+import Foundation
 import UIKit
 
 class HomeCoordinator: Coordinator {
@@ -342,6 +343,11 @@ class HomeCoordinator: Coordinator {
             return
         }
 
+        if action == .financialGoals {
+            showFinancialGoals()
+            return
+        }
+
         let alert = UIAlertController(
             title: "Bilgi",
             message: "Bu alanın detay akışını sonraki adımda bağlayacağız.",
@@ -358,6 +364,142 @@ class HomeCoordinator: Coordinator {
         let viewController = PrivacyViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showFinancialGoals() {
+        guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
+
+        let viewModel = FinancialGoalsViewModel(walletService: walletService, tokenStore: tokenStore)
+        let viewController = FinancialGoalsViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onCreateGoalRequested = { [weak self, weak navigationController, weak viewController] in
+            guard let self, let navigationController, let viewController else { return }
+            self.showCreateFinancialGoal(from: viewController, in: navigationController)
+        }
+        viewController.onGoalSelected = { [weak self, weak navigationController, weak viewController] goal in
+            guard let self, let navigationController, let viewController else { return }
+            self.showFinancialGoalDetail(goal, from: viewController, in: navigationController)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showCreateFinancialGoal(
+        from financialGoalsViewController: FinancialGoalsViewController,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = CreateFinancialGoalViewModel(walletService: walletService)
+        let viewController = CreateFinancialGoalViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewModel.onGoalCreated = { [weak financialGoalsViewController] goal in
+            financialGoalsViewController?.prependGoal(goal)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showFinancialGoalDetail(
+        _ goal: FinancialGoalRecord,
+        from financialGoalsViewController: FinancialGoalsViewController,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = FinancialGoalDetailViewModel(walletService: walletService, goal: goal)
+        let viewController = FinancialGoalDetailViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onAddMoney = { [weak self, weak navigationController, weak financialGoalsViewController] goal, detailViewController in
+            guard let self, let navigationController, let financialGoalsViewController else { return }
+            self.showFinancialGoalAddMoney(
+                goal,
+                from: financialGoalsViewController,
+                detailViewController: detailViewController,
+                in: navigationController
+            )
+        }
+        viewController.onEdit = { [weak self, weak navigationController, weak financialGoalsViewController] goal, detailViewController in
+            guard let self, let navigationController, let financialGoalsViewController else { return }
+            self.showEditFinancialGoal(
+                goal,
+                from: financialGoalsViewController,
+                detailViewController: detailViewController,
+                in: navigationController
+            )
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showFinancialGoalAddMoney(
+        _ goal: FinancialGoalRecord,
+        from financialGoalsViewController: FinancialGoalsViewController,
+        detailViewController: FinancialGoalDetailViewController,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = FinancialGoalAddMoneyViewModel(walletService: walletService, goal: goal)
+        let viewController = FinancialGoalAddMoneyViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onContributionAdded = { [weak self, weak financialGoalsViewController, weak detailViewController, weak navigationController] context in
+            guard let self, let financialGoalsViewController, let detailViewController, let navigationController else { return }
+            Task { @MainActor [weak self, weak financialGoalsViewController, weak detailViewController] in
+                guard let self, let financialGoalsViewController, let detailViewController else { return }
+                await financialGoalsViewController.reloadData()
+                detailViewController.applyUpdatedGoal(context.updatedGoal)
+                await detailViewController.reloadData()
+                self.rootViewController.selectedViewController = navigationController
+                self.showFinancialGoalAddMoneySuccess(
+                    context,
+                    detailViewController: detailViewController,
+                    in: navigationController
+                )
+            }
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showFinancialGoalAddMoneySuccess(
+        _ context: FinancialGoalAddMoneySuccessContext,
+        detailViewController: FinancialGoalDetailViewController,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = FinancialGoalAddMoneySuccessViewModel(context: context)
+        let viewController = FinancialGoalAddMoneySuccessViewController(viewModel: viewModel)
+        viewController.onReturnToGoal = { [weak navigationController, weak detailViewController] in
+            guard let navigationController, let detailViewController else { return }
+            navigationController.popToViewController(detailViewController, animated: true)
+        }
+        navigationController.pushViewController(viewController, animated: true)
+    }
+
+    private func showEditFinancialGoal(
+        _ goal: FinancialGoalRecord,
+        from financialGoalsViewController: FinancialGoalsViewController,
+        detailViewController: FinancialGoalDetailViewController,
+        in navigationController: UINavigationController
+    ) {
+        let viewModel = EditFinancialGoalViewModel(walletService: walletService, goal: goal)
+        let viewController = EditFinancialGoalViewController(viewModel: viewModel)
+        viewController.onBack = { [weak navigationController] in
+            navigationController?.popViewController(animated: true)
+        }
+        viewController.onSaved = { [weak financialGoalsViewController, weak detailViewController] updatedGoal in
+            Task { @MainActor [weak financialGoalsViewController, weak detailViewController] in
+                await financialGoalsViewController?.reloadData()
+                detailViewController?.applyUpdatedGoal(updatedGoal)
+                await detailViewController?.reloadData()
+            }
+        }
+        viewController.onDeleted = { [weak financialGoalsViewController, weak navigationController] goalID in
+            Task { @MainActor [weak financialGoalsViewController, weak navigationController] in
+                guard let financialGoalsViewController, let navigationController else { return }
+                await financialGoalsViewController.reloadData()
+                navigationController.popToViewController(financialGoalsViewController, animated: true)
+            }
         }
         navigationController.pushViewController(viewController, animated: true)
     }

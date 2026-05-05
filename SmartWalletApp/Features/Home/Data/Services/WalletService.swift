@@ -3,6 +3,11 @@ import Foundation
 final class WalletService {
     private let apiClient: APIClient
     private let encoder = JSONEncoder()
+    private let isoEncoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }()
 
     init(apiClient: APIClient) {
         self.apiClient = apiClient
@@ -51,6 +56,37 @@ final class WalletService {
 
     func fetchAIAdvice() async throws -> WalletAIAdviceResponse {
         try await apiClient.send(WalletEndpoint.aiAdvice, as: WalletAIAdviceResponse.self)
+    }
+
+    func fetchFinancialGoals() async throws -> [FinancialGoalResponse] {
+        try await apiClient.send(WalletEndpoint.financialGoals, as: [FinancialGoalResponse].self)
+    }
+
+    func fetchFinancialGoalsSummary(userID: UUID) async throws -> FinancialGoalSummaryResponse {
+        try await apiClient.send(WalletEndpoint.financialGoalsSummary(userID: userID), as: FinancialGoalSummaryResponse.self)
+    }
+
+    func createFinancialGoal(request: CreateFinancialGoalRequest) async throws -> CreateFinancialGoalResponse {
+        let body = try isoEncoder.encode(request)
+        return try await apiClient.send(WalletEndpoint.createFinancialGoal(body: body), as: CreateFinancialGoalResponse.self)
+    }
+
+    func addFinancialGoalFunds(request: AddFinancialGoalFundsRequest) async throws -> AddFinancialGoalFundsResponse {
+        let body = try encoder.encode(request)
+        return try await apiClient.send(WalletEndpoint.addFinancialGoalFunds(body: body), as: AddFinancialGoalFundsResponse.self)
+    }
+
+    func updateFinancialGoal(goalID: UUID, request: UpdateFinancialGoalRequest) async throws -> Bool {
+        let body = try isoEncoder.encode(request)
+        return try await apiClient.send(WalletEndpoint.updateFinancialGoal(goalID: goalID, body: body), as: Bool.self)
+    }
+
+    func closeFinancialGoal(goalID: UUID) async throws -> CloseFinancialGoalResponse {
+        try await apiClient.send(WalletEndpoint.closeFinancialGoal(goalID: goalID), as: CloseFinancialGoalResponse.self)
+    }
+
+    func fetchFinancialGoalContributions(goalID: UUID) async throws -> [FinancialGoalContributionResponse] {
+        try await apiClient.send(WalletEndpoint.financialGoalContributions(goalID: goalID), as: [FinancialGoalContributionResponse].self)
     }
 
     func fetchPortfolioSummary() async throws -> PortfolioSummaryResponse {
@@ -105,6 +141,13 @@ final class WalletService {
     case ownerName(iban: String)
     case analysis
     case aiAdvice
+    case financialGoals
+    case financialGoalsSummary(userID: UUID)
+    case createFinancialGoal(body: Data)
+    case addFinancialGoalFunds(body: Data)
+    case updateFinancialGoal(goalID: UUID, body: Data)
+    case closeFinancialGoal(goalID: UUID)
+    case financialGoalContributions(goalID: UUID)
     case portfolioSummary
     case portfolioPrices
     case investmentHistory
@@ -133,6 +176,20 @@ final class WalletService {
             return "/api/Wallets/analysis"
         case .aiAdvice:
             return "/api/Wallets/ai-advice"
+        case .financialGoals:
+            return "/api/FinancialGoals/financial-goals"
+        case .financialGoalsSummary(let userID):
+            return "/api/FinancialGoals/summary/\(userID.uuidString.lowercased())"
+        case .createFinancialGoal:
+            return "/api/FinancialGoals/create-target"
+        case .addFinancialGoalFunds:
+            return "/api/FinancialGoals/add-funds"
+        case .updateFinancialGoal(let goalID, _):
+            return "/api/FinancialGoals/\(goalID.uuidString)/target-update"
+        case .closeFinancialGoal(let goalID):
+            return "/api/FinancialGoals/\(goalID.uuidString)/close"
+        case .financialGoalContributions(let goalID):
+            return "/api/FinancialGoals/\(goalID.uuidString)/contributions"
         case .portfolioSummary:
             return "/api/Portfolios/summary"
         case .portfolioPrices:
@@ -156,7 +213,7 @@ final class WalletService {
 
     var method: HTTPMethod {
         switch self {
-        case .portfolioBuy, .portfolioSell, .contacts, .transfer:
+        case .portfolioBuy, .portfolioSell, .contacts, .transfer, .createFinancialGoal, .addFinancialGoalFunds, .updateFinancialGoal, .closeFinancialGoal:
             return .post
         case .removeContact:
             return .delete
@@ -177,6 +234,14 @@ final class WalletService {
             return body
         case .contacts(let body):
             return body
+        case .createFinancialGoal(let body):
+            return body
+        case .addFinancialGoalFunds(let body):
+            return body
+        case .updateFinancialGoal(_, let body):
+            return body
+        case .closeFinancialGoal:
+            return nil
         case .removeContact:
             return nil
         case .transfer(let body):
