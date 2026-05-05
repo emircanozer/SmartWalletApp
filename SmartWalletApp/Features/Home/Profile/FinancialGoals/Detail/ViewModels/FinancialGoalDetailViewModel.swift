@@ -2,9 +2,15 @@ import Foundation
 import UIKit
 
 final class FinancialGoalDetailViewModel {
-    private var goal: FinancialGoalRecord
+    var onStateChange: ((FinancialGoalDetailViewData) -> Void)?
+    var onError: ((String) -> Void)?
 
-    init(goal: FinancialGoalRecord) {
+    private let walletService: WalletService
+    private var goal: FinancialGoalRecord
+    private var contributions: [FinancialGoalContributionResponse] = []
+
+    init(walletService: WalletService, goal: FinancialGoalRecord) {
+        self.walletService = walletService
         self.goal = goal
     }
 }
@@ -18,60 +24,63 @@ extension FinancialGoalDetailViewModel {
         goal = updatedGoal
     }
 
+    @MainActor
+    func load() async {
+        do {
+            contributions = try await walletService.fetchFinancialGoalContributions(goalID: goal.id)
+            emitState()
+        } catch {
+            contributions = []
+            emitState()
+            onError?("Katkı geçmişi alınamadı. Lütfen tekrar deneyin.")
+        }
+    }
+
+    func emitState() {
+        onStateChange?(makeViewData())
+    }
+
     func makeViewData() -> FinancialGoalDetailViewData {
         let progress = goal.targetAmount > .zero
             ? min(1, CGFloat(NSDecimalNumber(decimal: goal.savedAmount / goal.targetAmount).doubleValue))
             : 0
         let completionPercent = Int((progress * 100).rounded())
         let remainingAmount = max(goal.targetAmount - goal.savedAmount, .zero)
-        let monthlyGap = max(remainingAmount / Decimal(3), .zero)
 
         return FinancialGoalDetailViewData(
-            navigationTitleText: "Hedef Detayi",
+            navigationTitleText: "Hedef Detayı",
             goalTitleText: goal.title,
             deadlineText: "Hedef Tarihi: \(AppDateTextFormatter.string(from: goal.deadline, style: .financialGoalDayMonth))",
             badgeText: "%\(completionPercent)",
-            savedTitleText: "BIRIKEN",
+            savedTitleText: "BİRİKEN",
             savedAmountText: AppNumberTextFormatter.prefixedLira(goal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
             targetAmountText: "/ \(AppNumberTextFormatter.prefixedLira(goal.targetAmount, minimumFractionDigits: 0, maximumFractionDigits: 0))",
             remainingTitleText: "KALAN",
-            remainingAmountText: "\(AppNumberTextFormatter.prefixedLira(remainingAmount, minimumFractionDigits: 0, maximumFractionDigits: 0)) kaldi",
-            progressText: "%\(completionPercent) tamamlandi",
+            remainingAmountText: "\(AppNumberTextFormatter.prefixedLira(remainingAmount, minimumFractionDigits: 0, maximumFractionDigits: 0)) kaldı",
+            progressText: "%\(completionPercent) tamamlandı",
             progress: progress,
-            daysRemainingText: "Kalan gun: \(remainingDaysText())",
+            daysRemainingText: "Kalan gün: \(remainingDaysText())",
             addMoneyButtonTitleText: "Para Ekle",
-            editButtonTitleText: "Duzenle",
-            aiSuggestionTitleText: "AI Onerisi",
-            aiSuggestionBodyText: "Bu hedef icin mevcut birikim seviyen yetersiz. Hedefe zamaninda ulasmak icin aylik yaklasik \(AppNumberTextFormatter.prefixedLira(monthlyGap, minimumFractionDigits: 0, maximumFractionDigits: 0)) birikim yapman onerilir. Alternatif olarak hedef tarihini guncelleyebilirsin.",
-            historySectionTitleText: "Katki Gecmisi",
-            viewAllTitleText: "Tumunu Gor",
+            editButtonTitleText: "Düzenle",
+            historySectionTitleText: "Katkı Geçmişi",
             historyItems: makeHistoryItems()
         )
     }
 
     private func remainingDaysText() -> String {
         let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: Calendar.current.startOfDay(for: goal.deadline)).day ?? 0
-        return "\(max(days, 0)) gun"
+        return "\(max(days, 0)) gün"
     }
 
     private func makeHistoryItems() -> [FinancialGoalContributionItemViewData] {
-        let contributions = mockContributionAmounts()
-        return contributions.enumerated().map { index, amount in
-            let date = Calendar.current.date(byAdding: .day, value: -((index * 7) + 5), to: Date()) ?? Date()
+        contributions.map { contribution in
             return FinancialGoalContributionItemViewData(
-                titleText: "+\(AppNumberTextFormatter.prefixedLira(amount, minimumFractionDigits: 0, maximumFractionDigits: 0)) eklendi",
-                dateText: AppDateTextFormatter.string(from: date, style: .financialGoalDayMonth)
+                titleText: "+\(AppNumberTextFormatter.prefixedLira(contribution.amount, minimumFractionDigits: 0, maximumFractionDigits: 0)) eklendi",
+                dateText: AppDateTextFormatter.string(
+                    from: AppDateTextFormatter.parseServerDate(contribution.contributionDate),
+                    style: .financialGoalDayMonth
+                )
             )
         }
-    }
-
-    private func mockContributionAmounts() -> [Decimal] {
-        if goal.savedAmount == .zero {
-            return [Decimal(2_000), Decimal(1_500)]
-        }
-
-        let first = max(goal.savedAmount / Decimal(3), Decimal(1_000))
-        let second = max(goal.savedAmount / Decimal(2), Decimal(2_000))
-        return [first, second]
     }
 }

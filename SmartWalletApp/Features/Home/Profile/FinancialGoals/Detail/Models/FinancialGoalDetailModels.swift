@@ -16,10 +16,7 @@ struct FinancialGoalDetailViewData {
     let daysRemainingText: String
     let addMoneyButtonTitleText: String
     let editButtonTitleText: String
-    let aiSuggestionTitleText: String
-    let aiSuggestionBodyText: String
     let historySectionTitleText: String
-    let viewAllTitleText: String
     let historyItems: [FinancialGoalContributionItemViewData]
 }
 

@@ -15,8 +15,6 @@ final class FinancialGoalsContentView: UIView {
     private let goalCountLabel = UILabel()
     private let totalSavedLabel = UILabel()
     private let totalTargetLabel = UILabel()
-    private let summaryIconContainer = UIView()
-    private let summaryIconView = UIImageView()
     private let progressTrackView = UIView()
     private let progressFillView = UIView()
     private let completionLabel = UILabel()
@@ -40,9 +38,6 @@ final class FinancialGoalsContentView: UIView {
         super.layoutSubviews()
         [summaryCardView].forEach {
             $0.layer.cornerRadius = 22
-        }
-        [summaryIconContainer].forEach {
-            $0.layer.cornerRadius = 14
         }
         createGoalButton.layer.cornerRadius = createGoalButton.bounds.height / 2
         updateProgressWidth()
@@ -115,11 +110,6 @@ extension FinancialGoalsContentView {
         totalTargetLabel.font = .systemFont(ofSize: 15, weight: .semibold)
         totalTargetLabel.textColor = AppColor.bodyText
 
-        summaryIconContainer.backgroundColor = AppColor.surfaceWarmSoft
-        summaryIconView.image = UIImage(systemName: "chart.bar.fill")
-        summaryIconView.tintColor = AppColor.accentOlive
-        summaryIconView.contentMode = .scaleAspectFit
-
         progressTrackView.backgroundColor = AppColor.divider
         progressTrackView.layer.cornerRadius = 6
         progressTrackView.clipsToBounds = true
@@ -168,13 +158,10 @@ extension FinancialGoalsContentView {
             goalCountLabel,
             totalSavedLabel,
             totalTargetLabel,
-            summaryIconContainer,
             progressTrackView,
             completionLabel,
             remainingLabel
         ].forEach(summaryCardView.addSubview)
-
-        summaryIconContainer.addSubview(summaryIconView)
         progressTrackView.addSubview(progressFillView)
 
         createGoalButton.addTarget(self, action: #selector(handleCreateGoalTap), for: .touchUpInside)
@@ -191,8 +178,6 @@ extension FinancialGoalsContentView {
             goalCountLabel,
             totalSavedLabel,
             totalTargetLabel,
-            summaryIconContainer,
-            summaryIconView,
             progressTrackView,
             progressFillView,
             completionLabel,
@@ -233,17 +218,7 @@ extension FinancialGoalsContentView {
 
             goalCountLabel.topAnchor.constraint(equalTo: summaryCardView.topAnchor, constant: 24),
             goalCountLabel.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor, constant: 24),
-            goalCountLabel.trailingAnchor.constraint(lessThanOrEqualTo: summaryIconContainer.leadingAnchor, constant: -12),
-
-            summaryIconContainer.topAnchor.constraint(equalTo: summaryCardView.topAnchor, constant: 18),
-            summaryIconContainer.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor, constant: -18),
-            summaryIconContainer.widthAnchor.constraint(equalToConstant: 36),
-            summaryIconContainer.heightAnchor.constraint(equalToConstant: 36),
-
-            summaryIconView.centerXAnchor.constraint(equalTo: summaryIconContainer.centerXAnchor),
-            summaryIconView.centerYAnchor.constraint(equalTo: summaryIconContainer.centerYAnchor),
-            summaryIconView.widthAnchor.constraint(equalToConstant: 18),
-            summaryIconView.heightAnchor.constraint(equalToConstant: 18),
+            goalCountLabel.trailingAnchor.constraint(lessThanOrEqualTo: summaryCardView.trailingAnchor, constant: -24),
 
             totalSavedLabel.topAnchor.constraint(equalTo: goalCountLabel.bottomAnchor, constant: 12),
             totalSavedLabel.leadingAnchor.constraint(equalTo: goalCountLabel.leadingAnchor),

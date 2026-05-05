@@ -16,4 +16,5 @@ struct EditFinancialGoalViewData {
 struct EditFinancialGoalFormState {
     let selectedDateText: String?
     let isSaveEnabled: Bool
+    let isSubmitting: Bool
 }

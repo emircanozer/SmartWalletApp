@@ -53,11 +53,6 @@ extension FinancialGoalsViewModel {
         emitState()
     }
 
-    func deleteGoal(id: UUID) {
-        goals.removeAll { $0.id == id }
-        emitState()
-    }
-
     func prependGoal(_ goal: FinancialGoalRecord) {
         goals.insert(goal, at: 0)
         if let summary {

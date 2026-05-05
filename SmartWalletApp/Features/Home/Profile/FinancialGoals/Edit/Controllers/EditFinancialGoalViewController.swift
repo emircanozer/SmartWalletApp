@@ -108,12 +108,15 @@ extension EditFinancialGoalViewController {
 
     @objc func handleSaveTap() {
         dismissKeyboard()
-        switch viewModel.save() {
-        case .success(let updatedGoal):
-            onSaved?(updatedGoal)
-            navigationController?.popViewController(animated: true)
-        case .failure(let error):
-            showAlert(message: error.localizedDescription)
+        Task { [weak self] in
+            guard let self else { return }
+            let result = await viewModel.submit()
+            if let updatedGoal = result.goal {
+                onSaved?(updatedGoal)
+                navigationController?.popViewController(animated: true)
+            } else if let message = result.errorMessage {
+                showAlert(message: message)
+            }
         }
     }
 
@@ -123,7 +126,14 @@ extension EditFinancialGoalViewController {
 
     @objc func handleDeleteTap() {
         dismissKeyboard()
-        onDeleted?(viewModel.saveGoalID)
+        Task { [weak self] in
+            guard let self else { return }
+            if let message = await viewModel.closeGoal() {
+                showAlert(message: message)
+                return
+            }
+            onDeleted?(viewModel.saveGoalID)
+        }
     }
 
     @objc func handleNameChanged() {

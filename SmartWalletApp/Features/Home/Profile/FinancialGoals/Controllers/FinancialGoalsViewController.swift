@@ -48,10 +48,6 @@ extension FinancialGoalsViewController {
         viewModel.updateGoal(goal)
     }
 
-    func deleteGoal(id: UUID) {
-        viewModel.deleteGoal(id: id)
-    }
-
     private func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.onCreateGoalTap = { [weak self] in

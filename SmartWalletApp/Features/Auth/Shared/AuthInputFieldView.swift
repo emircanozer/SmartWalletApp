@@ -89,6 +89,12 @@ class AuthInputFieldView: UIView {
         textField.text = text
     }
 
+    func setInputEnabled(_ isEnabled: Bool) {
+        textField.isEnabled = isEnabled
+        textField.alpha = isEnabled ? 1 : 0.7
+        containerView.alpha = isEnabled ? 1 : 0.85
+    }
+
     func setPlaceholder(_ placeholder: String) {
         textField.attributedPlaceholder = NSAttributedString(
             string: placeholder,

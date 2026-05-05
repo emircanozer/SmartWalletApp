@@ -22,13 +22,7 @@ final class FinancialGoalDetailContentView: UIView {
     private let progressLabel = UILabel()
     private let daysLabel = UILabel()
     private let actionStackView = UIStackView()
-    private let aiCardView = UIView()
-    private let aiIconContainerView = UIView()
-    private let aiIconView = UIImageView()
-    private let aiTitleLabel = UILabel()
-    private let aiBodyLabel = UILabel()
     private let historyTitleLabel = UILabel()
-    private let viewAllButton = UIButton(type: .system)
     private let historyStackView = UIStackView()
     private var progressWidthConstraint: NSLayoutConstraint?
 
@@ -45,12 +39,10 @@ final class FinancialGoalDetailContentView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        [summaryCardView, aiCardView, addMoneyButton, editButton].forEach {
+        [summaryCardView, addMoneyButton, editButton].forEach {
             $0.layer.cornerRadius = 20
         }
-        [badgeLabel, aiIconContainerView].forEach {
-            $0.layer.cornerRadius = $0.bounds.height / 2
-        }
+        badgeLabel.layer.cornerRadius = badgeLabel.bounds.height / 2
         progressTrackView.layer.cornerRadius = progressTrackView.bounds.height / 2
         progressFillView.layer.cornerRadius = progressFillView.bounds.height / 2
     }
@@ -76,10 +68,7 @@ extension FinancialGoalDetailContentView {
         var editConfiguration = editButton.configuration
         editConfiguration?.title = data.editButtonTitleText
         editButton.configuration = editConfiguration
-        aiTitleLabel.text = data.aiSuggestionTitleText
-        aiBodyLabel.text = data.aiSuggestionBodyText
         historyTitleLabel.text = data.historySectionTitleText
-        viewAllButton.setTitle(data.viewAllTitleText, for: .normal)
 
         historyStackView.arrangedSubviews.forEach {
             historyStackView.removeArrangedSubview($0)
@@ -107,13 +96,11 @@ extension FinancialGoalDetailContentView {
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
 
-        [summaryCardView, aiCardView].forEach {
-            $0.backgroundColor = AppColor.whitePrimary
-            $0.layer.shadowColor = UIColor.black.cgColor
-            $0.layer.shadowOpacity = 0.03
-            $0.layer.shadowRadius = 12
-            $0.layer.shadowOffset = CGSize(width: 0, height: 6)
-        }
+        summaryCardView.backgroundColor = AppColor.whitePrimary
+        summaryCardView.layer.shadowColor = UIColor.black.cgColor
+        summaryCardView.layer.shadowOpacity = 0.03
+        summaryCardView.layer.shadowRadius = 12
+        summaryCardView.layer.shadowOffset = CGSize(width: 0, height: 6)
 
         goalTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
         goalTitleLabel.textColor = AppColor.primaryText
@@ -176,25 +163,8 @@ extension FinancialGoalDetailContentView {
         editConfiguration.baseForegroundColor = AppColor.primaryText
         editButton.configuration = editConfiguration
 
-        aiIconContainerView.backgroundColor = AppColor.surfaceMuted
-        aiIconView.image = UIImage(systemName: "sparkles")
-        aiIconView.tintColor = AppColor.navigationTint
-        aiIconView.contentMode = .scaleAspectFit
-
-        aiTitleLabel.font = .systemFont(ofSize: 15, weight: .bold)
-        aiTitleLabel.textColor = AppColor.navigationTint
-
-        aiBodyLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        aiBodyLabel.textColor = AppColor.bodyText
-        aiBodyLabel.numberOfLines = 0
-        aiBodyLabel.setLineSpacing(5)
-
         historyTitleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         historyTitleLabel.textColor = AppColor.primaryText
-
-        viewAllButton.setTitleColor(AppColor.accentOlive, for: .normal)
-        viewAllButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
-        viewAllButton.isUserInteractionEnabled = false
 
         historyStackView.axis = .vertical
         historyStackView.spacing = 12
@@ -209,9 +179,7 @@ extension FinancialGoalDetailContentView {
             titleLabel,
             summaryCardView,
             actionStackView,
-            aiCardView,
             historyTitleLabel,
-            viewAllButton,
             historyStackView
         ].forEach(contentContainer.addSubview)
 
@@ -231,8 +199,6 @@ extension FinancialGoalDetailContentView {
         progressTrackView.addSubview(progressFillView)
 
         [addMoneyButton, editButton].forEach(actionStackView.addArrangedSubview)
-        [aiIconContainerView, aiTitleLabel, aiBodyLabel].forEach(aiCardView.addSubview)
-        aiIconContainerView.addSubview(aiIconView)
     }
 
     func setupLayout() {
@@ -257,13 +223,7 @@ extension FinancialGoalDetailContentView {
             actionStackView,
             addMoneyButton,
             editButton,
-            aiCardView,
-            aiIconContainerView,
-            aiIconView,
-            aiTitleLabel,
-            aiBodyLabel,
             historyTitleLabel,
-            viewAllButton,
             historyStackView
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -344,38 +304,13 @@ extension FinancialGoalDetailContentView {
             actionStackView.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
             actionStackView.heightAnchor.constraint(equalToConstant: 52),
 
-            aiCardView.topAnchor.constraint(equalTo: actionStackView.bottomAnchor, constant: 18),
-            aiCardView.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor),
-            aiCardView.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
-
-            aiIconContainerView.topAnchor.constraint(equalTo: aiCardView.topAnchor, constant: 18),
-            aiIconContainerView.leadingAnchor.constraint(equalTo: aiCardView.leadingAnchor, constant: 16),
-            aiIconContainerView.widthAnchor.constraint(equalToConstant: 28),
-            aiIconContainerView.heightAnchor.constraint(equalToConstant: 28),
-
-            aiIconView.centerXAnchor.constraint(equalTo: aiIconContainerView.centerXAnchor),
-            aiIconView.centerYAnchor.constraint(equalTo: aiIconContainerView.centerYAnchor),
-            aiIconView.widthAnchor.constraint(equalToConstant: 16),
-            aiIconView.heightAnchor.constraint(equalToConstant: 16),
-
-            aiTitleLabel.centerYAnchor.constraint(equalTo: aiIconContainerView.centerYAnchor),
-            aiTitleLabel.leadingAnchor.constraint(equalTo: aiIconContainerView.trailingAnchor, constant: 10),
-            aiTitleLabel.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor, constant: -16),
-
-            aiBodyLabel.topAnchor.constraint(equalTo: aiTitleLabel.bottomAnchor, constant: 12),
-            aiBodyLabel.leadingAnchor.constraint(equalTo: aiIconContainerView.leadingAnchor),
-            aiBodyLabel.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor, constant: -16),
-            aiBodyLabel.bottomAnchor.constraint(equalTo: aiCardView.bottomAnchor, constant: -18),
-
-            historyTitleLabel.topAnchor.constraint(equalTo: aiCardView.bottomAnchor, constant: 22),
-            historyTitleLabel.leadingAnchor.constraint(equalTo: aiCardView.leadingAnchor),
-
-            viewAllButton.centerYAnchor.constraint(equalTo: historyTitleLabel.centerYAnchor),
-            viewAllButton.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor),
+            historyTitleLabel.topAnchor.constraint(equalTo: actionStackView.bottomAnchor, constant: 22),
+            historyTitleLabel.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor),
+            historyTitleLabel.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
 
             historyStackView.topAnchor.constraint(equalTo: historyTitleLabel.bottomAnchor, constant: 14),
-            historyStackView.leadingAnchor.constraint(equalTo: aiCardView.leadingAnchor),
-            historyStackView.trailingAnchor.constraint(equalTo: aiCardView.trailingAnchor),
+            historyStackView.leadingAnchor.constraint(equalTo: summaryCardView.leadingAnchor),
+            historyStackView.trailingAnchor.constraint(equalTo: summaryCardView.trailingAnchor),
             historyStackView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -110)
         ])
 

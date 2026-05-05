@@ -23,7 +23,7 @@ final class FinancialGoalAddMoneySuccessContentView: UIView {
     private var progressWidthConstraint: NSLayoutConstraint?
 
     override init(frame: CGRect) {
-        super.init(frame: frame)    
+        super.init(frame: frame)
         configureView()
         buildHierarchy()
         setupLayout()

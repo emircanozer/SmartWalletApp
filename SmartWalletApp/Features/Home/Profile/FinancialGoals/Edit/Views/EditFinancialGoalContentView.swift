@@ -77,6 +77,10 @@ extension EditFinancialGoalContentView {
         dateValueLabel.text = state.selectedDateText
         saveButton.isEnabled = state.isSaveEnabled
         saveButton.alpha = state.isSaveEnabled ? 1 : 0.6
+        saveButton.setTitle(state.isSubmitting ? "Kaydediliyor..." : "Kaydet", for: .normal)
+        nameField.setInputEnabled(!state.isSubmitting)
+        amountField.setInputEnabled(!state.isSubmitting)
+        noteTextView.isEditable = !state.isSubmitting
     }
 
     func setKeyboardBottomInset(_ inset: CGFloat) {

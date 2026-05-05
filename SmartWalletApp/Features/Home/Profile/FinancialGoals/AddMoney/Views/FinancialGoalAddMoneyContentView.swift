@@ -12,7 +12,6 @@ final class FinancialGoalAddMoneyContentView: UIView {
     private let contentContainer = UIView()
     private let bottomActionContainer = UIView()
     private let titleLabel = UILabel()
-    private let profileButton = UIButton(type: .system)
     private let summaryCardView = UIView()
     private let goalTitleLabel = UILabel()
     private let deadlineLabel = UILabel()
@@ -159,10 +158,6 @@ extension FinancialGoalAddMoneyContentView {
         titleLabel.font = .systemFont(ofSize: 22, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
 
-        profileButton.setImage(UIImage(systemName: "person.crop.circle"), for: .normal)
-        profileButton.tintColor = AppColor.secondaryText
-        profileButton.isUserInteractionEnabled = false
-
         summaryCardView.backgroundColor = AppColor.whitePrimary
         summaryCardView.layer.shadowColor = UIColor.black.cgColor
         summaryCardView.layer.shadowOpacity = 0.03
@@ -262,7 +257,6 @@ extension FinancialGoalAddMoneyContentView {
         [
             backButton,
             titleLabel,
-            profileButton,
             summaryCardView,
             amountTitleLabel,
             amountFieldContainerView,
@@ -273,7 +267,7 @@ extension FinancialGoalAddMoneyContentView {
             projectedSavingsLabel,
             remainingAfterAddLabel
         ].forEach(contentContainer.addSubview)
-        bottomActionContainer.addSubview(confirmButton)
+            bottomActionContainer.addSubview(confirmButton)
 
         [
             goalTitleLabel,
@@ -299,7 +293,6 @@ extension FinancialGoalAddMoneyContentView {
             bottomActionContainer,
             backButton,
             titleLabel,
-            profileButton,
             summaryCardView,
             goalTitleLabel,
             deadlineLabel,
@@ -348,11 +341,6 @@ extension FinancialGoalAddMoneyContentView {
 
             titleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             titleLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-
-            profileButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
-            profileButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
-            profileButton.widthAnchor.constraint(equalToConstant: 24),
-            profileButton.heightAnchor.constraint(equalToConstant: 24),
 
             summaryCardView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 28),
             summaryCardView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
@@ -459,6 +447,22 @@ extension FinancialGoalAddMoneyContentView {
         let baseInset = bottomActionContainer.bounds.height + 24
         scrollView.contentInset.bottom = max(baseInset, keyboardInset + 16)
         scrollView.verticalScrollIndicatorInsets.bottom = max(baseInset, keyboardInset + 16)
+    }
+
+    func clearAmountPlaceholder() {
+        guard amountField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true else { return }
+        amountField.attributedPlaceholder = nil
+        amountField.placeholder = ""
+    }
+
+    func restoreAmountPlaceholder(_ text: String) {
+        amountField.attributedPlaceholder = NSAttributedString(
+            string: text,
+            attributes: [
+                .foregroundColor: AppColor.placeholderText,
+                .font: UIFont.systemFont(ofSize: 22, weight: .bold)
+            ]
+        )
     }
 
     func makeQuickAmountButton(with item: FinancialGoalAddMoneyQuickAmountViewData) -> QuickAmountButton {

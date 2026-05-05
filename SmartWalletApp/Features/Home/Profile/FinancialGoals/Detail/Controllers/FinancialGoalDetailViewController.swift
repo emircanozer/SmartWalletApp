@@ -27,7 +27,11 @@ final class FinancialGoalDetailViewController: BaseViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         enableInteractivePopGesture()
         bindActions()
+        bindViewModel()
         contentView.apply(viewModel.makeViewData())
+        Task { [weak self] in
+            await self?.viewModel.load()
+        }
     }
 }
 
@@ -37,10 +41,24 @@ extension FinancialGoalDetailViewController {
         contentView.apply(viewModel.makeViewData())
     }
 
+    @MainActor
+    func reloadData() async {
+        await viewModel.load()
+    }
+
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         contentView.addMoneyButton.addTarget(self, action: #selector(handleAddMoneyTap), for: .touchUpInside)
         contentView.editButton.addTarget(self, action: #selector(handleEditTap), for: .touchUpInside)
+    }
+
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] data in
+            self?.contentView.apply(data)
+        }
+        viewModel.onError = { [weak self] message in
+            self?.showAlert(message: message)
+        }
     }
 
     @objc func handleBackTap() {

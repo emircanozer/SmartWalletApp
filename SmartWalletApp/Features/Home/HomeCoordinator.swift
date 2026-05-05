@@ -407,7 +407,7 @@ class HomeCoordinator: Coordinator {
         from financialGoalsViewController: FinancialGoalsViewController,
         in navigationController: UINavigationController
     ) {
-        let viewModel = FinancialGoalDetailViewModel(goal: goal)
+        let viewModel = FinancialGoalDetailViewModel(walletService: walletService, goal: goal)
         let viewController = FinancialGoalDetailViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
@@ -450,6 +450,7 @@ class HomeCoordinator: Coordinator {
                 guard let self, let financialGoalsViewController, let detailViewController else { return }
                 await financialGoalsViewController.reloadData()
                 detailViewController.applyUpdatedGoal(context.updatedGoal)
+                await detailViewController.reloadData()
                 self.rootViewController.selectedViewController = navigationController
                 self.showFinancialGoalAddMoneySuccess(
                     context,
@@ -481,18 +482,22 @@ class HomeCoordinator: Coordinator {
         detailViewController: FinancialGoalDetailViewController,
         in navigationController: UINavigationController
     ) {
-        let viewModel = EditFinancialGoalViewModel(goal: goal)
+        let viewModel = EditFinancialGoalViewModel(walletService: walletService, goal: goal)
         let viewController = EditFinancialGoalViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
         }
         viewController.onSaved = { [weak financialGoalsViewController, weak detailViewController] updatedGoal in
-            financialGoalsViewController?.updateGoal(updatedGoal)
-            detailViewController?.applyUpdatedGoal(updatedGoal)
+            Task { @MainActor [weak financialGoalsViewController, weak detailViewController] in
+                await financialGoalsViewController?.reloadData()
+                detailViewController?.applyUpdatedGoal(updatedGoal)
+                await detailViewController?.reloadData()
+            }
         }
         viewController.onDeleted = { [weak financialGoalsViewController, weak navigationController] goalID in
-            financialGoalsViewController?.deleteGoal(id: goalID)
-            if let financialGoalsViewController, let navigationController {
+            Task { @MainActor [weak financialGoalsViewController, weak navigationController] in
+                guard let financialGoalsViewController, let navigationController else { return }
+                await financialGoalsViewController.reloadData()
                 navigationController.popToViewController(financialGoalsViewController, animated: true)
             }
         }

@@ -42,6 +42,7 @@ final class FinancialGoalAddMoneyViewController: BaseViewController, UITextViewD
         contentView.confirmButton.addTarget(self, action: #selector(handleConfirmTap), for: .touchUpInside)
         contentView.amountField.addTarget(self, action: #selector(handleAmountChanged), for: .editingChanged)
         contentView.amountField.addTarget(self, action: #selector(handleAmountFocus), for: .editingDidBegin)
+        contentView.amountField.addTarget(self, action: #selector(handleAmountBlur), for: .editingDidEnd)
         contentView.onQuickAmountTap = { [weak self] amount in
             self?.dismissKeyboard()
             self?.viewModel.selectQuickAmount(amount)
@@ -93,7 +94,13 @@ final class FinancialGoalAddMoneyViewController: BaseViewController, UITextViewD
     }
 
     @objc func handleAmountFocus() {
+        contentView.clearAmountPlaceholder()
         contentView.scrollToVisible(contentView.amountField)
+    }
+
+    @objc func handleAmountBlur() {
+        guard (contentView.amountField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        contentView.restoreAmountPlaceholder("₺5000")
     }
 
     @objc func handleKeyboardWillChangeFrame(_ notification: Notification) {
