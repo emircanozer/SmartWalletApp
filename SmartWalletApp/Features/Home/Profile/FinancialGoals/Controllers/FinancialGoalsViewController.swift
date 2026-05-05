@@ -35,12 +35,13 @@ final class FinancialGoalsViewController: BaseViewController {
 }
 
 extension FinancialGoalsViewController {
-    func addGoal(_ draft: FinancialGoalDraft) {
-        viewModel.addGoal(draft)
+    @MainActor
+    func reloadData() async {
+        await viewModel.load()
     }
 
-    func addContribution(to goalID: UUID, amount: Decimal) {
-        viewModel.addContribution(to: goalID, amount: amount)
+    func prependGoal(_ goal: FinancialGoalRecord) {
+        viewModel.prependGoal(goal)
     }
 
     func updateGoal(_ goal: FinancialGoalRecord) {

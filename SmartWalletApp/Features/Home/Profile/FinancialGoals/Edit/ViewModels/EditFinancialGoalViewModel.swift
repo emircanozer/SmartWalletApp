@@ -113,16 +113,9 @@ extension EditFinancialGoalViewModel {
     private func emitState() {
         onStateChange?(
             EditFinancialGoalFormState(
-                selectedDateText: Self.dateFormatter.string(from: selectedDate),
+                selectedDateText: AppDateTextFormatter.string(from: selectedDate, style: .financialGoalDayMonth),
                 isSaveEnabled: !titleText.isEmpty && parsedAmount != nil && parsedAmount! > .zero
             )
         )
     }
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
 }

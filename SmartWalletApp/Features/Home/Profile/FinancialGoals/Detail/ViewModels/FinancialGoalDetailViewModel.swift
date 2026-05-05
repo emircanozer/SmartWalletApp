@@ -18,20 +18,6 @@ extension FinancialGoalDetailViewModel {
         goal = updatedGoal
     }
 
-    func addContribution(_ amount: Decimal) {
-        goal = FinancialGoalRecord(
-            id: goal.id,
-            title: goal.title,
-            targetAmount: goal.targetAmount,
-            savedAmount: goal.savedAmount + amount,
-            deadline: goal.deadline,
-            note: goal.note,
-            iconName: goal.iconName,
-            iconTintColor: goal.iconTintColor,
-            iconBackgroundColor: goal.iconBackgroundColor
-        )
-    }
-
     func makeViewData() -> FinancialGoalDetailViewData {
         let progress = goal.targetAmount > .zero
             ? min(1, CGFloat(NSDecimalNumber(decimal: goal.savedAmount / goal.targetAmount).doubleValue))
@@ -43,7 +29,7 @@ extension FinancialGoalDetailViewModel {
         return FinancialGoalDetailViewData(
             navigationTitleText: "Hedef Detayi",
             goalTitleText: goal.title,
-            deadlineText: "Hedef Tarihi: \(Self.goalDateFormatter.string(from: goal.deadline))",
+            deadlineText: "Hedef Tarihi: \(AppDateTextFormatter.string(from: goal.deadline, style: .financialGoalDayMonth))",
             badgeText: "%\(completionPercent)",
             savedTitleText: "BIRIKEN",
             savedAmountText: AppNumberTextFormatter.prefixedLira(goal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
@@ -74,7 +60,7 @@ extension FinancialGoalDetailViewModel {
             let date = Calendar.current.date(byAdding: .day, value: -((index * 7) + 5), to: Date()) ?? Date()
             return FinancialGoalContributionItemViewData(
                 titleText: "+\(AppNumberTextFormatter.prefixedLira(amount, minimumFractionDigits: 0, maximumFractionDigits: 0)) eklendi",
-                dateText: Self.historyDateFormatter.string(from: date)
+                dateText: AppDateTextFormatter.string(from: date, style: .financialGoalDayMonth)
             )
         }
     }
@@ -88,18 +74,4 @@ extension FinancialGoalDetailViewModel {
         let second = max(goal.savedAmount / Decimal(2), Decimal(2_000))
         return [first, second]
     }
-
-    private static let goalDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
-
-    private static let historyDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
 }

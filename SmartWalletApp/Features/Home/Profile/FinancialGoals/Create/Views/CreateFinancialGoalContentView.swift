@@ -70,6 +70,7 @@ extension CreateFinancialGoalContentView {
         deadlineValueLabel.text = state.selectedDateText
         approveButton.isEnabled = state.isApproveEnabled
         approveButton.alpha = state.isApproveEnabled ? 1 : 0.6
+        approveButton.setTitle(state.isSubmitting ? "Olusturuluyor..." : "Hedefi Onayla", for: .normal)
     }
 
     func setKeyboardBottomInset(_ inset: CGFloat) {

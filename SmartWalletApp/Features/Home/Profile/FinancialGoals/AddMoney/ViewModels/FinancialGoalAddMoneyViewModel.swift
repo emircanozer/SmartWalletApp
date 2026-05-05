@@ -4,13 +4,16 @@ import UIKit
 final class FinancialGoalAddMoneyViewModel {
     var onStateChange: ((FinancialGoalAddMoneyFormState) -> Void)?
 
+    private let walletService: WalletService
     private let goal: FinancialGoalRecord
     private let quickAmounts: [Decimal] = [500, 1_000, 5_000, 10_000]
     private var amountText = ""
     private var noteText = ""
     private var selectedQuickAmount: Decimal?
+    private var isSubmitting = false
 
-    init(goal: FinancialGoalRecord) {
+    init(walletService: WalletService, goal: FinancialGoalRecord) {
+        self.walletService = walletService
         self.goal = goal
     }
 }
@@ -26,7 +29,7 @@ extension FinancialGoalAddMoneyViewModel {
         return FinancialGoalAddMoneyViewData(
             navigationTitleText: "Hedefe Para Ekle",
             goalTitleText: goal.title,
-            deadlineText: "Hedef Tarihi: \(Self.goalDateFormatter.string(from: goal.deadline))",
+            deadlineText: "Hedef Tarihi: \(AppDateTextFormatter.string(from: goal.deadline, style: .financialGoalDayMonth))",
             badgeText: "%\(completionPercent)",
             savedTitleText: "BIRIKEN",
             savedAmountText: AppNumberTextFormatter.prefixedLira(goal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
@@ -74,26 +77,63 @@ extension FinancialGoalAddMoneyViewModel {
         return parsedAmount
     }
 
-    func makeSuccessContext() -> FinancialGoalAddMoneySuccessContext? {
-        guard let amount = confirmAmount() else { return nil }
+    @MainActor
+    func submit() async -> (context: FinancialGoalAddMoneySuccessContext?, errorMessage: String?) {
+        guard let amount = confirmAmount() else {
+            return (nil, "Lutfen gecerli bir tutar girin.")
+        }
 
-        let updatedGoal = FinancialGoalRecord(
-            id: goal.id,
-            title: goal.title,
-            targetAmount: goal.targetAmount,
-            savedAmount: goal.savedAmount + amount,
-            deadline: goal.deadline,
-            note: goal.note,
-            iconName: goal.iconName,
-            iconTintColor: goal.iconTintColor,
-            iconBackgroundColor: goal.iconBackgroundColor
-        )
+        isSubmitting = true
+        emitState()
 
-        return FinancialGoalAddMoneySuccessContext(
-            originalGoal: goal,
-            updatedGoal: updatedGoal,
-            addedAmount: amount
-        )
+        defer {
+            isSubmitting = false
+            emitState()
+        }
+
+        do {
+            let response = try await walletService.addFinancialGoalFunds(
+                request: AddFinancialGoalFundsRequest(
+                    goalId: goal.id,
+                    amount: amount
+                )
+            )
+
+            guard response.success else {
+                return (nil, response.message)
+            }
+
+            let refreshedGoals = try await walletService.fetchFinancialGoals()
+            guard let refreshedGoal = refreshedGoals.first(where: { $0.id == goal.id }) else {
+                return (nil, "Guncel hedef bilgisi alinamadi. Lutfen tekrar deneyin.")
+            }
+
+            let updatedGoal = FinancialGoalRecord(
+                id: refreshedGoal.id,
+                title: refreshedGoal.title,
+                targetAmount: refreshedGoal.targetAmount,
+                savedAmount: refreshedGoal.currentAmount,
+                deadline: AppDateTextFormatter.parseServerDate(refreshedGoal.targetDate),
+                note: goal.note,
+                iconName: goal.iconName,
+                iconTintColor: goal.iconTintColor,
+                iconBackgroundColor: goal.iconBackgroundColor
+            )
+
+            return (
+                FinancialGoalAddMoneySuccessContext(
+                    originalGoal: goal,
+                    updatedGoal: updatedGoal,
+                    addedAmount: amount,
+                    message: response.message
+                ),
+                nil
+            )
+        } catch let error as NetworkError {
+            return (nil, error.errorDescription ?? "Hedefe para eklenemedi. Lutfen tekrar deneyin.")
+        } catch {
+            return (nil, error.localizedDescription)
+        }
     }
 
     private var parsedAmount: Decimal? {
@@ -117,15 +157,9 @@ extension FinancialGoalAddMoneyViewModel {
                 projectedSavingsText: "Bu islem sonrasi birikim: \(AppNumberTextFormatter.prefixedLira(projectedSavings, minimumFractionDigits: 0, maximumFractionDigits: 0))",
                 remainingAfterAddText: "Onayladiktan sonra hedefe kalan: \(AppNumberTextFormatter.prefixedLira(remainingAfterAdd, minimumFractionDigits: 0, maximumFractionDigits: 0))",
                 confirmButtonTitleText: "Onayla ve \(AppNumberTextFormatter.prefixedLira(amount, minimumFractionDigits: 0, maximumFractionDigits: 0)) Ekle",
-                isConfirmEnabled: amount > .zero
+                isConfirmEnabled: !isSubmitting && amount > .zero,
+                isSubmitting: isSubmitting
             )
         )
     }
-
-    private static let goalDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
 }

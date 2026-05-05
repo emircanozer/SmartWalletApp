@@ -1,12 +1,19 @@
 import Foundation
+import UIKit
 
 final class CreateFinancialGoalViewModel {
     var onStateChange: ((CreateFinancialGoalFormState) -> Void)?
-    var onGoalCreated: ((FinancialGoalDraft) -> Void)?
+    var onGoalCreated: ((FinancialGoalRecord) -> Void)?
 
+    private let walletService: WalletService
     private var title = ""
     private var amountText = ""
     private var selectedDate: Date?
+    private var isSubmitting = false
+
+    init(walletService: WalletService) {
+        self.walletService = walletService
+    }
 }
 
 extension CreateFinancialGoalViewModel {
@@ -41,7 +48,8 @@ extension CreateFinancialGoalViewModel {
         emitState()
     }
 
-    func submit() -> String? {
+    @MainActor
+    func submit() async -> String? {
         guard !title.isEmpty else {
             return "Lutfen hedef adini girin."
         }
@@ -54,8 +62,45 @@ extension CreateFinancialGoalViewModel {
             return "Lutfen son tarihi secin."
         }
 
-        onGoalCreated?(FinancialGoalDraft(title: title, targetAmount: amount, deadline: selectedDate, note: nil))
-        return nil
+        isSubmitting = true
+        emitState()
+
+        defer {
+            isSubmitting = false
+            emitState()
+        }
+
+        do {
+            let response = try await walletService.createFinancialGoal(
+                request: CreateFinancialGoalRequest(
+                    title: title,
+                    targetAmount: amount,
+                    targetDate: selectedDate
+                )
+            )
+
+            guard response.success else {
+                return response.message
+            }
+
+            let icon = suggestedIcon(for: title)
+            onGoalCreated?(
+                FinancialGoalRecord(
+                    id: response.goalId,
+                    title: title,
+                    targetAmount: amount,
+                    savedAmount: .zero,
+                    deadline: selectedDate,
+                    note: nil,
+                    iconName: icon.name,
+                    iconTintColor: icon.tint,
+                    iconBackgroundColor: icon.background
+                )
+            )
+            return nil
+        } catch {
+            return "Hedef olusturulamadi. Lutfen tekrar deneyin."
+        }
     }
 }
 
@@ -72,16 +117,24 @@ extension CreateFinancialGoalViewModel {
     func emitState() {
         onStateChange?(
             CreateFinancialGoalFormState(
-                selectedDateText: selectedDate.map { Self.dateFormatter.string(from: $0) },
-                isApproveEnabled: !title.isEmpty && parsedAmount != nil && parsedAmount! > .zero && selectedDate != nil
+                selectedDateText: selectedDate.map { AppDateTextFormatter.string(from: $0, style: .financialGoalDayMonthYear) },
+                isApproveEnabled: !isSubmitting && !title.isEmpty && parsedAmount != nil && parsedAmount! > .zero && selectedDate != nil,
+                isSubmitting: isSubmitting
             )
         )
     }
 
-    static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM yyyy"
-        return formatter
-    }()
+    func suggestedIcon(for title: String) -> (name: String, tint: UIColor, background: UIColor) {
+        let normalized = title.lowercased()
+        if normalized.contains("telefon") || normalized.contains("iphone") {
+            return ("iphone.gen3", AppColor.navigationTint, AppColor.surfaceMuted)
+        }
+        if normalized.contains("tatil") || normalized.contains("gezi") || normalized.contains("eglence") {
+            return ("sun.max", AppColor.navigationTint, AppColor.surfaceMuted)
+        }
+        if normalized.contains("araba") {
+            return ("car", AppColor.navigationTint, AppColor.surfaceMuted)
+        }
+        return ("target", AppColor.navigationTint, AppColor.surfaceMuted)
+    }
 }

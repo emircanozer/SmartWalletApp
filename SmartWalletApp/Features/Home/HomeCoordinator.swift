@@ -391,13 +391,13 @@ class HomeCoordinator: Coordinator {
         from financialGoalsViewController: FinancialGoalsViewController,
         in navigationController: UINavigationController
     ) {
-        let viewModel = CreateFinancialGoalViewModel()
+        let viewModel = CreateFinancialGoalViewModel(walletService: walletService)
         let viewController = CreateFinancialGoalViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
         }
-        viewModel.onGoalCreated = { [weak financialGoalsViewController] draft in
-            financialGoalsViewController?.addGoal(draft)
+        viewModel.onGoalCreated = { [weak financialGoalsViewController] goal in
+            financialGoalsViewController?.prependGoal(goal)
         }
         navigationController.pushViewController(viewController, animated: true)
     }
@@ -439,18 +439,19 @@ class HomeCoordinator: Coordinator {
         detailViewController: FinancialGoalDetailViewController,
         in navigationController: UINavigationController
     ) {
-        let viewModel = FinancialGoalAddMoneyViewModel(goal: goal)
+        let viewModel = FinancialGoalAddMoneyViewModel(walletService: walletService, goal: goal)
         let viewController = FinancialGoalAddMoneyViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
         }
         viewController.onContributionAdded = { [weak self, weak financialGoalsViewController, weak detailViewController, weak navigationController] context in
-            guard let financialGoalsViewController, let detailViewController else { return }
-            financialGoalsViewController.updateGoal(context.updatedGoal)
-            detailViewController.applyUpdatedGoal(context.updatedGoal)
-            self?.rootViewController.selectedViewController = navigationController
-            if let navigationController {
-                self?.showFinancialGoalAddMoneySuccess(
+            guard let self, let financialGoalsViewController, let detailViewController, let navigationController else { return }
+            Task { @MainActor [weak self, weak financialGoalsViewController, weak detailViewController] in
+                guard let self, let financialGoalsViewController, let detailViewController else { return }
+                await financialGoalsViewController.reloadData()
+                detailViewController.applyUpdatedGoal(context.updatedGoal)
+                self.rootViewController.selectedViewController = navigationController
+                self.showFinancialGoalAddMoneySuccess(
                     context,
                     detailViewController: detailViewController,
                     in: navigationController

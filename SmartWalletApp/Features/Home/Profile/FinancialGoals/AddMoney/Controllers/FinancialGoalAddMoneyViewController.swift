@@ -77,8 +77,15 @@ final class FinancialGoalAddMoneyViewController: BaseViewController, UITextViewD
 
     @objc func handleConfirmTap() {
         dismissKeyboard()
-        guard let context = viewModel.makeSuccessContext() else { return }
-        onContributionAdded?(context)
+        Task { [weak self] in
+            guard let self else { return }
+            let result = await viewModel.submit()
+            if let context = result.context {
+                onContributionAdded?(context)
+            } else if let message = result.errorMessage {
+                showAlert(message: message)
+            }
+        }
     }
 
     @objc func handleAmountChanged() {

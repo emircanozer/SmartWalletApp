@@ -47,23 +47,6 @@ extension FinancialGoalsViewModel {
         goals.first { $0.id == id }
     }
 
-    func addContribution(to id: UUID, amount: Decimal) {
-        guard let index = goals.firstIndex(where: { $0.id == id }) else { return }
-        let goal = goals[index]
-        goals[index] = FinancialGoalRecord(
-            id: goal.id,
-            title: goal.title,
-            targetAmount: goal.targetAmount,
-            savedAmount: goal.savedAmount + amount,
-            deadline: goal.deadline,
-            note: goal.note,
-            iconName: goal.iconName,
-            iconTintColor: goal.iconTintColor,
-            iconBackgroundColor: goal.iconBackgroundColor
-        )
-        emitState()
-    }
-
     func updateGoal(_ updatedGoal: FinancialGoalRecord) {
         guard let index = goals.firstIndex(where: { $0.id == updatedGoal.id }) else { return }
         goals[index] = updatedGoal
@@ -75,20 +58,21 @@ extension FinancialGoalsViewModel {
         emitState()
     }
 
-    func addGoal(_ draft: FinancialGoalDraft) {
-        let icon = suggestedIcon(for: draft.title)
-        let newGoal = FinancialGoalRecord(
-            id: UUID(),
-            title: draft.title,
-            targetAmount: draft.targetAmount,
-            savedAmount: .zero,
-            deadline: draft.deadline,
-            note: draft.note,
-            iconName: icon.name,
-            iconTintColor: icon.tint,
-            iconBackgroundColor: icon.background
-        )
-        goals.append(newGoal)
+    func prependGoal(_ goal: FinancialGoalRecord) {
+        goals.insert(goal, at: 0)
+        if let summary {
+            let updatedTargetAmount = summary.totalTargetAmount + goal.targetAmount
+            let updatedSavedAmount = summary.totalSavedAmount + goal.savedAmount
+            let completionPercentage = updatedTargetAmount > .zero
+                ? (updatedSavedAmount / updatedTargetAmount) * Decimal(100)
+                : .zero
+            self.summary = FinancialGoalSummaryResponse(
+                totalGoalCount: summary.totalGoalCount + 1,
+                totalSavedAmount: updatedSavedAmount,
+                totalTargetAmount: updatedTargetAmount,
+                completionPercentage: completionPercentage
+            )
+        }
         emitState()
     }
 }
@@ -102,8 +86,10 @@ extension FinancialGoalsViewModel {
         let totalSaved = summary?.totalSavedAmount ?? .zero
         let totalTarget = summary?.totalTargetAmount ?? .zero
         let totalGoalCount = summary?.totalGoalCount ?? goals.count
-        let completionPercent = summary?.completionPercentage ?? 0
-        let progress = CGFloat(completionPercent) / 100
+        let completionPercent = summary?.completionPercentage ?? .zero
+        let completionPercentNumber = NSDecimalNumber(decimal: completionPercent)
+        let roundedCompletionPercent = Int(completionPercentNumber.doubleValue.rounded())
+        let progress = CGFloat(completionPercentNumber.doubleValue) / 100
         let remaining = max(totalTarget - totalSaved, .zero)
 
         return FinancialGoalsViewData(
@@ -112,7 +98,7 @@ extension FinancialGoalsViewModel {
             totalGoalCountText: "TOPLAM HEDEF: \(totalGoalCount)",
             totalSavedAmountText: AppNumberTextFormatter.prefixedLira(totalSaved, minimumFractionDigits: 0, maximumFractionDigits: 0),
             totalTargetAmountText: AppNumberTextFormatter.prefixedLira(totalTarget, minimumFractionDigits: 0, maximumFractionDigits: 0),
-            completionText: "%\(completionPercent) Tamamlandi",
+            completionText: "%\(roundedCompletionPercent) Tamamlandi",
             remainingAmountText: AppNumberTextFormatter.prefixedLira(remaining, minimumFractionDigits: 0, maximumFractionDigits: 0) + " kaldi",
             progress: progress,
             sectionTitleText: "HEDEFLERIN",
@@ -127,7 +113,7 @@ extension FinancialGoalsViewModel {
         return FinancialGoalItemViewData(
             id: goal.id,
             titleText: goal.title,
-            deadlineText: "Son tarih: " + Self.goalDateFormatter.string(from: goal.deadline),
+            deadlineText: "Son tarih: " + AppDateTextFormatter.string(from: goal.deadline, style: .financialGoalDayMonth),
             currentAmountText: AppNumberTextFormatter.prefixedLira(goal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
             targetAmountText: AppNumberTextFormatter.prefixedLira(goal.targetAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
             progress: progress,
@@ -207,11 +193,4 @@ extension FinancialGoalsViewModel {
         }
         return ("target", AppColor.navigationTint, AppColor.surfaceMuted)
     }
-
-    static let goalDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
 }

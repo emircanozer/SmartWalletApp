@@ -99,11 +99,14 @@ extension CreateFinancialGoalViewController {
 
     @objc private func handleApproveTap() {
         dismissKeyboard()
-        if let message = viewModel.submit() {
-            showAlert(message: message)
-            return
+        Task { [weak self] in
+            guard let self else { return }
+            if let message = await viewModel.submit() {
+                showAlert(message: message)
+                return
+            }
+            navigationController?.popViewController(animated: true)
         }
-        navigationController?.popViewController(animated: true)
     }
 
     @objc private func handleNameChanged() {

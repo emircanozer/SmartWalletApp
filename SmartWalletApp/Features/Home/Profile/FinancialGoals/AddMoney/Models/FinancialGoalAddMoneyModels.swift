@@ -33,10 +33,12 @@ struct FinancialGoalAddMoneyFormState {
     let remainingAfterAddText: String
     let confirmButtonTitleText: String
     let isConfirmEnabled: Bool
+    let isSubmitting: Bool
 }
 
 struct FinancialGoalAddMoneySuccessContext {
     let originalGoal: FinancialGoalRecord
     let updatedGoal: FinancialGoalRecord
     let addedAmount: Decimal
+    let message: String
 }

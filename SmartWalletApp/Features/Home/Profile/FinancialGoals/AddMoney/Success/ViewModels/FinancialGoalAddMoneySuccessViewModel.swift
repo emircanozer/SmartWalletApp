@@ -25,7 +25,7 @@ extension FinancialGoalAddMoneySuccessViewModel {
         return FinancialGoalAddMoneySuccessViewData(
             heroImageName: "background",
             titleText: "Hedefe Para Eklendi",
-            subtitleText: "\(AppNumberTextFormatter.prefixedLira(context.addedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0)) basariyla hedefinize aktarildi",
+            subtitleText: context.message,
             previousAmountTitleText: "ONCEKI BIRIKIM",
             previousAmountValueText: AppNumberTextFormatter.prefixedLira(context.originalGoal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
             addedAmountTitleText: "EKLENEN TUTAR",
@@ -34,7 +34,7 @@ extension FinancialGoalAddMoneySuccessViewModel {
             updatedAmountValueText: AppNumberTextFormatter.prefixedLira(updatedGoal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
             returnButtonTitleText: "Hedefe Don",
             goalTitleText: updatedGoal.title,
-            deadlineText: "Hedef Tarihi: \(Self.goalDateFormatter.string(from: updatedGoal.deadline))",
+            deadlineText: "Hedef Tarihi: \(AppDateTextFormatter.string(from: updatedGoal.deadline, style: .financialGoalDayMonth))",
             badgeText: "%\(completionPercent)",
             progressText: "%\(completionPercent) tamamlandi",
             progressAmountText: "\(AppNumberTextFormatter.prefixedLira(updatedGoal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0)) / \(AppNumberTextFormatter.prefixedLira(updatedGoal.targetAmount, minimumFractionDigits: 0, maximumFractionDigits: 0))",
@@ -45,11 +45,4 @@ extension FinancialGoalAddMoneySuccessViewModel {
             iconBackgroundColor: updatedGoal.iconBackgroundColor
         )
     }
-
-    private static let goalDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
-        formatter.dateFormat = "d MMMM"
-        return formatter
-    }()
 }

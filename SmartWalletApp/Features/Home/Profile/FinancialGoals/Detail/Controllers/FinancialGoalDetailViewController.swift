@@ -32,11 +32,6 @@ final class FinancialGoalDetailViewController: BaseViewController {
 }
 
 extension FinancialGoalDetailViewController {
-    func applyContribution(_ amount: Decimal) {
-        viewModel.addContribution(amount)
-        contentView.apply(viewModel.makeViewData())
-    }
-
     func applyUpdatedGoal(_ goal: FinancialGoalRecord) {
         viewModel.replaceGoal(with: goal)
         contentView.apply(viewModel.makeViewData())

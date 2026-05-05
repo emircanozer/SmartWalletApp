@@ -6,7 +6,7 @@ struct FinancialGoalResponse: Decodable {
     let targetAmount: Decimal
     let currentAmount: Decimal
     let targetDate: String
-    let completionPercentage: Int
+    let completionPercentage: Decimal
     let remainingAmount: Decimal
     let daysRemaining: Int
 }

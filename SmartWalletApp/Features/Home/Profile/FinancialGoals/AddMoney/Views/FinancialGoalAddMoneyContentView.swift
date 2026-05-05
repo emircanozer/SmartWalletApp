@@ -124,12 +124,14 @@ extension FinancialGoalAddMoneyContentView {
         }
         projectedSavingsLabel.text = state.projectedSavingsText
         remainingAfterAddLabel.text = state.remainingAfterAddText
-        confirmButton.setTitle(state.confirmButtonTitleText, for: .normal)
+        confirmButton.setTitle(state.isSubmitting ? "Aktariliyor..." : state.confirmButtonTitleText, for: .normal)
         confirmButton.isEnabled = state.isConfirmEnabled
         confirmButton.alpha = state.isConfirmEnabled ? 1 : 0.6
         quickAmountButtons.forEach {
             $0.isSelectedAmount = $0.amount == state.selectedQuickAmount
         }
+        amountField.isEnabled = !state.isSubmitting
+        noteTextView.isEditable = !state.isSubmitting
     }
 
     func setKeyboardBottomInset(_ inset: CGFloat) {
