@@ -6,30 +6,20 @@ final class FinancialGoalsViewModel {
     var onError: ((String) -> Void)?
 
     private let walletService: WalletService
-    private let tokenStore: TokenStore
     private var goals: [FinancialGoalRecord] = []
     private var summary: FinancialGoalSummaryResponse?
 
-    init(walletService: WalletService, tokenStore: TokenStore) {
+    init(walletService: WalletService) {
         self.walletService = walletService
-        self.tokenStore = tokenStore
     }
 }
 
 extension FinancialGoalsViewModel {
     @MainActor
     func load() async {
-        guard let userID = currentUserID else {
-            goals = []
-            summary = nil
-            emitState()
-            onError?("Kullanici bilgisi alinamadi. Lutfen tekrar giris yapin.")
-            return
-        }
-
         do {
             async let goalsResponse = walletService.fetchFinancialGoals()
-            async let summaryResponse = walletService.fetchFinancialGoalsSummary(userID: userID)
+            async let summaryResponse = walletService.fetchFinancialGoalsSummary()
 
             let (fetchedGoals, fetchedSummary) = try await (goalsResponse, summaryResponse)
             goals = fetchedGoals.map(mapGoalResponse)
@@ -131,48 +121,6 @@ extension FinancialGoalsViewModel {
             iconTintColor: icon.tint,
             iconBackgroundColor: icon.background
         )
-    }
-
-    var currentUserID: UUID? {
-        guard let token = tokenStore.accessToken else { return nil }
-        return decodeUserID(from: token)
-    }
-
-    func decodeUserID(from token: String) -> UUID? {
-        let segments = token.split(separator: ".")
-        guard segments.count >= 2 else { return nil }
-
-        var payload = String(segments[1])
-            .replacingOccurrences(of: "-", with: "+")
-            .replacingOccurrences(of: "_", with: "/")
-
-        let remainder = payload.count % 4
-        if remainder != 0 {
-            payload += String(repeating: "=", count: 4 - remainder)
-        }
-
-        guard let data = Data(base64Encoded: payload),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            return nil
-        }
-
-        let candidateKeys = [
-            "nameid",
-            "nameidentifier",
-            "sub",
-            "userId",
-            "userid",
-            "id",
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-        ]
-
-        for key in candidateKeys {
-            if let value = json[key] as? String, let uuid = UUID(uuidString: value) {
-                return uuid
-            }
-        }
-
-        return nil
     }
 
     func suggestedIcon(for title: String) -> (name: String, tint: UIColor, background: UIColor) {

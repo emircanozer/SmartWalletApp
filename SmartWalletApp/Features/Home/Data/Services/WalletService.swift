@@ -62,8 +62,8 @@ final class WalletService {
         try await apiClient.send(WalletEndpoint.financialGoals, as: [FinancialGoalResponse].self)
     }
 
-    func fetchFinancialGoalsSummary(userID: UUID) async throws -> FinancialGoalSummaryResponse {
-        try await apiClient.send(WalletEndpoint.financialGoalsSummary(userID: userID), as: FinancialGoalSummaryResponse.self)
+    func fetchFinancialGoalsSummary() async throws -> FinancialGoalSummaryResponse {
+        try await apiClient.send(WalletEndpoint.financialGoalsSummary, as: FinancialGoalSummaryResponse.self)
     }
 
     func createFinancialGoal(request: CreateFinancialGoalRequest) async throws -> CreateFinancialGoalResponse {
@@ -71,9 +71,9 @@ final class WalletService {
         return try await apiClient.send(WalletEndpoint.createFinancialGoal(body: body), as: CreateFinancialGoalResponse.self)
     }
 
-    func addFinancialGoalFunds(request: AddFinancialGoalFundsRequest) async throws -> AddFinancialGoalFundsResponse {
+    func addFinancialGoalFunds(goalID: UUID, request: AddFinancialGoalFundsRequest) async throws -> AddFinancialGoalFundsResponse {
         let body = try encoder.encode(request)
-        return try await apiClient.send(WalletEndpoint.addFinancialGoalFunds(body: body), as: AddFinancialGoalFundsResponse.self)
+        return try await apiClient.send(WalletEndpoint.addFinancialGoalFunds(goalID: goalID, body: body), as: AddFinancialGoalFundsResponse.self)
     }
 
     func updateFinancialGoal(goalID: UUID, request: UpdateFinancialGoalRequest) async throws -> Bool {
@@ -142,9 +142,9 @@ final class WalletService {
     case analysis
     case aiAdvice
     case financialGoals
-    case financialGoalsSummary(userID: UUID)
+    case financialGoalsSummary
     case createFinancialGoal(body: Data)
-    case addFinancialGoalFunds(body: Data)
+    case addFinancialGoalFunds(goalID: UUID, body: Data)
     case updateFinancialGoal(goalID: UUID, body: Data)
     case closeFinancialGoal(goalID: UUID)
     case financialGoalContributions(goalID: UUID)
@@ -177,17 +177,17 @@ final class WalletService {
         case .aiAdvice:
             return "/api/Wallets/ai-advice"
         case .financialGoals:
-            return "/api/FinancialGoals/financial-goals"
-        case .financialGoalsSummary(let userID):
-            return "/api/FinancialGoals/summary/\(userID.uuidString.lowercased())"
+            return "/api/FinancialGoals"
+        case .financialGoalsSummary:
+            return "/api/FinancialGoals/summary"
         case .createFinancialGoal:
-            return "/api/FinancialGoals/create-target"
-        case .addFinancialGoalFunds:
-            return "/api/FinancialGoals/add-funds"
+            return "/api/FinancialGoals"
+        case .addFinancialGoalFunds(let goalID, _):
+            return "/api/FinancialGoals/\(goalID.uuidString)/contributions"
         case .updateFinancialGoal(let goalID, _):
-            return "/api/FinancialGoals/\(goalID.uuidString)/target-update"
+            return "/api/FinancialGoals/\(goalID.uuidString)"
         case .closeFinancialGoal(let goalID):
-            return "/api/FinancialGoals/\(goalID.uuidString)/close"
+            return "/api/FinancialGoals/\(goalID.uuidString)/status"
         case .financialGoalContributions(let goalID):
             return "/api/FinancialGoals/\(goalID.uuidString)/contributions"
         case .portfolioSummary:
@@ -213,8 +213,12 @@ final class WalletService {
 
     var method: HTTPMethod {
         switch self {
-        case .portfolioBuy, .portfolioSell, .contacts, .transfer, .createFinancialGoal, .addFinancialGoalFunds, .updateFinancialGoal, .closeFinancialGoal:
+        case .portfolioBuy, .portfolioSell, .contacts, .transfer, .createFinancialGoal, .addFinancialGoalFunds:
             return .post
+        case .updateFinancialGoal:
+            return .put
+        case .closeFinancialGoal:
+            return .patch
         case .removeContact:
             return .delete
         default:
@@ -236,7 +240,7 @@ final class WalletService {
             return body
         case .createFinancialGoal(let body):
             return body
-        case .addFinancialGoalFunds(let body):
+        case .addFinancialGoalFunds(_, let body):
             return body
         case .updateFinancialGoal(_, let body):
             return body

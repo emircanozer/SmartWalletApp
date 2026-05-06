@@ -93,8 +93,8 @@ extension FinancialGoalAddMoneyViewModel {
 
         do {
             let response = try await walletService.addFinancialGoalFunds(
+                goalID: goal.id,
                 request: AddFinancialGoalFundsRequest(
-                    goalId: goal.id,
                     amount: amount
                 )
             )

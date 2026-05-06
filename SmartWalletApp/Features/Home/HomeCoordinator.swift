@@ -371,7 +371,7 @@ class HomeCoordinator: Coordinator {
     private func showFinancialGoals() {
         guard let navigationController = rootViewController.selectedViewController as? UINavigationController else { return }
 
-        let viewModel = FinancialGoalsViewModel(walletService: walletService, tokenStore: tokenStore)
+        let viewModel = FinancialGoalsViewModel(walletService: walletService)
         let viewController = FinancialGoalsViewController(viewModel: viewModel)
         viewController.onBack = { [weak navigationController] in
             navigationController?.popViewController(animated: true)
