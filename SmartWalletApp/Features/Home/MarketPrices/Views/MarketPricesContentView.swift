@@ -75,10 +75,13 @@ extension MarketPricesContentView {
         headerTitleLabel.text = "Piyasalar"
         headerTitleLabel.font = .systemFont(ofSize: 28, weight: .bold)
         headerTitleLabel.textColor = AppColor.primaryText
+        headerTitleLabel.adjustsFontSizeToFitWidth = true
+        headerTitleLabel.minimumScaleFactor = 0.82
 
         headerSubtitleLabel.text = "Güncel alış ve satış fiyatları"
         headerSubtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
         headerSubtitleLabel.textColor = AppColor.secondaryText
+        headerSubtitleLabel.numberOfLines = 2
 
         tableCard.backgroundColor = AppColor.whitePrimary
         tableCard.layer.shadowColor = UIColor.black.cgColor
@@ -101,9 +104,9 @@ extension MarketPricesContentView {
         buttonConfiguration.baseBackgroundColor = AppColor.surfaceWarmSoft
         buttonConfiguration.baseForegroundColor = AppColor.accentOlive
         buttonConfiguration.cornerStyle = .capsule
-        buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 9, leading: 14, bottom: 9, trailing: 14)
+        buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
         tradeButton.configuration = buttonConfiguration
-        tradeButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
+        tradeButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .bold)
 
         emptyStateView.isHidden = true
 
@@ -112,9 +115,9 @@ extension MarketPricesContentView {
 
     func configureTableHeader() {
         [
-            makeHeaderLabel("Varlık", alignment: .left, width: 102),
-            makeHeaderLabel("Alış", alignment: .right, width: 68),
-            makeHeaderLabel("Satış", alignment: .right, width: 68),
+            makeHeaderLabel("Varlık", alignment: .left, width: 86),
+            makeHeaderLabel("Alış", alignment: .right, width: 64),
+            makeHeaderLabel("Satış", alignment: .right, width: 64),
             makeHeaderLabel("Günlük", alignment: .center, width: nil)
         ].forEach(tableHeaderStack.addArrangedSubview)
     }
@@ -125,6 +128,8 @@ extension MarketPricesContentView {
         label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = AppColor.secondaryText
         label.textAlignment = alignment
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.72
 
         if let width {
             label.widthAnchor.constraint(equalToConstant: width).isActive = true

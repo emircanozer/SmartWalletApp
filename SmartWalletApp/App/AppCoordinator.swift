@@ -39,7 +39,6 @@ class AppCoordinator: Coordinator {
     }
 
     private func continueAfterSplash() {
-        try? tokenStore.clearTokens() // tokenleri siliyor
         if tokenStore.accessToken?.isEmpty == false {
             showHomeFlow()
         } else {

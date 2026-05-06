@@ -134,12 +134,16 @@ extension InvestmentPortfolioContentView {
 
         allocationTitleLabel.font = .systemFont(ofSize: 28, weight: .bold)
         allocationTitleLabel.textColor = AppColor.primaryText
+        allocationTitleLabel.adjustsFontSizeToFitWidth = true
+        allocationTitleLabel.minimumScaleFactor = 0.82
 
         allocationStack.axis = .vertical
         allocationStack.spacing = 18
 
         assetsTitleLabel.font = .systemFont(ofSize: 28, weight: .bold)
         assetsTitleLabel.textColor = AppColor.primaryText
+        assetsTitleLabel.adjustsFontSizeToFitWidth = true
+        assetsTitleLabel.minimumScaleFactor = 0.82
 
         assetsCard.backgroundColor = AppColor.whitePrimary
         assetsCard.layer.shadowColor = UIColor.black.cgColor
@@ -149,7 +153,7 @@ extension InvestmentPortfolioContentView {
 
         tradeButton.setTitle("AL / SAT", for: .normal)
         tradeButton.setTitleColor(AppColor.accentOlive, for: .normal)
-        tradeButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        tradeButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
         tradeButton.contentHorizontalAlignment = .center
 
         assetsScrollView.showsVerticalScrollIndicator = false

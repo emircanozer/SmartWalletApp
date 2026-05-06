@@ -7,9 +7,9 @@ enum EditFinancialGoalValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .emptyTitle:
-            return "Lutfen hedef adini girin."
+            return "Lütfen hedef adını girin."
         case .invalidAmount:
-            return "Lutfen gecerli bir hedef tutari girin."
+            return "Lütfen geçerli bir hedef tutarı girin."
         }
     }
 }
@@ -44,16 +44,16 @@ extension EditFinancialGoalViewModel {
 
     func makeViewData() -> EditFinancialGoalViewData {
         EditFinancialGoalViewData(
-            titleText: "Hedefi Duzenle",
-            nameTitleText: "Hedef Adi",
-            amountTitleText: "Hedef Tutari",
+            titleText: "Hedefi Düzenle",
+            nameTitleText: "Hedef Adı",
+            amountTitleText: "Hedef Tutarı",
             dateTitleText: "Hedef Tarihi",
-            noteTitleText: "Aciklama",
-            notePlaceholderText: "Istege bagli aciklama",
+            noteTitleText: "Açıklama",
+            notePlaceholderText: "İsteğe baglı açıklama",
             saveButtonTitleText: "Kaydet",
-            cancelButtonTitleText: "Iptal",
+            cancelButtonTitleText: "İptal",
             deleteButtonTitleText: "Hedefi Sil",
-            deleteDescriptionText: "Bu islem geri alinamaz."
+            deleteDescriptionText: "Bu işlem geri alınamaz."
         )
     }
 

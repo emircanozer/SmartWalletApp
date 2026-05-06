@@ -27,7 +27,7 @@ final class SendMoneyAmountChipButton: UIButton {
             : AppColor.white92
         setTitleColor(
             isSelected
-                ? AppColor.primaryText
+                ? AppColor.primaryYellowText
                 : AppColor.inputText,
             for: .normal
         )

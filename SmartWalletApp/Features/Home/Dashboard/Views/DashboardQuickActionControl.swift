@@ -44,9 +44,11 @@ extension DashboardQuickActionControl {
 
         titleLabel.text = item.title.uppercased()
         titleLabel.textAlignment = .center
-        titleLabel.font = .systemFont(ofSize: 11, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 10, weight: .bold)
         titleLabel.textColor = AppColor.inputText
-        titleLabel.numberOfLines = 2
+        titleLabel.numberOfLines = 3
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.minimumScaleFactor = 0.82
     }
 
     func buildHierarchy() {

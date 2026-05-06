@@ -149,7 +149,7 @@ extension UpdateEmailContentView {
         infoImageView.contentMode = .scaleAspectFit
 
         sendButton.backgroundColor = AppColor.primaryYellow
-        sendButton.setTitleColor(AppColor.primaryText, for: .normal)
+        sendButton.setTitleColor(AppColor.primaryYellowText, for: .normal)
         sendButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
 
         cancelButton.setTitleColor(AppColor.primaryText, for: .normal)

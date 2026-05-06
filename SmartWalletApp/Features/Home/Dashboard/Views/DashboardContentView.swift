@@ -66,6 +66,9 @@ extension DashboardContentView {
 
         greetingLabel.font = .systemFont(ofSize: 32, weight: .bold)
         greetingLabel.textColor = AppColor.titleDark
+        greetingLabel.numberOfLines = 2
+        greetingLabel.adjustsFontSizeToFitWidth = true
+        greetingLabel.minimumScaleFactor = 0.72
 
         balanceCard.backgroundColor = AppColor.darkSurfaceAlt
         balanceCard.layer.shadowColor = UIColor.black.cgColor
@@ -106,7 +109,7 @@ extension DashboardContentView {
         quickActionsStack.axis = .horizontal
         quickActionsStack.alignment = .top
         quickActionsStack.distribution = .fillEqually
-        quickActionsStack.spacing = 12
+        quickActionsStack.spacing = 8
 
         sectionTitleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         sectionTitleLabel.textColor = AppColor.primaryText

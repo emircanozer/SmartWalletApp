@@ -11,6 +11,7 @@ final class EditFinancialGoalContentView: UIView {
 
     var onDateTap: (() -> Void)?
 
+    private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let titleLabel = UILabel()
     private let formCardView = UIView()
@@ -85,13 +86,22 @@ extension EditFinancialGoalContentView {
 
     func setKeyboardBottomInset(_ inset: CGFloat) {
         keyboardInset = inset
-        transform = inset > 0 ? CGAffineTransform(translationX: 0, y: -min(inset * 0.32, 110)) : .identity
+        scrollView.contentInset.bottom = inset + 24
+        scrollView.verticalScrollIndicatorInsets.bottom = inset + 24
+    }
+
+    func scrollToVisible(_ view: UIView) {
+        let rect = view.convert(view.bounds, to: scrollView)
+        scrollView.scrollRectToVisible(rect.insetBy(dx: 0, dy: -24), animated: true)
     }
 }
 
 extension EditFinancialGoalContentView {
     func configureView() {
         backgroundColor = AppColor.appBackground
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceVertical = true
+        scrollView.keyboardDismissMode = .interactive
 
         backButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
         backButton.tintColor = AppColor.primaryText
@@ -164,7 +174,8 @@ extension EditFinancialGoalContentView {
     }
 
     func buildHierarchy() {
-        addSubview(contentContainer)
+        addSubview(scrollView)
+        scrollView.addSubview(contentContainer)
 
         [backButton, titleLabel, formCardView, saveButton, cancelButton, deleteButton, deleteDescriptionLabel].forEach(contentContainer.addSubview)
         [nameTitleLabel, nameField, amountTitleLabel, amountField, dateTitleLabel, dateFieldView, noteTitleLabel, noteContainerView].forEach(formCardView.addSubview)
@@ -174,6 +185,7 @@ extension EditFinancialGoalContentView {
 
     func setupLayout() {
         [
+            scrollView,
             contentContainer,
             backButton,
             titleLabel,
@@ -196,10 +208,17 @@ extension EditFinancialGoalContentView {
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+
+            contentContainer.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            contentContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            contentContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            contentContainer.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
 
             backButton.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 16),
             backButton.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
@@ -210,11 +229,11 @@ extension EditFinancialGoalContentView {
             titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 
-            formCardView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
+            formCardView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 18),
             formCardView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 16),
             formCardView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -16),
 
-            nameTitleLabel.topAnchor.constraint(equalTo: formCardView.topAnchor, constant: 22),
+            nameTitleLabel.topAnchor.constraint(equalTo: formCardView.topAnchor, constant: 18),
             nameTitleLabel.leadingAnchor.constraint(equalTo: formCardView.leadingAnchor, constant: 20),
             nameTitleLabel.trailingAnchor.constraint(equalTo: formCardView.trailingAnchor, constant: -20),
 
@@ -222,7 +241,7 @@ extension EditFinancialGoalContentView {
             nameField.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             nameField.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
-            amountTitleLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 18),
+            amountTitleLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 14),
             amountTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             amountTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
@@ -230,7 +249,7 @@ extension EditFinancialGoalContentView {
             amountField.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             amountField.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
-            dateTitleLabel.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: 18),
+            dateTitleLabel.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: 14),
             dateTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             dateTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
@@ -248,37 +267,37 @@ extension EditFinancialGoalContentView {
             dateIconView.widthAnchor.constraint(equalToConstant: 22),
             dateIconView.heightAnchor.constraint(equalToConstant: 22),
 
-            noteTitleLabel.topAnchor.constraint(equalTo: dateFieldView.bottomAnchor, constant: 18),
+            noteTitleLabel.topAnchor.constraint(equalTo: dateFieldView.bottomAnchor, constant: 14),
             noteTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             noteTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
             noteContainerView.topAnchor.constraint(equalTo: noteTitleLabel.bottomAnchor, constant: 8),
             noteContainerView.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             noteContainerView.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
-            noteContainerView.heightAnchor.constraint(equalToConstant: 88),
-            noteContainerView.bottomAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: -20),
+            noteContainerView.heightAnchor.constraint(equalToConstant: 76),
+            noteContainerView.bottomAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: -18),
 
             noteTextView.topAnchor.constraint(equalTo: noteContainerView.topAnchor, constant: 12),
             noteTextView.leadingAnchor.constraint(equalTo: noteContainerView.leadingAnchor, constant: 12),
             noteTextView.trailingAnchor.constraint(equalTo: noteContainerView.trailingAnchor, constant: -12),
             noteTextView.bottomAnchor.constraint(equalTo: noteContainerView.bottomAnchor, constant: -12),
 
-            saveButton.topAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: 24),
+            saveButton.topAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: 18),
             saveButton.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 16),
             saveButton.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -16),
-            saveButton.heightAnchor.constraint(equalToConstant: 50),
+            saveButton.heightAnchor.constraint(equalToConstant: 48),
 
-            cancelButton.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 12),
+            cancelButton.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 10),
             cancelButton.leadingAnchor.constraint(equalTo: saveButton.leadingAnchor),
             cancelButton.trailingAnchor.constraint(equalTo: saveButton.trailingAnchor),
-            cancelButton.heightAnchor.constraint(equalToConstant: 48),
+            cancelButton.heightAnchor.constraint(equalToConstant: 46),
 
-            deleteButton.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 18),
+            deleteButton.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 14),
             deleteButton.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
 
             deleteDescriptionLabel.topAnchor.constraint(equalTo: deleteButton.bottomAnchor, constant: 4),
             deleteDescriptionLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
-            deleteDescriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor, constant: -12)
+            deleteDescriptionLabel.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -18)
         ])
     }
 

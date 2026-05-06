@@ -59,21 +59,29 @@ extension TransferReceiptsItemCell {
 
         typeLabel.font = .systemFont(ofSize: 12, weight: .bold)
         typeLabel.textColor = AppColor.accentOlive
+        typeLabel.adjustsFontSizeToFitWidth = true
+        typeLabel.minimumScaleFactor = 0.8
 
-        titleLabel.font = .systemFont(ofSize: 17, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
         titleLabel.numberOfLines = 2
 
-        amountLabel.font = .systemFont(ofSize: 17, weight: .bold)
+        amountLabel.font = .systemFont(ofSize: 16, weight: .bold)
         amountLabel.textAlignment = .right
+        amountLabel.adjustsFontSizeToFitWidth = true
+        amountLabel.minimumScaleFactor = 0.8
         amountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         amountLabel.setContentHuggingPriority(.required, for: .horizontal)
 
         dateLabel.font = .systemFont(ofSize: 14, weight: .medium)
         dateLabel.textColor = AppColor.secondaryText
+        dateLabel.adjustsFontSizeToFitWidth = true
+        dateLabel.minimumScaleFactor = 0.8
 
         detailButton.setTitleColor(AppColor.accentOlive, for: .normal)
-        detailButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
+        detailButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
+        detailButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        detailButton.titleLabel?.minimumScaleFactor = 0.82
         detailButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         detailButton.setContentHuggingPriority(.required, for: .horizontal)
         detailButton.addTarget(self, action: #selector(handleDetailTap), for: .touchUpInside)
@@ -108,11 +116,11 @@ extension TransferReceiptsItemCell {
 
             typeLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 18),
             typeLabel.leadingAnchor.constraint(equalTo: iconWrapper.trailingAnchor, constant: 14),
-            typeLabel.trailingAnchor.constraint(lessThanOrEqualTo: amountLabel.leadingAnchor, constant: -12),
+            typeLabel.trailingAnchor.constraint(lessThanOrEqualTo: amountLabel.leadingAnchor, constant: -10),
 
             titleLabel.topAnchor.constraint(equalTo: typeLabel.bottomAnchor, constant: 4),
             titleLabel.leadingAnchor.constraint(equalTo: typeLabel.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: amountLabel.leadingAnchor, constant: -12),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: amountLabel.leadingAnchor, constant: -10),
 
             amountLabel.topAnchor.constraint(equalTo: typeLabel.topAnchor),
             amountLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -18),
@@ -120,7 +128,7 @@ extension TransferReceiptsItemCell {
 
             dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
             dateLabel.leadingAnchor.constraint(equalTo: typeLabel.leadingAnchor),
-            dateLabel.trailingAnchor.constraint(lessThanOrEqualTo: detailButton.leadingAnchor, constant: -18),
+            dateLabel.trailingAnchor.constraint(lessThanOrEqualTo: detailButton.leadingAnchor, constant: -12),
             dateLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -18),
 
             detailButton.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),

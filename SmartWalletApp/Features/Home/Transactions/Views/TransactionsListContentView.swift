@@ -46,7 +46,7 @@ extension TransactionsListContentView {
 
         filtersStack.axis = .horizontal
         filtersStack.alignment = .fill
-        filtersStack.distribution = .fillEqually
+        filtersStack.distribution = .fillProportionally
         filtersStack.spacing = 8
 
         summaryCard.backgroundColor = .black
@@ -67,7 +67,7 @@ extension TransactionsListContentView {
         summaryIconContainer.isHidden = true
 
         dateFilterButton.backgroundColor = AppColor.primaryYellow
-        dateFilterButton.setTitleColor(AppColor.primaryText, for: .normal)
+        dateFilterButton.setTitleColor(AppColor.primaryYellowText, for: .normal)
         dateFilterButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .bold)
 
         clearDateFilterButton.setTitleColor(AppColor.accentOlive, for: .normal)
@@ -83,13 +83,16 @@ extension TransactionsListContentView {
 
         [allFilterButton, incomeFilterButton, expenseFilterButton, dateFilterButton].forEach {
             $0.setTitleColor(AppColor.mutedText, for: .normal)
-            $0.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
+            $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
+            $0.titleLabel?.adjustsFontSizeToFitWidth = true
+            $0.titleLabel?.minimumScaleFactor = 0.78
             $0.backgroundColor = AppColor.chipSurface
+            $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         }
 
         dateFilterButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
         dateFilterButton.backgroundColor = AppColor.primaryYellow
-        dateFilterButton.setTitleColor(AppColor.primaryText, for: .normal)
+        dateFilterButton.setTitleColor(AppColor.primaryYellowText, for: .normal)
     }
 
     func buildHierarchy() {
@@ -232,7 +235,7 @@ extension TransactionsListContentView {
                 : AppColor.chipSurface
             button.setTitleColor(
                 isSelected
-                    ? AppColor.primaryText
+                    ? AppColor.primaryYellowText
                     : AppColor.mutedText,
                 for: .normal
             )

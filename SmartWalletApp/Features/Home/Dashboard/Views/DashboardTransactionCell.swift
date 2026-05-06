@@ -61,14 +61,20 @@ extension DashboardTransactionCell {
 
         titleLabel.font = .systemFont(ofSize: 19, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
-        titleLabel.numberOfLines = 1
+        titleLabel.numberOfLines = 2
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.minimumScaleFactor = 0.85
 
         subtitleLabel.font = .systemFont(ofSize: 16, weight: .medium)
         subtitleLabel.textColor = AppColor.bodyText
         subtitleLabel.numberOfLines = 1
+        subtitleLabel.adjustsFontSizeToFitWidth = true
+        subtitleLabel.minimumScaleFactor = 0.85
 
         dateLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         dateLabel.textColor = AppColor.quietText
+        dateLabel.adjustsFontSizeToFitWidth = true
+        dateLabel.minimumScaleFactor = 0.82
 
         badgeLabel.font = .systemFont(ofSize: 12, weight: .bold)
         badgeLabel.textColor = AppColor.secondaryText
@@ -77,6 +83,8 @@ extension DashboardTransactionCell {
 
         amountLabel.font = .systemFont(ofSize: 20, weight: .bold)
         amountLabel.textAlignment = .right
+        amountLabel.adjustsFontSizeToFitWidth = true
+        amountLabel.minimumScaleFactor = 0.78
         amountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         amountLabel.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -124,12 +132,14 @@ extension DashboardTransactionCell {
             subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: amountLabel.leadingAnchor, constant: -12),
 
-            dateLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 10),
+            dateLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 8),
             dateLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            dateLabel.trailingAnchor.constraint(lessThanOrEqualTo: badgeLabel.leadingAnchor, constant: -10),
             dateLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -18),
 
             badgeLabel.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
             badgeLabel.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 10),
+            badgeLabel.trailingAnchor.constraint(lessThanOrEqualTo: cardView.trailingAnchor, constant: -18),
 
             amountLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
             amountLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -18),

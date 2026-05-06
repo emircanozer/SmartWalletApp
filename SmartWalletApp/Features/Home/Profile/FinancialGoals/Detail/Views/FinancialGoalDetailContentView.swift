@@ -145,12 +145,12 @@ extension FinancialGoalDetailContentView {
         actionStackView.distribution = .fillEqually
 
         addMoneyButton.backgroundColor = AppColor.primaryYellow
-        addMoneyButton.setTitleColor(AppColor.authHeadingText, for: .normal)
+        addMoneyButton.setTitleColor(AppColor.primaryYellowText, for: .normal)
         addMoneyButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         var addMoneyConfiguration = UIButton.Configuration.plain()
         addMoneyConfiguration.image = UIImage(systemName: "plus.circle")
         addMoneyConfiguration.imagePadding = 8
-        addMoneyConfiguration.baseForegroundColor = AppColor.authHeadingText
+        addMoneyConfiguration.baseForegroundColor = AppColor.primaryYellowText
         addMoneyButton.configuration = addMoneyConfiguration
         editButton.backgroundColor = AppColor.whitePrimary
         editButton.layer.borderWidth = 1

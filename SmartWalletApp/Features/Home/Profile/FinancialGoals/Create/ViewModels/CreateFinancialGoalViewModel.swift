@@ -21,7 +21,7 @@ extension CreateFinancialGoalViewModel {
         CreateFinancialGoalViewData(
             titleText: "Yeni Hedef Olustur",
             subtitleText: "Hedef belirleyerek birikim surecini planlayabilirsiniz.",
-            nameTitleText: "Hedef Adi",
+            nameTitleText: "Hedef Adı",
             namePlaceholderText: "Orn: iPhone 15 Pro, Tatil",
             targetTitleText: "Hedef Tutar",
             targetPlaceholderText: "₺0",
@@ -65,6 +65,7 @@ extension CreateFinancialGoalViewModel {
         isSubmitting = true
         emitState()
 
+        // Bu blok, do başarılı olsa da çalışır, catche düşse de çalışır, return olsa da çalışır. Yani işlem bitince her durumda çalışacak
         defer {
             isSubmitting = false
             emitState()

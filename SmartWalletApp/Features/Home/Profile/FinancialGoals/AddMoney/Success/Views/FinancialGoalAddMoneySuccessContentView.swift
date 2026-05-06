@@ -138,7 +138,7 @@ extension FinancialGoalAddMoneySuccessContentView {
         remainingAmountLabel.textAlignment = .right
 
         returnButton.backgroundColor = AppColor.primaryYellow
-        returnButton.setTitleColor(AppColor.authHeadingText, for: .normal)
+        returnButton.setTitleColor(AppColor.primaryYellowText, for: .normal)
         returnButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
         returnButton.layer.shadowColor = UIColor.black.cgColor
         returnButton.layer.shadowOpacity = 0.12

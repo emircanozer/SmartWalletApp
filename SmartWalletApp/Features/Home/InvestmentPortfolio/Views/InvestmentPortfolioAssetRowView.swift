@@ -47,19 +47,27 @@ extension InvestmentPortfolioAssetRowView {
 
         iconImageView.contentMode = .scaleAspectFit
 
-        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 18, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
+        titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.minimumScaleFactor = 0.82
 
         subtitleLabel.font = .systemFont(ofSize: 13, weight: .medium)
         subtitleLabel.textColor = AppColor.secondaryText
         subtitleLabel.numberOfLines = 2
+        subtitleLabel.adjustsFontSizeToFitWidth = true
+        subtitleLabel.minimumScaleFactor = 0.82
 
-        valueLabel.font = .systemFont(ofSize: 22, weight: .bold)
+        valueLabel.font = .systemFont(ofSize: 20, weight: .bold)
         valueLabel.textColor = AppColor.primaryText
         valueLabel.textAlignment = .right
+        valueLabel.adjustsFontSizeToFitWidth = true
+        valueLabel.minimumScaleFactor = 0.8
 
         profitLossLabel.font = .systemFont(ofSize: 14, weight: .bold)
         profitLossLabel.textAlignment = .right
+        profitLossLabel.adjustsFontSizeToFitWidth = true
+        profitLossLabel.minimumScaleFactor = 0.8
     }
 
     private func buildHierarchy() {

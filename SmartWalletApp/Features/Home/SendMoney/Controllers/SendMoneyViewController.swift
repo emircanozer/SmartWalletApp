@@ -16,6 +16,7 @@ final class SendMoneyViewController: BaseViewController {
     private let presentationStyle: SendMoneyPresentationStyle
     private let contentView = SendMoneyContentView()
     private let refreshControl = UIRefreshControl()
+    private var shouldClearPrefilledAmountOnFocus = true
 
     init(viewModel: SendMoneyViewModel, presentationStyle: SendMoneyPresentationStyle) {
         self.viewModel = viewModel
@@ -100,6 +101,7 @@ final class SendMoneyViewController: BaseViewController {
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
                 self.contentView.applyData(data) // **
+                self.shouldClearPrefilledAmountOnFocus = data.amountText == "100"
                 self.bindAmountChips()
             case .transferSucceeded(let response):
                 self.setCenteredLoading(false)
@@ -168,6 +170,7 @@ final class SendMoneyViewController: BaseViewController {
     }
 
     @objc func handleAmountChanged() {
+        shouldClearPrefilledAmountOnFocus = false
         viewModel.updateAmount(contentView.amountTextField.text ?? "")
     }
 
@@ -183,6 +186,7 @@ final class SendMoneyViewController: BaseViewController {
     }
 
     @objc func handleAmountChipTap(_ sender: SendMoneyAmountChipButton) {
+        shouldClearPrefilledAmountOnFocus = false
         viewModel.selectQuickAmount(sender.amount)
     }
 
@@ -199,6 +203,13 @@ final class SendMoneyViewController: BaseViewController {
     }
 
     @objc func handleEditingDidBegin(_ sender: UIView) {
+        if sender === contentView.amountTextField,
+           shouldClearPrefilledAmountOnFocus,
+           contentView.amountTextField.text == "100" {
+            shouldClearPrefilledAmountOnFocus = false
+            contentView.amountTextField.text = ""
+            viewModel.updateAmount("")
+        }
         contentView.scrollToVisible(sender)
     }
 

@@ -2,6 +2,7 @@ import UIKit
 
 enum AppColor {
     static let primaryYellow = named("PrimaryYellow", fallback: UIColor(red: 1.0, green: 0.82, blue: 0.0, alpha: 1.0))
+    static let primaryYellowText = UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0)
     static let primaryText = themedNamed("PrimaryText", light: UIColor(red: 0.16, green: 0.17, blue: 0.23, alpha: 1.0), dark: UIColor(red: 0.94, green: 0.95, blue: 0.98, alpha: 1.0))
     static let authHeadingText = themedNamed("AuthHeadingText", light: UIColor(red: 0.14, green: 0.15, blue: 0.22, alpha: 1.0), dark: UIColor(red: 0.95, green: 0.95, blue: 0.98, alpha: 1.0))
     static let brandTextStrong = themedNamed("BrandTextStrong", light: UIColor(red: 0.23, green: 0.25, blue: 0.32, alpha: 1.0), dark: UIColor(red: 0.91, green: 0.92, blue: 0.95, alpha: 1.0))

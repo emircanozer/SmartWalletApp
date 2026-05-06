@@ -51,6 +51,8 @@ extension EditFinancialGoalViewController {
         contentView.saveButton.addTarget(self, action: #selector(handleSaveTap), for: .touchUpInside)
         contentView.cancelButton.addTarget(self, action: #selector(handleCancelTap), for: .touchUpInside)
         contentView.deleteButton.addTarget(self, action: #selector(handleDeleteTap), for: .touchUpInside)
+        contentView.nameField.setEditingDidBeginTarget(self, action: #selector(handleFieldFocus))
+        contentView.amountField.setEditingDidBeginTarget(self, action: #selector(handleFieldFocus))
         contentView.nameField.setEditingChangedTarget(self, action: #selector(handleNameChanged))
         contentView.amountField.setEditingChangedTarget(self, action: #selector(handleAmountChanged))
         contentView.noteTextView.delegate = self
@@ -149,6 +151,10 @@ extension EditFinancialGoalViewController {
         hiddenDateTextField.resignFirstResponder()
     }
 
+    @objc func handleFieldFocus(_ sender: UIView) {
+        contentView.scrollToVisible(sender)
+    }
+
     @objc func handleKeyboardWillChangeFrame(_ notification: Notification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
@@ -167,6 +173,7 @@ extension EditFinancialGoalViewController {
             textView.text = ""
             textView.textColor = AppColor.inputText
         }
+        contentView.scrollToVisible(textView)
     }
 
     func textViewDidChange(_ textView: UITextView) {

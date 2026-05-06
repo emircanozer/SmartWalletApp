@@ -243,7 +243,7 @@ extension FinancialGoalAddMoneyContentView {
         bottomActionContainer.layer.shadowOffset = CGSize(width: 0, height: -4)
 
         confirmButton.backgroundColor = AppColor.primaryYellow
-        confirmButton.setTitleColor(AppColor.authHeadingText, for: .normal)
+        confirmButton.setTitleColor(AppColor.primaryYellowText, for: .normal)
         confirmButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
         confirmButton.isEnabled = false
         confirmButton.alpha = 0.6
@@ -500,6 +500,6 @@ final class QuickAmountButton: UIButton {
 
     private func updateAppearance() {
         backgroundColor = isSelectedAmount ? AppColor.primaryYellow : AppColor.surfaceMuted
-        setTitleColor(isSelectedAmount ? AppColor.authHeadingText : AppColor.primaryText, for: .normal)
+        setTitleColor(isSelectedAmount ? AppColor.primaryYellowText : AppColor.primaryText, for: .normal)
     }
 }

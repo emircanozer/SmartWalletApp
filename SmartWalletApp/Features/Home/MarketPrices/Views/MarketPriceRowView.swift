@@ -59,9 +59,13 @@ extension MarketPriceRowView {
 
         assetTitleLabel.font = .systemFont(ofSize: 16, weight: .bold)
         assetTitleLabel.textColor = AppColor.primaryText
+        assetTitleLabel.adjustsFontSizeToFitWidth = true
+        assetTitleLabel.minimumScaleFactor = 0.82
 
         assetSubtitleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         assetSubtitleLabel.textColor = AppColor.secondaryText
+        assetSubtitleLabel.adjustsFontSizeToFitWidth = true
+        assetSubtitleLabel.minimumScaleFactor = 0.82
 
         [buyPriceLabel, sellPriceLabel].forEach {
             $0.font = .systemFont(ofSize: 15, weight: .semibold)
@@ -107,15 +111,15 @@ extension MarketPriceRowView {
 
             assetStack.centerYAnchor.constraint(equalTo: centerYAnchor),
             assetStack.leadingAnchor.constraint(equalTo: iconContainerView.trailingAnchor, constant: 10),
-            assetStack.widthAnchor.constraint(equalToConstant: 56),
+            assetStack.widthAnchor.constraint(equalToConstant: 64),
 
             buyPriceLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             buyPriceLabel.leadingAnchor.constraint(equalTo: assetStack.trailingAnchor, constant: 10),
-            buyPriceLabel.widthAnchor.constraint(equalToConstant: 68),
+            buyPriceLabel.widthAnchor.constraint(equalToConstant: 60),
 
             sellPriceLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             sellPriceLabel.leadingAnchor.constraint(equalTo: buyPriceLabel.trailingAnchor, constant: 10),
-            sellPriceLabel.widthAnchor.constraint(equalToConstant: 68),
+            sellPriceLabel.widthAnchor.constraint(equalToConstant: 60),
 
             changeBadgeView.centerYAnchor.constraint(equalTo: centerYAnchor),
             changeBadgeView.leadingAnchor.constraint(equalTo: sellPriceLabel.trailingAnchor, constant: 10),
