@@ -7,7 +7,8 @@ enum RegisterViewState {
     case failure(String)
 }
 
-final class RegisterViewModel {
+@MainActor
+final class RegisterViewModel: BaseViewModel {
     var onStateChange: ((RegisterViewState) -> Void)?
 
     private let authService: AuthService
@@ -16,7 +17,6 @@ final class RegisterViewModel {
         self.authService = authService
     }
 
-    @MainActor
     func register(
         name: String,
         email: String,
@@ -24,32 +24,32 @@ final class RegisterViewModel {
         confirmPassword: String,
         isTermsAccepted: Bool
     ) async {
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedPassword = password.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = trimmed(name)
+        let trimmedEmail = trimmed(email)
+        let trimmedPassword = trimmed(password)
+        let trimmedConfirmPassword = trimmed(confirmPassword)
 
         guard !trimmedName.isEmpty, !trimmedEmail.isEmpty, !trimmedPassword.isEmpty, !trimmedConfirmPassword.isEmpty else {
-            onStateChange?(.failure("Tüm alanları doldurun."))
+            emitFailure("Tüm alanları doldurun.", using: onStateChange, transform: RegisterViewState.failure)
             return
         }
 
         guard trimmedPassword.count >= 8 else {
-            onStateChange?(.failure("Şifre en az 8 karakter olmalıdır."))
+            emitFailure("Şifre en az 8 karakter olmalıdır.", using: onStateChange, transform: RegisterViewState.failure)
             return
         }
 
         guard trimmedPassword == trimmedConfirmPassword else {
-            onStateChange?(.failure("Şifreler eşleşmiyor."))
+            emitFailure("Şifreler eşleşmiyor.", using: onStateChange, transform: RegisterViewState.failure)
             return
         }
 
         guard isTermsAccepted else {
-            onStateChange?(.failure("Devam etmek için kullanım şartlarını kabul edin."))
+            emitFailure("Devam etmek için kullanım şartlarını kabul edin.", using: onStateChange, transform: RegisterViewState.failure)
             return
         }
 
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await authService.register(
@@ -64,9 +64,9 @@ final class RegisterViewModel {
                 registration: response
             )
 
-            onStateChange?(.verificationRequired(context))
+            emit(.verificationRequired(context), using: onStateChange)
         } catch {
-            onStateChange?(.failure(error.localizedDescription))
+            emitFailure(error.localizedDescription, using: onStateChange, transform: RegisterViewState.failure)
         }
     }
 }

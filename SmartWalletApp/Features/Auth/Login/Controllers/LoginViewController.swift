@@ -28,16 +28,12 @@ class LoginViewController: BaseViewController {
         enableInteractivePopGesture()
         bindActions()
         bindViewModel()
-        observeKeyboard()
+        startObservingKeyboard()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         contentView.applyCornerRadius()
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -108,14 +104,8 @@ extension LoginViewController {
         contentView.scrollToVisible(targetView)
     }
 
-    func observeKeyboard() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
-    @objc func handleKeyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
+    override func keyboardDidUpdate(height: CGFloat, duration: TimeInterval, options: UIView.AnimationOptions) {
+        let bottomInset = height + 24
         contentView.setKeyboardBottomInset(bottomInset)
 
         if let firstResponder = view.currentFirstResponder {
@@ -124,7 +114,7 @@ extension LoginViewController {
         }
     }
 
-    @objc func handleKeyboardWillHide(_ notification: Notification) {
+    override func keyboardDidHide(duration: TimeInterval, options: UIView.AnimationOptions) {
         contentView.setKeyboardBottomInset(0)
     }
 }

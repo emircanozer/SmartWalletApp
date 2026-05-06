@@ -44,17 +44,13 @@ class ForgotPasswordViewController: BaseViewController {
         applyContent()
         bindActions()
         bindViewModel()
-        observeKeyboard()
+        startObservingKeyboard()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         heroCard.layer.cornerRadius = 18
         sendButton.layer.cornerRadius = 12
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -231,24 +227,15 @@ extension ForgotPasswordViewController {
         }
     }
 
-    func observeKeyboard() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
-    @objc func handleKeyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-              let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else { return }
-
-        let translation = min(max(0, keyboardFrame.height - view.safeAreaInsets.bottom) * 0.32, 110)
-        UIView.animate(withDuration: duration) {
+    override func keyboardDidUpdate(height: CGFloat, duration: TimeInterval, options: UIView.AnimationOptions) {
+        let translation = min(max(0, height) * 0.32, 110)
+        UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.contentView.transform = CGAffineTransform(translationX: 0, y: -translation)
         }
     }
 
-    @objc func handleKeyboardWillHide(_ notification: Notification) {
-        let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double ?? 0.25
-        UIView.animate(withDuration: duration) {
+    override func keyboardDidHide(duration: TimeInterval, options: UIView.AnimationOptions) {
+        UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.contentView.transform = .identity
         }
     }

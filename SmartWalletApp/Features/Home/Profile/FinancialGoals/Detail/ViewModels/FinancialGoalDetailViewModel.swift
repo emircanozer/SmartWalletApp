@@ -1,9 +1,9 @@
 import Foundation
 import UIKit
 
-final class FinancialGoalDetailViewModel {
+@MainActor
+final class FinancialGoalDetailViewModel: BaseViewModel {
     var onStateChange: ((FinancialGoalDetailViewData) -> Void)?
-    var onError: ((String) -> Void)?
 
     private let walletService: WalletService
     private var goal: FinancialGoalRecord
@@ -24,7 +24,6 @@ extension FinancialGoalDetailViewModel {
         goal = updatedGoal
     }
 
-    @MainActor
     func load() async {
         do {
             contributions = try await walletService.fetchFinancialGoalContributions(goalID: goal.id)
@@ -32,12 +31,12 @@ extension FinancialGoalDetailViewModel {
         } catch {
             contributions = []
             emitState()
-            onError?("Katkı geçmişi alınamadı. Lütfen tekrar deneyin.")
+            emitError("Katkı geçmişi alınamadı. Lütfen tekrar deneyin.")
         }
     }
 
     func emitState() {
-        onStateChange?(makeViewData())
+        emit(makeViewData(), using: onStateChange)
     }
 
     func makeViewData() -> FinancialGoalDetailViewData {

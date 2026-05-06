@@ -1,7 +1,8 @@
 import Foundation
 import UIKit
 
-final class InvestmentPortfolioViewModel {
+@MainActor
+final class InvestmentPortfolioViewModel: BaseViewModel {
     var onStateChange: ((InvestmentPortfolioViewState) -> Void)?
 
     private let walletService: WalletService
@@ -10,16 +11,15 @@ final class InvestmentPortfolioViewModel {
         self.walletService = walletService
     }
 
-    @MainActor
     func load() async {
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await walletService.fetchPortfolioSummary()
             // case ile veri gönderme
-            onStateChange?(.loaded(map(response)))
+            emit(.loaded(map(response)), using: onStateChange)
         } catch {
-            onStateChange?(.failure("Yatırım portföyü alınamadı. Lütfen tekrar deneyin."))
+            emitFailure("Yatırım portföyü alınamadı. Lütfen tekrar deneyin.", using: onStateChange, transform: InvestmentPortfolioViewState.failure)
         }
     }
 }

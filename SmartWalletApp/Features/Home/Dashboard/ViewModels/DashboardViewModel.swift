@@ -11,7 +11,8 @@ enum DashboardViewState {
     case failure(String)
 }
 
-final class DashboardViewModel {
+@MainActor
+final class DashboardViewModel: BaseViewModel {
     var onStateChange: ((DashboardViewState) -> Void)?
 
     private let walletService: WalletService
@@ -23,17 +24,16 @@ final class DashboardViewModel {
 
     /* bu closure sonunda UI güncellemesine gidiyor her ne kadar burada label boyamamıyor ama state yayınlıyor o state controller’da UI güncellemesine dönüşüyor o yüzden controller da da olmasa bile mainactoru burada da kullanmak güvenli */
 
-    @MainActor
     func loadDashboard() async {
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let wallet = try await walletService.fetchMyWallet()
             let transactions = try await walletService.fetchTransactions(walletId: wallet.id)
             let data = makeViewData(wallet: wallet, transactions: transactions)
-            onStateChange?(.loaded(data))
+            emit(.loaded(data), using: onStateChange)
         } catch {
-            onStateChange?(.failure(error.localizedDescription))
+            emitFailure(error.localizedDescription, using: onStateChange, transform: DashboardViewState.failure)
         }
     }
 }

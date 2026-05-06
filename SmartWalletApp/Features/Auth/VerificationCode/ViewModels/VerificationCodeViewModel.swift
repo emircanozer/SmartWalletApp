@@ -8,7 +8,8 @@ enum VerificationCodeViewState {
     case failure(String)
 }
 
-final class VerificationCodeViewModel {
+@MainActor
+final class VerificationCodeViewModel: BaseViewModel {
     var onStateChange: ((VerificationCodeViewState) -> Void)?
 
     private(set) var context: PendingRegistrationContext
@@ -23,16 +24,15 @@ final class VerificationCodeViewModel {
         self.tokenStore = tokenStore
     }
 
-    @MainActor
     func verify(code: String) async {
-        let trimmedCode = code.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedCode = trimmed(code)
 
         guard trimmedCode.count == 6 else {
-            onStateChange?(.failure("Doğrulama kodu 6 haneli olmalıdır."))
+            emitFailure("Doğrulama kodu 6 haneli olmalıdır.", using: onStateChange, transform: VerificationCodeViewState.failure)
             return
         }
 
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let verifyResponse = try await authService.verifyEmail(
@@ -41,7 +41,7 @@ final class VerificationCodeViewModel {
             print("DEBUG Auth: verify-email cevabi. success=\(verifyResponse.success), message=\(verifyResponse.message)")
 
             guard verifyResponse.success else {
-                onStateChange?(.failure(verifyResponse.message))
+                emitFailure(verifyResponse.message, using: onStateChange, transform: VerificationCodeViewState.failure)
                 return
             }
 
@@ -54,20 +54,27 @@ final class VerificationCodeViewModel {
                 print("DEBUG Auth: tokenlar keychain'e kaydedildi.")
             } catch {
                 print("DEBUG Auth: verify basarili ama otomatik login hatasi: \(error.localizedDescription)")
-                onStateChange?(.failure("Doğrulama başarılı oldu ama otomatik giriş tamamlanamadı. \(error.localizedDescription)"))
+                emitFailure(
+                    "Doğrulama başarılı oldu ama otomatik giriş tamamlanamadı. \(error.localizedDescription)",
+                    using: onStateChange,
+                    transform: VerificationCodeViewState.failure
+                )
                 return
             }
 
-            onStateChange?(.success(context, verifyResponse))
+            emit(.success(context, verifyResponse), using: onStateChange)
         } catch {
             print("DEBUG Auth: verify-email hatasi: \(error.localizedDescription)")
-            onStateChange?(.failure("Doğrulama tamamlanamadı. \(error.localizedDescription)"))
+            emitFailure(
+                "Doğrulama tamamlanamadı. \(error.localizedDescription)",
+                using: onStateChange,
+                transform: VerificationCodeViewState.failure
+            )
         }
     }
 
-    @MainActor
     func resendCode() async {
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await authService.resendVerificationCode(
@@ -76,10 +83,10 @@ final class VerificationCodeViewModel {
                 )
             )
             print("DEBUG Auth: verification code yeniden gonderildi. email=\(context.email), message=\(response.message)")
-            onStateChange?(.resendSuccess(response.message))
+            emit(.resendSuccess(response.message), using: onStateChange)
         } catch {
             print("DEBUG Auth: verification code yeniden gonderme hatasi: \(error.localizedDescription)")
-            onStateChange?(.failure(error.localizedDescription))
+            emitFailure(error.localizedDescription, using: onStateChange, transform: VerificationCodeViewState.failure)
         }
     }
 }

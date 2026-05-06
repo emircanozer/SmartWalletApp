@@ -8,7 +8,8 @@ enum ForgotPasswordCodeViewState {
     case failure(String)
 }
 
-final class ForgotPasswordCodeViewModel {
+@MainActor
+final class ForgotPasswordCodeViewModel: BaseViewModel {
     var onStateChange: ((ForgotPasswordCodeViewState) -> Void)?
 
     let email: String
@@ -19,16 +20,15 @@ final class ForgotPasswordCodeViewModel {
         self.authService = authService
     }
 
-    @MainActor
     func verify(code: String) async {
-        let trimmedCode = code.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedCode = trimmed(code)
 
         guard trimmedCode.count == 6 else {
-            onStateChange?(.failure("Doğrulama kodu 6 haneli olmalıdır."))
+            emitFailure("Doğrulama kodu 6 haneli olmalıdır.", using: onStateChange, transform: ForgotPasswordCodeViewState.failure)
             return
         }
 
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             
@@ -37,29 +37,28 @@ final class ForgotPasswordCodeViewModel {
             )
 
             guard response.success else {
-                onStateChange?(.failure(response.message))
+                emitFailure(response.message, using: onStateChange, transform: ForgotPasswordCodeViewState.failure)
                 return
             }
 
-            onStateChange?(.success(PendingPasswordResetContext(email: email, code: trimmedCode), response.message))
+            emit(.success(PendingPasswordResetContext(email: email, code: trimmedCode), response.message), using: onStateChange)
         } catch {
-            onStateChange?(.failure("Kod doğrulanamadı. \(error.localizedDescription)"))
+            emitFailure("Kod doğrulanamadı. \(error.localizedDescription)", using: onStateChange, transform: ForgotPasswordCodeViewState.failure)
         }
     }
 
-    @MainActor
     func resendCode() async {
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await authService.forgotPassword(request: ForgotPasswordRequest(email: email))
             guard response.success else {
-                onStateChange?(.failure(response.message))
+                emitFailure(response.message, using: onStateChange, transform: ForgotPasswordCodeViewState.failure)
                 return
             }
-            onStateChange?(.resendSuccess(response.message))
+            emit(.resendSuccess(response.message), using: onStateChange)
         } catch {
-            onStateChange?(.failure(error.localizedDescription))
+            emitFailure(error.localizedDescription, using: onStateChange, transform: ForgotPasswordCodeViewState.failure)
         }
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 
-final class MarketPricesViewModel {
+@MainActor
+final class MarketPricesViewModel: BaseViewModel {
     // state olarak controller’a veriyor.
     var onStateChange: ((MarketPricesViewState) -> Void)?
 
@@ -10,15 +11,14 @@ final class MarketPricesViewModel {
         self.walletService = walletService
     }
 
-    @MainActor
     func load() async {
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await walletService.fetchPortfolioPrices()
-            onStateChange?(.loaded(map(response)))
+            emit(.loaded(map(response)), using: onStateChange)
         } catch {
-            onStateChange?(.failure("Piyasa verileri alınamadı. Lütfen tekrar deneyin."))
+            emitFailure("Piyasa verileri alınamadı. Lütfen tekrar deneyin.", using: onStateChange, transform: MarketPricesViewState.failure)
         }
     }
 }

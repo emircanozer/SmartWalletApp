@@ -7,7 +7,8 @@ enum ForgotPasswordViewState {
     case failure(String)
 }
 
-final class ForgotPasswordViewModel {
+@MainActor
+final class ForgotPasswordViewModel: BaseViewModel {
     var onStateChange: ((ForgotPasswordViewState) -> Void)?
 
     private let authService: AuthService
@@ -16,24 +17,23 @@ final class ForgotPasswordViewModel {
         self.authService = authService
     }
 
-    @MainActor
     func sendResetLink(email: String) async {
-        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedEmail = trimmed(email)
 
         guard !trimmedEmail.isEmpty else {
-            onStateChange?(.failure("E-posta alanını doldurun."))
+            emitFailure("E-posta alanını doldurun.", using: onStateChange, transform: ForgotPasswordViewState.failure)
             return
         }
 
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await authService.forgotPassword(request: ForgotPasswordRequest(email: trimmedEmail))
             print("DEBUG Auth: forgot-password basarili. email=\(trimmedEmail)")
-            onStateChange?(.success(trimmedEmail, response))
+            emit(.success(trimmedEmail, response), using: onStateChange)
         } catch {
             print("DEBUG Auth: forgot-password hatasi: \(error.localizedDescription)")
-            onStateChange?(.failure(error.localizedDescription))
+            emitFailure(error.localizedDescription, using: onStateChange, transform: ForgotPasswordViewState.failure)
         }
     }
 }

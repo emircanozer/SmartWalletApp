@@ -1,7 +1,8 @@
 import Foundation
 import UIKit
 
-final class CreateFinancialGoalViewModel {
+@MainActor
+final class CreateFinancialGoalViewModel: BaseViewModel {
     var onStateChange: ((CreateFinancialGoalFormState) -> Void)?
     var onGoalCreated: ((FinancialGoalRecord) -> Void)?
 
@@ -48,7 +49,6 @@ extension CreateFinancialGoalViewModel {
         emitState()
     }
 
-    @MainActor
     func submit() async -> String? {
         guard !title.isEmpty else {
             return "Lutfen hedef adini girin."
@@ -62,23 +62,19 @@ extension CreateFinancialGoalViewModel {
             return "Lutfen son tarihi secin."
         }
 
-        isSubmitting = true
-        emitState()
-
-        // Bu blok, do başarılı olsa da çalışır, catche düşse de çalışır, return olsa da çalışır. Yani işlem bitince her durumda çalışacak
-        defer {
-            isSubmitting = false
-            emitState()
-        }
-
         do {
-            let response = try await walletService.createFinancialGoal(
-                request: CreateFinancialGoalRequest(
-                    title: title,
-                    targetAmount: amount,
-                    targetDate: selectedDate
+            let response = try await performSubmission(
+                setSubmitting: { [weak self] in self?.isSubmitting = $0 },
+                emitState: { [weak self] in self?.emitState() }
+            ) {
+                try await self.walletService.createFinancialGoal(
+                    request: CreateFinancialGoalRequest(
+                        title: self.title,
+                        targetAmount: amount,
+                        targetDate: selectedDate
+                    )
                 )
-            )
+            }
 
             guard response.success else {
                 return response.message
@@ -116,12 +112,13 @@ extension CreateFinancialGoalViewModel {
     }
 
     func emitState() {
-        onStateChange?(
+        emit(
             CreateFinancialGoalFormState(
                 selectedDateText: selectedDate.map { AppDateTextFormatter.string(from: $0, style: .financialGoalDayMonthYear) },
                 isApproveEnabled: !isSubmitting && !title.isEmpty && parsedAmount != nil && parsedAmount! > .zero && selectedDate != nil,
                 isSubmitting: isSubmitting
-            )
+            ),
+            using: onStateChange
         )
     }
 

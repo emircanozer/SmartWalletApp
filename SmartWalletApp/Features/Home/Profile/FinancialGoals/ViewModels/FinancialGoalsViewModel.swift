@@ -1,9 +1,9 @@
 import Foundation
 import UIKit
 
-final class FinancialGoalsViewModel {
+@MainActor
+final class FinancialGoalsViewModel: BaseViewModel {
     var onStateChange: ((FinancialGoalsViewData) -> Void)?
-    var onError: ((String) -> Void)?
 
     private let walletService: WalletService
     private var goals: [FinancialGoalRecord] = []
@@ -15,7 +15,6 @@ final class FinancialGoalsViewModel {
 }
 
 extension FinancialGoalsViewModel {
-    @MainActor
     func load() async {
         do {
             async let goalsResponse = walletService.fetchFinancialGoals()
@@ -29,7 +28,7 @@ extension FinancialGoalsViewModel {
             goals = []
             summary = nil
             emitState()
-            onError?("Finansal hedefler alinamadi. Lutfen tekrar deneyin.")
+            emitError("Finansal hedefler alinamadi. Lutfen tekrar deneyin.")
         }
     }
 
@@ -64,7 +63,7 @@ extension FinancialGoalsViewModel {
 
  extension FinancialGoalsViewModel {
     func emitState() {
-        onStateChange?(makeViewData())
+        emit(makeViewData(), using: onStateChange)
     }
 
     func makeViewData() -> FinancialGoalsViewData {

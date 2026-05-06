@@ -25,13 +25,9 @@ final class DeleteAccountViewController: BaseViewController {
         super.viewDidLoad()
         bindActions()
         bindViewModel()
-        registerKeyboardObservers()
+        startObservingKeyboard()
         contentView.apply(viewModel.makeViewData())
         enableInteractivePopGesture()
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -63,22 +59,15 @@ extension DeleteAccountViewController {
         }
     }
 
-    func registerKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
     func updateFormState() {
         let isEnabled = isConfirmationChecked && !contentView.passwordField.trimmedText.isEmpty
         contentView.updateDeleteButton(isEnabled: isEnabled)
     }
 
     func showDeletedAlert(message: String) {
-        let alert = UIAlertController(title: "Bilgi", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Tamam", style: .default) { [weak self] _ in
+        showAlert(message: message) { [weak self] in
             self?.onDeleted?()
-        })
-        present(alert, animated: true)
+        }
     }
 
     @objc func handleBackTap() {
@@ -101,14 +90,13 @@ extension DeleteAccountViewController {
         }
     }
 
-    @objc func handleKeyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let bottomInset = max(0, keyboardFrame.height - view.safeAreaInsets.bottom) + 24
+    override func keyboardDidUpdate(height: CGFloat, duration: TimeInterval, options: UIView.AnimationOptions) {
+        let bottomInset = height + 24
         contentView.setKeyboardBottomInset(bottomInset)
         contentView.scrollToVisible(contentView.passwordField)
     }
 
-    @objc func handleKeyboardWillHide(_ notification: Notification) {
+    override func keyboardDidHide(duration: TimeInterval, options: UIView.AnimationOptions) {
         contentView.setKeyboardBottomInset(0)
     }
 }

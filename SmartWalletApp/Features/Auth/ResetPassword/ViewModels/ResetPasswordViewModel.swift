@@ -7,7 +7,8 @@ enum ResetPasswordViewState {
     case failure(String)
 }
 
-final class ResetPasswordViewModel {
+@MainActor
+final class ResetPasswordViewModel: BaseViewModel {
     var onStateChange: ((ResetPasswordViewState) -> Void)?
 
     let context: PendingPasswordResetContext
@@ -18,27 +19,26 @@ final class ResetPasswordViewModel {
         self.authService = authService
     }
 
-    @MainActor
     func resetPassword(newPassword: String, confirmPassword: String) async {
-        let trimmedPassword = newPassword.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedPassword = trimmed(newPassword)
+        let trimmedConfirmPassword = trimmed(confirmPassword)
 
         guard !trimmedPassword.isEmpty, !trimmedConfirmPassword.isEmpty else {
-            onStateChange?(.failure("Lütfen yeni şifre alanlarını doldurun."))
+            emitFailure("Lütfen yeni şifre alanlarını doldurun.", using: onStateChange, transform: ResetPasswordViewState.failure)
             return
         }
 
         guard trimmedPassword.count >= 6 else {
-            onStateChange?(.failure("Yeni şifre en az 6 karakter olmalıdır."))
+            emitFailure("Yeni şifre en az 6 karakter olmalıdır.", using: onStateChange, transform: ResetPasswordViewState.failure)
             return
         }
 
         guard trimmedPassword == trimmedConfirmPassword else {
-            onStateChange?(.failure("Şifreler birbiriyle eşleşmiyor."))
+            emitFailure("Şifreler birbiriyle eşleşmiyor.", using: onStateChange, transform: ResetPasswordViewState.failure)
             return
         }
 
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let response = try await authService.resetPassword(
@@ -50,13 +50,13 @@ final class ResetPasswordViewModel {
             )
 
             guard response.success else {
-                onStateChange?(.failure(response.message))
+                emitFailure(response.message, using: onStateChange, transform: ResetPasswordViewState.failure)
                 return
             }
 
-            onStateChange?(.success(response.message))
+            emit(.success(response.message), using: onStateChange)
         } catch {
-            onStateChange?(.failure("Şifre güncellenemedi. \(error.localizedDescription)"))
+            emitFailure("Şifre güncellenemedi. \(error.localizedDescription)", using: onStateChange, transform: ResetPasswordViewState.failure)
         }
     }
 }

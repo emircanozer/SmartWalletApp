@@ -14,7 +14,8 @@ enum EditFinancialGoalValidationError: LocalizedError {
     }
 }
 
-final class EditFinancialGoalViewModel {
+@MainActor
+final class EditFinancialGoalViewModel: BaseViewModel {
     var onStateChange: ((EditFinancialGoalFormState) -> Void)?
 
     private let walletService: WalletService
@@ -104,7 +105,6 @@ extension EditFinancialGoalViewModel {
         )
     }
 
-    @MainActor
     func submit() async -> (goal: FinancialGoalRecord?, errorMessage: String?) {
         let draftResult = saveDraft()
 
@@ -112,23 +112,20 @@ extension EditFinancialGoalViewModel {
         case .failure(let error):
             return (nil, error.localizedDescription)
         case .success(let draftGoal):
-            isSubmitting = true
-            emitState()
-
-            defer {
-                isSubmitting = false
-                emitState()
-            }
-
             do {
-                let response = try await walletService.updateFinancialGoal(
-                    goalID: originalGoal.id,
-                    request: UpdateFinancialGoalRequest(
-                        title: draftGoal.title,
-                        targetAmount: draftGoal.targetAmount,
-                        targetDate: draftGoal.deadline
+                let response = try await performSubmission(
+                    setSubmitting: { [weak self] in self?.isSubmitting = $0 },
+                    emitState: { [weak self] in self?.emitState() }
+                ) {
+                    try await self.walletService.updateFinancialGoal(
+                        goalID: self.originalGoal.id,
+                        request: UpdateFinancialGoalRequest(
+                            title: draftGoal.title,
+                            targetAmount: draftGoal.targetAmount,
+                            targetDate: draftGoal.deadline
+                        )
                     )
-                )
+                }
 
                 guard response else {
                     return (nil, "Hedef guncellenemedi. Lutfen tekrar deneyin.")
@@ -161,18 +158,14 @@ extension EditFinancialGoalViewModel {
         }
     }
 
-    @MainActor
     func closeGoal() async -> String? {
-        isSubmitting = true
-        emitState()
-
-        defer {
-            isSubmitting = false
-            emitState()
-        }
-
         do {
-            let response = try await walletService.closeFinancialGoal(goalID: originalGoal.id)
+            let response = try await performSubmission(
+                setSubmitting: { [weak self] in self?.isSubmitting = $0 },
+                emitState: { [weak self] in self?.emitState() }
+            ) {
+                try await self.walletService.closeFinancialGoal(goalID: self.originalGoal.id)
+            }
             return response.success ? nil : response.message
         } catch let error as NetworkError {
             return error.errorDescription ?? "Hedef kapatilamadi. Lutfen tekrar deneyin."
@@ -191,12 +184,13 @@ extension EditFinancialGoalViewModel {
     }
 
     private func emitState() {
-        onStateChange?(
+        emit(
             EditFinancialGoalFormState(
                 selectedDateText: AppDateTextFormatter.string(from: selectedDate, style: .financialGoalDayMonth),
                 isSaveEnabled: !isSubmitting && !titleText.isEmpty && parsedAmount != nil && parsedAmount! > .zero,
                 isSubmitting: isSubmitting
-            )
+            ),
+            using: onStateChange
         )
     }
 }

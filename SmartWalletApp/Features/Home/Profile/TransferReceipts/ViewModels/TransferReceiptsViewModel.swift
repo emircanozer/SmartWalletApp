@@ -1,7 +1,8 @@
 import Foundation
 import UIKit
 
-final class TransferReceiptsViewModel {
+@MainActor
+final class TransferReceiptsViewModel: BaseViewModel {
     var onStateChange: ((TransferReceiptsViewState) -> Void)?
 
     private let walletService: WalletService
@@ -14,9 +15,8 @@ final class TransferReceiptsViewModel {
         self.walletService = walletService
     }
 
-    @MainActor
     func load() async {
-        onStateChange?(.loading)
+        emit(.loading, using: onStateChange)
 
         do {
             let wallet = try await walletService.fetchMyWallet()
@@ -26,7 +26,7 @@ final class TransferReceiptsViewModel {
             }
             emitLoadedState()
         } catch {
-            onStateChange?(.failure("Dekont geçmişi alınamadı. Lütfen tekrar deneyin."))
+            emitFailure("Dekont geçmişi alınamadı. Lütfen tekrar deneyin.", using: onStateChange, transform: TransferReceiptsViewState.failure)
         }
     }
 
@@ -48,7 +48,7 @@ final class TransferReceiptsViewModel {
 
  extension TransferReceiptsViewModel {
     private func emitLoadedState() {
-        onStateChange?(.loaded(makeViewData()))
+        emit(.loaded(makeViewData()), using: onStateChange)
     }
 
     private func makeViewData() -> TransferReceiptsViewData {

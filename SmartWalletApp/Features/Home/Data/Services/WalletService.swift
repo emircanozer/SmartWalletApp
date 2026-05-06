@@ -195,13 +195,13 @@ final class WalletService {
         case .portfolioPrices:
             return "/api/Portfolios/prices"
         case .investmentHistory:
-            return "/api/Portfolios/investment-history"
+            return "/api/Portfolios/transactions"
         case .portfolioAISummary:
             return "/api/Portfolios/ai-summary"
         case .portfolioBuy:
-            return "/api/Portfolios/buy"
+            return "/api/Portfolios/purchases"
         case .portfolioSell:
-            return "/api/Portfolios/sell"
+            return "/api/Portfolios/sales"
         case .contacts:
             return "/api/Wallets/contacts"
         case .removeContact(let iban):

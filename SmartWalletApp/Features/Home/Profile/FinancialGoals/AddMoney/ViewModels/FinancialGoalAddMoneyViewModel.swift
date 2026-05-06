@@ -1,7 +1,8 @@
 import Foundation
 import UIKit
 
-final class FinancialGoalAddMoneyViewModel {
+@MainActor
+final class FinancialGoalAddMoneyViewModel: BaseViewModel {
     var onStateChange: ((FinancialGoalAddMoneyFormState) -> Void)?
 
     private let walletService: WalletService
@@ -77,27 +78,23 @@ extension FinancialGoalAddMoneyViewModel {
         return parsedAmount
     }
 
-    @MainActor
     func submit() async -> (context: FinancialGoalAddMoneySuccessContext?, errorMessage: String?) {
         guard let amount = confirmAmount() else {
             return (nil, "Lutfen gecerli bir tutar girin.")
         }
 
-        isSubmitting = true
-        emitState()
-
-        defer {
-            isSubmitting = false
-            emitState()
-        }
-
         do {
-            let response = try await walletService.addFinancialGoalFunds(
-                goalID: goal.id,
-                request: AddFinancialGoalFundsRequest(
-                    amount: amount
+            let response = try await performSubmission(
+                setSubmitting: { [weak self] in self?.isSubmitting = $0 },
+                emitState: { [weak self] in self?.emitState() }
+            ) {
+                try await self.walletService.addFinancialGoalFunds(
+                    goalID: self.goal.id,
+                    request: AddFinancialGoalFundsRequest(
+                        amount: amount
+                    )
                 )
-            )
+            }
 
             guard response.success else {
                 return (nil, response.message)
@@ -150,7 +147,7 @@ extension FinancialGoalAddMoneyViewModel {
         let projectedSavings = goal.savedAmount + amount
         let remainingAfterAdd = max(goal.targetAmount - projectedSavings, .zero)
 
-        onStateChange?(
+        emit(
             FinancialGoalAddMoneyFormState(
                 amountText: amountText,
                 selectedQuickAmount: selectedQuickAmount,
@@ -159,7 +156,8 @@ extension FinancialGoalAddMoneyViewModel {
                 confirmButtonTitleText: "Onayla ve \(AppNumberTextFormatter.prefixedLira(amount, minimumFractionDigits: 0, maximumFractionDigits: 0)) Ekle",
                 isConfirmEnabled: !isSubmitting && amount > .zero,
                 isSubmitting: isSubmitting
-            )
+            ),
+            using: onStateChange
         )
     }
 }

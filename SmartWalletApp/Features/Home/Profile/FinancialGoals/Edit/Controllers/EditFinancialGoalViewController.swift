@@ -29,7 +29,7 @@ final class EditFinancialGoalViewController: BaseViewController, UITextViewDeleg
         enableInteractivePopGesture()
         bindActions()
         bindViewModel()
-        configureKeyboardHandling()
+        startObservingKeyboard(.willChangeFrame)
         configureDatePicker()
         contentView.apply(viewModel.makeViewData())
         contentView.setInitialValues(
@@ -38,10 +38,6 @@ final class EditFinancialGoalViewController: BaseViewController, UITextViewDeleg
             note: viewModel.initialNoteText
         )
         viewModel.load()
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -67,21 +63,6 @@ extension EditFinancialGoalViewController {
         viewModel.onStateChange = { [weak self] state in
             self?.contentView.applyFormState(state)
         }
-    }
-
-    func configureKeyboardHandling() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleKeyboardWillChangeFrame),
-            name: UIResponder.keyboardWillChangeFrameNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleKeyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
     }
 
     func configureDatePicker() {
@@ -155,14 +136,11 @@ extension EditFinancialGoalViewController {
         contentView.scrollToVisible(sender)
     }
 
-    @objc func handleKeyboardWillChangeFrame(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
-        let overlap = max(view.bounds.maxY - keyboardFrameInView.minY, 0)
-        contentView.setKeyboardBottomInset(overlap + 20)
+    override func keyboardDidUpdate(height: CGFloat, duration: TimeInterval, options: UIView.AnimationOptions) {
+        contentView.setKeyboardBottomInset(height + 20)
     }
 
-    @objc func handleKeyboardWillHide() {
+    override func keyboardDidHide(duration: TimeInterval, options: UIView.AnimationOptions) {
         contentView.setKeyboardBottomInset(0)
     }
 }
