@@ -39,6 +39,12 @@ class AppCoordinator: Coordinator {
     }
 
     private func continueAfterSplash() {
+        do {
+            try tokenStore.clearTokens()
+        } catch {
+            print("DEBUG Auth: tokenlar temizlenemedi: \(error.localizedDescription)")
+        }
+
         if tokenStore.accessToken?.isEmpty == false {
             showHomeFlow()
         } else {
