@@ -72,6 +72,7 @@ extension EditFinancialGoalViewController {
 
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
+        datePicker.locale = Locale(identifier: "tr_TR")
         datePicker.minimumDate = Date()
         datePicker.date = max(viewModel.initialDate, Date())
         hiddenDateTextField.inputView = datePicker

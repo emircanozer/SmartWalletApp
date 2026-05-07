@@ -14,17 +14,16 @@ final class CreateFinancialGoalContentView: UIView {
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let formCardView = UIView()
+
     private let nameTitleLabel = UILabel()
     private let amountTitleLabel = UILabel()
     private let deadlineTitleLabel = UILabel()
+
     private let deadlineFieldView = UIView()
     private let deadlinePlaceholderLabel = UILabel()
     private let deadlineValueLabel = UILabel()
     private let deadlineIconView = UIImageView()
-    private let aiHintCardView = UIView()
-    private let aiHintIconView = UIImageView()
-    private let aiHintTitleLabel = UILabel()
-    private let aiHintBodyLabel = UILabel()
+
     private var keyboardInset: CGFloat = 0
 
     override init(frame: CGRect) {
@@ -42,7 +41,6 @@ final class CreateFinancialGoalContentView: UIView {
         super.layoutSubviews()
         formCardView.layer.cornerRadius = 22
         deadlineFieldView.layer.cornerRadius = 16
-        aiHintCardView.layer.cornerRadius = 22
         approveButton.layer.cornerRadius = 18
         applyBottomInset()
     }
@@ -55,22 +53,24 @@ extension CreateFinancialGoalContentView {
         nameTitleLabel.text = data.nameTitleText
         amountTitleLabel.text = data.targetTitleText
         deadlineTitleLabel.text = data.deadlineTitleText
+
         nameField.setPlaceholder(data.namePlaceholderText)
         amountField.setPlaceholder(data.targetPlaceholderText)
+
         deadlinePlaceholderLabel.text = data.deadlinePlaceholderText
-        aiHintTitleLabel.text = data.aiHintTitleText
-        aiHintBodyLabel.text = data.aiHintBodyText
         approveButton.setTitle(data.approveButtonTitleText, for: .normal)
     }
 
     func applyFormState(_ state: CreateFinancialGoalFormState) {
         let hasDate = state.selectedDateText != nil
+
         deadlinePlaceholderLabel.isHidden = hasDate
         deadlineValueLabel.isHidden = !hasDate
         deadlineValueLabel.text = state.selectedDateText
+
         approveButton.isEnabled = state.isApproveEnabled
         approveButton.alpha = state.isApproveEnabled ? 1 : 0.6
-        approveButton.setTitle(state.isSubmitting ? "Olusturuluyor..." : "Hedefi Onayla", for: .normal)
+        approveButton.setTitle(state.isSubmitting ? "Oluşturuluyor..." : "Hedefi Onayla", for: .normal)
     }
 
     func setKeyboardBottomInset(_ inset: CGFloat) {
@@ -80,8 +80,10 @@ extension CreateFinancialGoalContentView {
 
     private func applyBottomInset() {
         let baseInset = bottomActionContainer.bounds.height + 24
-        scrollView.contentInset.bottom = max(baseInset, keyboardInset + 16)
-        scrollView.verticalScrollIndicatorInsets.bottom = max(baseInset, keyboardInset + 16)
+        let finalInset = max(baseInset, keyboardInset + 16)
+
+        scrollView.contentInset.bottom = finalInset
+        scrollView.verticalScrollIndicatorInsets.bottom = finalInset
     }
 
     func scrollToVisible(_ view: UIView) {
@@ -90,7 +92,7 @@ extension CreateFinancialGoalContentView {
     }
 }
 
- extension CreateFinancialGoalContentView {
+extension CreateFinancialGoalContentView {
     func configureView() {
         backgroundColor = AppColor.appBackground
 
@@ -142,22 +144,6 @@ extension CreateFinancialGoalContentView {
         deadlineFieldView.addGestureRecognizer(deadlineTapGesture)
         deadlineFieldView.isUserInteractionEnabled = true
 
-        aiHintCardView.backgroundColor = UIColor(red: 1.0, green: 0.97, blue: 0.9, alpha: 1.0)
-        aiHintCardView.layer.borderWidth = 1
-        aiHintCardView.layer.borderColor = UIColor(red: 0.98, green: 0.87, blue: 0.5, alpha: 1.0).cgColor
-
-        aiHintIconView.image = UIImage(systemName: "sparkles")
-        aiHintIconView.tintColor = AppColor.accentOlive
-        aiHintIconView.contentMode = .scaleAspectFit
-
-        aiHintTitleLabel.font = .systemFont(ofSize: 14, weight: .bold)
-        aiHintTitleLabel.textColor = AppColor.accentOlive
-
-        aiHintBodyLabel.font = .systemFont(ofSize: 15, weight: .medium)
-        aiHintBodyLabel.textColor = AppColor.bodyText
-        aiHintBodyLabel.numberOfLines = 0
-        aiHintBodyLabel.setLineSpacing(5)
-
         bottomActionContainer.backgroundColor = AppColor.appBackground
         bottomActionContainer.layer.shadowColor = UIColor.black.cgColor
         bottomActionContainer.layer.shadowOpacity = 0.04
@@ -174,13 +160,29 @@ extension CreateFinancialGoalContentView {
     func buildHierarchy() {
         addSubview(scrollView)
         addSubview(bottomActionContainer)
+
         scrollView.addSubview(contentContainer)
 
-        [backButton, titleLabel, subtitleLabel, formCardView, aiHintCardView].forEach(contentContainer.addSubview)
+        [backButton, titleLabel, subtitleLabel, formCardView].forEach {
+            contentContainer.addSubview($0)
+        }
+
         bottomActionContainer.addSubview(approveButton)
-        [nameTitleLabel, nameField, amountTitleLabel, amountField, deadlineTitleLabel, deadlineFieldView].forEach(formCardView.addSubview)
-        [deadlinePlaceholderLabel, deadlineValueLabel, deadlineIconView].forEach(deadlineFieldView.addSubview)
-        [aiHintIconView, aiHintTitleLabel, aiHintBodyLabel].forEach(aiHintCardView.addSubview)
+
+        [
+            nameTitleLabel,
+            nameField,
+            amountTitleLabel,
+            amountField,
+            deadlineTitleLabel,
+            deadlineFieldView
+        ].forEach {
+            formCardView.addSubview($0)
+        }
+
+        [deadlinePlaceholderLabel, deadlineValueLabel, deadlineIconView].forEach {
+            deadlineFieldView.addSubview($0)
+        }
     }
 
     func setupLayout() {
@@ -201,12 +203,10 @@ extension CreateFinancialGoalContentView {
             deadlinePlaceholderLabel,
             deadlineValueLabel,
             deadlineIconView,
-            aiHintCardView,
-            aiHintIconView,
-            aiHintTitleLabel,
-            aiHintBodyLabel,
             approveButton
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
@@ -223,7 +223,6 @@ extension CreateFinancialGoalContentView {
             contentContainer.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             contentContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentContainer.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
-            contentContainer.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.frameLayoutGuide.heightAnchor),
 
             backButton.topAnchor.constraint(equalTo: contentContainer.topAnchor, constant: 16),
             backButton.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
@@ -234,31 +233,34 @@ extension CreateFinancialGoalContentView {
             titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 36),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 28),
             subtitleLabel.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             subtitleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
 
-            formCardView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 24),
+            formCardView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
             formCardView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 24),
             formCardView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -24),
+            formCardView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -24),
 
-            nameTitleLabel.topAnchor.constraint(equalTo: formCardView.topAnchor, constant: 24),
+            nameTitleLabel.topAnchor.constraint(equalTo: formCardView.topAnchor, constant: 26),
             nameTitleLabel.leadingAnchor.constraint(equalTo: formCardView.leadingAnchor, constant: 24),
             nameTitleLabel.trailingAnchor.constraint(equalTo: formCardView.trailingAnchor, constant: -24),
 
             nameField.topAnchor.constraint(equalTo: nameTitleLabel.bottomAnchor, constant: 10),
             nameField.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             nameField.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
+            nameField.heightAnchor.constraint(equalToConstant: 56),
 
-            amountTitleLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 22),
+            amountTitleLabel.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 24),
             amountTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             amountTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
             amountField.topAnchor.constraint(equalTo: amountTitleLabel.bottomAnchor, constant: 10),
             amountField.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             amountField.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
+            amountField.heightAnchor.constraint(equalToConstant: 56),
 
-            deadlineTitleLabel.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: 22),
+            deadlineTitleLabel.topAnchor.constraint(equalTo: amountField.bottomAnchor, constant: 24),
             deadlineTitleLabel.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             deadlineTitleLabel.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
 
@@ -266,7 +268,7 @@ extension CreateFinancialGoalContentView {
             deadlineFieldView.leadingAnchor.constraint(equalTo: nameTitleLabel.leadingAnchor),
             deadlineFieldView.trailingAnchor.constraint(equalTo: nameTitleLabel.trailingAnchor),
             deadlineFieldView.heightAnchor.constraint(equalToConstant: 56),
-            deadlineFieldView.bottomAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: -24),
+            deadlineFieldView.bottomAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: -26),
 
             deadlinePlaceholderLabel.centerYAnchor.constraint(equalTo: deadlineFieldView.centerYAnchor),
             deadlinePlaceholderLabel.leadingAnchor.constraint(equalTo: deadlineFieldView.leadingAnchor, constant: 22),
@@ -279,26 +281,6 @@ extension CreateFinancialGoalContentView {
             deadlineIconView.trailingAnchor.constraint(equalTo: deadlineFieldView.trailingAnchor, constant: -18),
             deadlineIconView.widthAnchor.constraint(equalToConstant: 22),
             deadlineIconView.heightAnchor.constraint(equalToConstant: 22),
-
-            aiHintCardView.topAnchor.constraint(equalTo: formCardView.bottomAnchor, constant: 28),
-            aiHintCardView.leadingAnchor.constraint(equalTo: formCardView.leadingAnchor),
-            aiHintCardView.trailingAnchor.constraint(equalTo: formCardView.trailingAnchor),
-
-            aiHintIconView.topAnchor.constraint(equalTo: aiHintCardView.topAnchor, constant: 22),
-            aiHintIconView.leadingAnchor.constraint(equalTo: aiHintCardView.leadingAnchor, constant: 22),
-            aiHintIconView.widthAnchor.constraint(equalToConstant: 18),
-            aiHintIconView.heightAnchor.constraint(equalToConstant: 18),
-
-            aiHintTitleLabel.centerYAnchor.constraint(equalTo: aiHintIconView.centerYAnchor),
-            aiHintTitleLabel.leadingAnchor.constraint(equalTo: aiHintIconView.trailingAnchor, constant: 10),
-            aiHintTitleLabel.trailingAnchor.constraint(equalTo: aiHintCardView.trailingAnchor, constant: -22),
-
-            aiHintBodyLabel.topAnchor.constraint(equalTo: aiHintTitleLabel.bottomAnchor, constant: 12),
-            aiHintBodyLabel.leadingAnchor.constraint(equalTo: aiHintIconView.leadingAnchor),
-            aiHintBodyLabel.trailingAnchor.constraint(equalTo: aiHintCardView.trailingAnchor, constant: -22),
-            aiHintBodyLabel.bottomAnchor.constraint(equalTo: aiHintCardView.bottomAnchor, constant: -22),
-
-            aiHintCardView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor, constant: -32),
 
             approveButton.topAnchor.constraint(equalTo: bottomActionContainer.topAnchor, constant: 12),
             approveButton.leadingAnchor.constraint(equalTo: bottomActionContainer.leadingAnchor, constant: 16),

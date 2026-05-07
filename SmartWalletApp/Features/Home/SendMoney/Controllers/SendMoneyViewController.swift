@@ -101,7 +101,7 @@ final class SendMoneyViewController: BaseViewController {
                 self.setCenteredLoading(false)
                 self.refreshControl.endRefreshing()
                 self.contentView.applyData(data) // **
-                self.shouldClearPrefilledAmountOnFocus = data.amountText == "100"
+                self.shouldClearPrefilledAmountOnFocus = data.shouldClearPrefilledAmountOnFocus
                 self.bindAmountChips()
             case .transferSucceeded(let response):
                 self.setCenteredLoading(false)
@@ -186,7 +186,7 @@ final class SendMoneyViewController: BaseViewController {
     }
 
     @objc func handleAmountChipTap(_ sender: SendMoneyAmountChipButton) {
-        shouldClearPrefilledAmountOnFocus = false
+        shouldClearPrefilledAmountOnFocus = true
         viewModel.selectQuickAmount(sender.amount)
     }
 

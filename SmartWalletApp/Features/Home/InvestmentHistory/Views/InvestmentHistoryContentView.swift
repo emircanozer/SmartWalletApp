@@ -2,14 +2,19 @@ import UIKit
 
 final class InvestmentHistoryContentView: UIView {
     let backButton = UIButton(type: .system)
-    let allFilterButton = UIButton(type: .system)
-    let buyFilterButton = UIButton(type: .system)
-    let sellFilterButton = UIButton(type: .system)
+    let dateFilterButton = UIButton(type: .system)
+    let typeFilterButton = UIButton(type: .system)
 
     private let scrollView = UIScrollView()
     private let contentContainer = UIView()
     private let titleLabel = UILabel()
-    private let filtersStackView = UIStackView()
+    private let filterCardView = UIView()
+    private let dateFilterContainerView = UIView()
+    private let dateFilterIconView = UIImageView()
+    private let dateChevronView = UIImageView()
+    private let typeFilterContainerView = UIView()
+    private let typeFilterIconView = UIImageView()
+    private let typeChevronView = UIImageView()
     private let cardsStack = UIStackView()
     private let summaryCard = UIView()
     private let summaryHeaderRow = UIStackView()
@@ -36,9 +41,8 @@ final class InvestmentHistoryContentView: UIView {
         super.layoutSubviews()
         summaryCard.layer.cornerRadius = 24
         summaryBadgeView.layer.cornerRadius = 18
-        [allFilterButton, buyFilterButton, sellFilterButton].forEach {
-            $0.layer.cornerRadius = $0.bounds.height / 2
-        }
+        filterCardView.layer.cornerRadius = 24
+        [dateFilterContainerView, typeFilterContainerView].forEach { $0.layer.cornerRadius = 16 }
     }
 }
 
@@ -49,7 +53,8 @@ extension InvestmentHistoryContentView {
 
     func apply(_ data: InvestmentHistoryViewData) {
         titleLabel.text = data.titleText
-        applyFilterSelection(data.selectedFilter)
+        dateFilterButton.setTitle(data.selectedDateFilterTitleText, for: .normal)
+        typeFilterButton.setTitle(data.selectedTypeFilterTitleText, for: .normal)
 
         cardsStack.arrangedSubviews.forEach {
             cardsStack.removeArrangedSubview($0)
@@ -112,14 +117,26 @@ extension InvestmentHistoryContentView {
         titleLabel.font = .systemFont(ofSize: 24, weight: .bold)
         titleLabel.textColor = AppColor.primaryText
 
-        filtersStackView.axis = .horizontal
-        filtersStackView.spacing = 10
-        filtersStackView.distribution = .fillEqually
+        filterCardView.backgroundColor = AppColor.surfaceMuted
 
-        [allFilterButton, buyFilterButton, sellFilterButton].forEach {
-            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-            $0.setTitleColor(AppColor.secondaryText, for: .normal)
-            $0.backgroundColor = AppColor.surfaceMuted
+        [dateFilterContainerView, typeFilterContainerView].forEach {
+            $0.backgroundColor = AppColor.whitePrimary
+        }
+
+        dateFilterIconView.image = UIImage(systemName: "calendar")
+        dateFilterIconView.tintColor = AppColor.navigationTint
+        typeFilterIconView.image = UIImage(systemName: "line.3.horizontal.decrease")
+        typeFilterIconView.tintColor = AppColor.navigationTint
+
+        [dateChevronView, typeChevronView].forEach {
+            $0.image = UIImage(systemName: "chevron.down")
+            $0.tintColor = AppColor.iconMuted
+        }
+
+        [dateFilterButton, typeFilterButton].forEach {
+            $0.setTitleColor(AppColor.primaryText, for: .normal)
+            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+            $0.contentHorizontalAlignment = .left
         }
 
         cardsStack.axis = .vertical
@@ -163,8 +180,10 @@ extension InvestmentHistoryContentView {
         addSubview(scrollView)
         scrollView.addSubview(contentContainer)
 
-        [backButton, titleLabel, filtersStackView, cardsStack, emptyStateView, summaryCard].forEach(contentContainer.addSubview)
-        [allFilterButton, buyFilterButton, sellFilterButton].forEach(filtersStackView.addArrangedSubview)
+        [backButton, titleLabel, filterCardView, cardsStack, emptyStateView, summaryCard].forEach(contentContainer.addSubview)
+        [dateFilterContainerView, typeFilterContainerView].forEach(filterCardView.addSubview)
+        [dateFilterIconView, dateFilterButton, dateChevronView].forEach(dateFilterContainerView.addSubview)
+        [typeFilterIconView, typeFilterButton, typeChevronView].forEach(typeFilterContainerView.addSubview)
         [summaryHeaderRow, summaryBodyLabel, summaryLoadingIndicator].forEach(summaryCard.addSubview)
         summaryHeaderRow.addArrangedSubview(summaryBadgeView)
         summaryHeaderRow.addArrangedSubview(summaryTitleLabel)
@@ -177,7 +196,15 @@ extension InvestmentHistoryContentView {
             contentContainer,
             backButton,
             titleLabel,
-            filtersStackView,
+            filterCardView,
+            dateFilterContainerView,
+            dateFilterIconView,
+            dateFilterButton,
+            dateChevronView,
+            typeFilterContainerView,
+            typeFilterIconView,
+            typeFilterButton,
+            typeChevronView,
             cardsStack,
             emptyStateView,
             summaryCard,
@@ -210,16 +237,54 @@ extension InvestmentHistoryContentView {
             titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
-            filtersStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
-            filtersStackView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
-            filtersStackView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
-            filtersStackView.heightAnchor.constraint(equalToConstant: 56),
+            filterCardView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 22),
+            filterCardView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
+            filterCardView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
-            cardsStack.topAnchor.constraint(equalTo: filtersStackView.bottomAnchor, constant: 20),
+            dateFilterContainerView.topAnchor.constraint(equalTo: filterCardView.topAnchor, constant: 18),
+            dateFilterContainerView.leadingAnchor.constraint(equalTo: filterCardView.leadingAnchor, constant: 16),
+            dateFilterContainerView.trailingAnchor.constraint(equalTo: filterCardView.trailingAnchor, constant: -16),
+            dateFilterContainerView.heightAnchor.constraint(equalToConstant: 48),
+
+            dateFilterIconView.leadingAnchor.constraint(equalTo: dateFilterContainerView.leadingAnchor, constant: 16),
+            dateFilterIconView.centerYAnchor.constraint(equalTo: dateFilterContainerView.centerYAnchor),
+            dateFilterIconView.widthAnchor.constraint(equalToConstant: 18),
+            dateFilterIconView.heightAnchor.constraint(equalToConstant: 18),
+
+            dateChevronView.trailingAnchor.constraint(equalTo: dateFilterContainerView.trailingAnchor, constant: -16),
+            dateChevronView.centerYAnchor.constraint(equalTo: dateFilterContainerView.centerYAnchor),
+            dateChevronView.widthAnchor.constraint(equalToConstant: 14),
+            dateChevronView.heightAnchor.constraint(equalToConstant: 14),
+
+            dateFilterButton.leadingAnchor.constraint(equalTo: dateFilterIconView.trailingAnchor, constant: 12),
+            dateFilterButton.trailingAnchor.constraint(equalTo: dateChevronView.leadingAnchor, constant: -10),
+            dateFilterButton.centerYAnchor.constraint(equalTo: dateFilterContainerView.centerYAnchor),
+
+            typeFilterContainerView.topAnchor.constraint(equalTo: dateFilterContainerView.bottomAnchor, constant: 14),
+            typeFilterContainerView.leadingAnchor.constraint(equalTo: dateFilterContainerView.leadingAnchor),
+            typeFilterContainerView.trailingAnchor.constraint(equalTo: dateFilterContainerView.trailingAnchor),
+            typeFilterContainerView.heightAnchor.constraint(equalToConstant: 48),
+            typeFilterContainerView.bottomAnchor.constraint(equalTo: filterCardView.bottomAnchor, constant: -18),
+
+            typeFilterIconView.leadingAnchor.constraint(equalTo: typeFilterContainerView.leadingAnchor, constant: 16),
+            typeFilterIconView.centerYAnchor.constraint(equalTo: typeFilterContainerView.centerYAnchor),
+            typeFilterIconView.widthAnchor.constraint(equalToConstant: 18),
+            typeFilterIconView.heightAnchor.constraint(equalToConstant: 18),
+
+            typeChevronView.trailingAnchor.constraint(equalTo: typeFilterContainerView.trailingAnchor, constant: -16),
+            typeChevronView.centerYAnchor.constraint(equalTo: typeFilterContainerView.centerYAnchor),
+            typeChevronView.widthAnchor.constraint(equalToConstant: 14),
+            typeChevronView.heightAnchor.constraint(equalToConstant: 14),
+
+            typeFilterButton.leadingAnchor.constraint(equalTo: typeFilterIconView.trailingAnchor, constant: 12),
+            typeFilterButton.trailingAnchor.constraint(equalTo: typeChevronView.leadingAnchor, constant: -10),
+            typeFilterButton.centerYAnchor.constraint(equalTo: typeFilterContainerView.centerYAnchor),
+
+            cardsStack.topAnchor.constraint(equalTo: filterCardView.bottomAnchor, constant: 20),
             cardsStack.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             cardsStack.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
-            emptyStateView.topAnchor.constraint(equalTo: filtersStackView.bottomAnchor, constant: 36),
+            emptyStateView.topAnchor.constraint(equalTo: filterCardView.bottomAnchor, constant: 36),
             emptyStateView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor, constant: 20),
             emptyStateView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor, constant: -20),
 
@@ -251,23 +316,8 @@ extension InvestmentHistoryContentView {
         ])
     }
 
-    func applyFilterSelection(_ filter: InvestmentHistoryFilter) {
-        let buttons: [(UIButton, InvestmentHistoryFilter)] = [
-            (allFilterButton, .all),
-            (buyFilterButton, .buy),
-            (sellFilterButton, .sell)
-        ]
-
-        buttons.forEach { button, buttonFilter in
-            let isSelected = buttonFilter == filter
-            button.backgroundColor = isSelected ? AppColor.primaryYellow : AppColor.surfaceMuted
-            button.setTitleColor(isSelected ? AppColor.primaryText : AppColor.secondaryText, for: .normal)
-        }
-    }
-
     func applyStaticContent() {
-        allFilterButton.setTitle("Tümü", for: .normal)
-        buyFilterButton.setTitle("Alım", for: .normal)
-        sellFilterButton.setTitle("Satım", for: .normal)
+        dateFilterButton.setTitle("Tüm Tarihler", for: .normal)
+        typeFilterButton.setTitle("Tümü", for: .normal)
     }
 }

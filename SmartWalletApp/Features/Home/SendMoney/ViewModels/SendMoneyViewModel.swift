@@ -18,6 +18,7 @@ final class SendMoneyViewModel {
     private var enteredIBAN: String = ""
     private var amountText: String = "100"
     private var selectedAmount: Decimal = 100
+    private var isAmountPrefilled = true
     private var noteText: String = ""
     private var selectedRecipientID: String?
     private var recipients: [SendMoneyRecipient] = []
@@ -55,17 +56,19 @@ final class SendMoneyViewModel {
         let normalized = sanitizeAmountInput(rawValue)
         amountText = normalized
         selectedAmount = parseAmount(normalized)
+        isAmountPrefilled = false
         emitLoadedState()
     }
 
     func selectQuickAmount(_ amount: Decimal) {
         selectedAmount = amount
         amountText = AppNumberTextFormatter.inputDecimalTRY(amount, maximumFractionDigits: 2)
+        isAmountPrefilled = true
         emitLoadedState()
     }
 
     func updateIBAN(_ iban: String) {
-        enteredIBAN = iban.uppercased()
+        enteredIBAN = sanitizeIBANInput(iban)
         let matchedRecipient = recipients.first(where: { $0.iban == enteredIBAN })
         selectedRecipientID = matchedRecipient?.id
         lookupRecipient = nil
@@ -73,7 +76,7 @@ final class SendMoneyViewModel {
         emitLoadedState()
 
         let normalized = enteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard normalized.count == 26 else { return }
+        guard isValidIBAN(normalized) else { return }
 
         ibanLookupTask = Task { [weak self] in
             guard let self else { return }
@@ -291,6 +294,7 @@ final class SendMoneyViewModel {
         let amountError = amount > availableBalance && amount > 0
             ? "Bakiyenizden fazla tutar gönderemezsiniz."
             : nil
+        let ibanError = ibanValidationMessage()
 
         return SendMoneyViewData(
             balanceText: AppNumberTextFormatter.prefixedLira(
@@ -299,24 +303,27 @@ final class SendMoneyViewModel {
                 maximumFractionDigits: 2
             ),
             amountText: amountText.isEmpty ? "" : amountText,
+            shouldClearPrefilledAmountOnFocus: isAmountPrefilled && !amountText.isEmpty,
             selectedAmount: selectedAmount,
             quickAmounts: quickAmounts,
             recipients: recipients,
             selectedRecipientID: selectedRecipientID,
             enteredIBAN: enteredIBAN,
+            formattedIBAN: formatIBAN(enteredIBAN),
+            ibanErrorMessage: ibanError,
             lookupRecipient: lookupRecipient,
             selectedCategoryTitle: selectedCategory?.title ?? "Kategori Seç",
             selectedCategory: selectedCategory,
             noteText: noteText,
             amountErrorMessage: amountError,
-            canConfirm: canConfirmTransfer(amount: amount, amountError: amountError)
+            canConfirm: canConfirmTransfer(amount: amount, amountError: amountError, ibanError: ibanError)
         )
     }
 
-    func canConfirmTransfer(amount: Decimal, amountError: String?) -> Bool {
-        let hasTypedIBAN = !enteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    func canConfirmTransfer(amount: Decimal, amountError: String?, ibanError: String?) -> Bool {
+        let hasTypedIBAN = isValidIBAN(enteredIBAN)
         let hasSelectedRecipient = selectedRecipientID != nil
-        return (hasTypedIBAN || hasSelectedRecipient) && amount > 0 && amountError == nil && selectedCategory != nil
+        return (hasTypedIBAN || hasSelectedRecipient) && amount > 0 && amountError == nil && ibanError == nil && selectedCategory != nil
     }
 
     func currentAmount() -> Decimal {
@@ -344,6 +351,7 @@ final class SendMoneyViewModel {
         enteredIBAN = ""
         amountText = "100"
         selectedAmount = 100
+        isAmountPrefilled = true
         noteText = ""
         selectedRecipientID = nil
         lookupRecipient = nil
@@ -395,5 +403,31 @@ final class SendMoneyViewModel {
         }
 
         return result
+    }
+
+    func sanitizeIBANInput(_ rawValue: String) -> String {
+        let sanitized = rawValue
+            .uppercased()
+            .filter { $0.isLetter || $0.isWholeNumber }
+        return String(sanitized.prefix(26))
+    }
+
+    func formatIBAN(_ value: String) -> String {
+        stride(from: 0, to: value.count, by: 4).map { startIndex in
+            let start = value.index(value.startIndex, offsetBy: startIndex)
+            let end = value.index(start, offsetBy: min(4, value.count - startIndex), limitedBy: value.endIndex) ?? value.endIndex
+            return String(value[start..<end])
+        }.joined(separator: " ")
+    }
+
+    func isValidIBAN(_ value: String) -> Bool {
+        let pattern = #"^TR\d{24}$"#
+        return value.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    func ibanValidationMessage() -> String? {
+        let trimmedIBAN = enteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedIBAN.isEmpty, !isValidIBAN(trimmedIBAN) else { return nil }
+        return "Doğru IBAN numarası giriniz."
     }
 }

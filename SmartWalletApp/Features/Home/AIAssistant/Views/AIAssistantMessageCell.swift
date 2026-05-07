@@ -26,10 +26,11 @@ final class AIAssistantMessageCell: UITableViewCell {
     private var timestampLeadingConstraint: NSLayoutConstraint!
     private var timestampTrailingConstraint: NSLayoutConstraint!
 
-    private var assistantMaxWidthConstraint: NSLayoutConstraint!
-    private var userMaxWidthConstraint: NSLayoutConstraint!
     private var assistantTypingWidthConstraint: NSLayoutConstraint!
     private var dynamicBubbleWidthConstraint: NSLayoutConstraint?
+
+    private let bubbleHorizontalPadding: CGFloat = 32
+    private let maxBubbleWidthRatio: CGFloat = 0.78
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -47,9 +48,9 @@ final class AIAssistantMessageCell: UITableViewCell {
 
         delegate = nil
         typingIndicatorView.stopAnimating()
-
         dynamicBubbleWidthConstraint?.isActive = false
         dynamicBubbleWidthConstraint = nil
+        messageLabel.text = nil
     }
 
     override func layoutSubviews() {
@@ -84,8 +85,6 @@ extension AIAssistantMessageCell {
         timestampLeadingConstraint.isActive = isAssistant
         timestampTrailingConstraint.isActive = !isAssistant
 
-        assistantMaxWidthConstraint.isActive = isAssistant && !isTyping
-        userMaxWidthConstraint.isActive = !isAssistant
         assistantTypingWidthConstraint.isActive = isAssistant && isTyping
 
         bubbleContainer.backgroundColor = isAssistant ? AppColor.whitePrimary : AppColor.warmHighlight
@@ -102,7 +101,7 @@ extension AIAssistantMessageCell {
             typingIndicatorView.startAnimating()
         } else {
             typingIndicatorView.stopAnimating()
-            updateBubbleWidth(for: item, isAssistant: isAssistant)
+            updateBubbleWidth(for: item.text)
         }
 
         if let action = item.action {
@@ -132,28 +131,32 @@ extension AIAssistantMessageCell {
         }
     }
 
-    private func updateBubbleWidth(for item: AIAssistantMessageItem, isAssistant: Bool) {
-        let screenWidth = UIScreen.main.bounds.width
+    private func updateBubbleWidth(for text: String) {
+        let availableScreenWidth = UIScreen.main.bounds.width
 
-        let maxBubbleWidth: CGFloat = screenWidth * 0.84
-        let minBubbleWidth: CGFloat = isAssistant ? 180 : 44
-        let horizontalPadding: CGFloat = 48
+        let maxBubbleWidth = availableScreenWidth * maxBubbleWidthRatio
+        let maxTextWidth = maxBubbleWidth - bubbleHorizontalPadding
 
-        let rawTextWidth = (item.text as NSString).size(
-            withAttributes: [
+        let textRect = (text as NSString).boundingRect(
+            with: CGSize(width: maxTextWidth, height: .greatestFiniteMagnitude),
+            options: [
+                .usesLineFragmentOrigin,
+                .usesFontLeading
+            ],
+            attributes: [
                 .font: messageLabel.font as Any
-            ]
-        ).width
+            ],
+            context: nil
+        )
 
-        let targetWidth = min(max(rawTextWidth + horizontalPadding, minBubbleWidth), maxBubbleWidth)
+        let calculatedWidth = ceil(textRect.width) + bubbleHorizontalPadding
+        let finalWidth = min(max(calculatedWidth, 56), maxBubbleWidth)
 
-        dynamicBubbleWidthConstraint = bubbleContainer.widthAnchor.constraint(equalToConstant: targetWidth)
+        dynamicBubbleWidthConstraint = bubbleContainer.widthAnchor.constraint(equalToConstant: finalWidth)
         dynamicBubbleWidthConstraint?.priority = .required
         dynamicBubbleWidthConstraint?.isActive = true
     }
-}
 
-extension AIAssistantMessageCell {
     func configureView() {
         selectionStyle = .none
         backgroundColor = .clear
@@ -172,15 +175,17 @@ extension AIAssistantMessageCell {
 
         bubbleStack.axis = .vertical
         bubbleStack.spacing = 0
+        bubbleStack.alignment = .fill
+        bubbleStack.distribution = .fill
 
         messageLabel.font = .systemFont(ofSize: 17, weight: .medium)
         messageLabel.textColor = AppColor.primaryText
         messageLabel.numberOfLines = 0
-        messageLabel.lineBreakMode = .byCharWrapping
+        messageLabel.lineBreakMode = .byWordWrapping
 
         messageLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        messageLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        messageLabel.setContentHuggingPriority(.required, for: .horizontal)
+        messageLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        messageLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         actionsStack.axis = .horizontal
         actionsStack.spacing = 10
@@ -271,16 +276,6 @@ extension AIAssistantMessageCell {
         timestampTrailingConstraint = timestampLabel.trailingAnchor.constraint(
             equalTo: bubbleContainer.trailingAnchor,
             constant: -4
-        )
-
-        assistantMaxWidthConstraint = bubbleContainer.widthAnchor.constraint(
-            lessThanOrEqualTo: contentView.widthAnchor,
-            multiplier: 0.84
-        )
-
-        userMaxWidthConstraint = bubbleContainer.widthAnchor.constraint(
-            lessThanOrEqualTo: contentView.widthAnchor,
-            multiplier: 0.84
         )
 
         assistantTypingWidthConstraint = bubbleContainer.widthAnchor.constraint(

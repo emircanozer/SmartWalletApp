@@ -105,29 +105,29 @@ final class AuthService {
         case .login:
             return "/api/Auth/login"
         case .verifyEmail:
-            return "/api/Auth/verify-email"
+            return "/api/Auth/email-verification"
         case .resendVerificationCode:
-            return "/api/Auth/resend-verification-code"
+            return "/api/Auth/email-verification-resend"
         case .forgotPassword:
-            return "/api/Auth/forgot-password"
+            return "/api/Auth/password-reset-request"
         case .verifyPasswordResetCode:
-            return "/api/Auth/verify-code"
+            return "/api/Auth/password-reset-verification"
         case .resetPassword:
-            return "/api/Auth/reset-password"
+            return "/api/Auth/password-reset"
         case .profile:
             return "/api/Auth/profile"
         case .lastFailedLogin:
-            return "/api/Auth/last-failed-login"
+            return "/api/Auth/profile/last-failed-login"
         case .logout:
             return "/api/Auth/logout"
         case .deleteAccount:
-            return "/api/Auth/delete-account"
+            return "/api/Auth/account-deletion"
         case .changePassword:
-            return "/api/Auth/change-password-profile"
+            return "/api/Auth/profile/password"
         case .updateEmail:
-            return "/api/Auth/update-email"
+            return "/api/Auth/profile/email-update-request"
         case .confirmEmailUpdate:
-            return "/api/Auth/confirm-email-update"
+            return "/api/Auth/profile/email"
         }
     }
 
@@ -137,8 +137,10 @@ final class AuthService {
             return .get
         case .logout:
             return .post
-        case .deleteAccount, .changePassword, .updateEmail, .confirmEmailUpdate:
+        case .deleteAccount, .updateEmail:
             return .post
+        case .resetPassword, .changePassword, .confirmEmailUpdate:
+            return .put
         default:
             return .post
         }

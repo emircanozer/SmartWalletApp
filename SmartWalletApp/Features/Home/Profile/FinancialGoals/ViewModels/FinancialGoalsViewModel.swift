@@ -28,7 +28,7 @@ extension FinancialGoalsViewModel {
             goals = []
             summary = nil
             emitState()
-            emitError("Finansal hedefler alinamadi. Lutfen tekrar deneyin.")
+            emitError("Finansal hedefler alınamadı. Lütfen tekrar deneyin.")
         }
     }
 
@@ -82,10 +82,10 @@ extension FinancialGoalsViewModel {
             totalGoalCountText: "TOPLAM HEDEF: \(totalGoalCount)",
             totalSavedAmountText: AppNumberTextFormatter.prefixedLira(totalSaved, minimumFractionDigits: 0, maximumFractionDigits: 0),
             totalTargetAmountText: AppNumberTextFormatter.prefixedLira(totalTarget, minimumFractionDigits: 0, maximumFractionDigits: 0),
-            completionText: "%\(roundedCompletionPercent) Tamamlandi",
-            remainingAmountText: AppNumberTextFormatter.prefixedLira(remaining, minimumFractionDigits: 0, maximumFractionDigits: 0) + " kaldi",
+            completionText: "%\(roundedCompletionPercent) Tamamlandı",
+            remainingAmountText: AppNumberTextFormatter.prefixedLira(remaining, minimumFractionDigits: 0, maximumFractionDigits: 0) + " kaldı",
             progress: progress,
-            sectionTitleText: "HEDEFLERIN",
+            sectionTitleText: "HEDEFLERİN",
             items: goals.map(mapGoal)
         )
     }

@@ -38,9 +38,7 @@ final class InvestmentHistoryViewController: BaseViewController {
  extension InvestmentHistoryViewController {
     func bindActions() {
         contentView.backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
-        contentView.allFilterButton.addTarget(self, action: #selector(handleAllFilterTap), for: .touchUpInside)
-        contentView.buyFilterButton.addTarget(self, action: #selector(handleBuyFilterTap), for: .touchUpInside)
-        contentView.sellFilterButton.addTarget(self, action: #selector(handleSellFilterTap), for: .touchUpInside)
+        configureFilterMenus()
     }
 
     func bindViewModel() {
@@ -92,15 +90,24 @@ final class InvestmentHistoryViewController: BaseViewController {
         loadHistory()
     }
 
-    @objc func handleAllFilterTap() {
-        viewModel.applyFilter(.all)
-    }
+    func configureFilterMenus() {
+        contentView.dateFilterButton.showsMenuAsPrimaryAction = true
+        contentView.typeFilterButton.showsMenuAsPrimaryAction = true
 
-    @objc func handleBuyFilterTap() {
-        viewModel.applyFilter(.buy)
-    }
+        contentView.dateFilterButton.menu = UIMenu(
+            children: InvestmentHistoryDateFilter.allCases.map { filter in
+                UIAction(title: filter.title) { [weak self] _ in
+                    self?.viewModel.applyDateFilter(filter)
+                }
+            }
+        )
 
-    @objc func handleSellFilterTap() {
-        viewModel.applyFilter(.sell)
+        contentView.typeFilterButton.menu = UIMenu(
+            children: InvestmentHistoryTypeFilter.allCases.map { filter in
+                UIAction(title: filter.title) { [weak self] _ in
+                    self?.viewModel.applyTypeFilter(filter)
+                }
+            }
+        )
     }
 }

@@ -32,12 +32,12 @@ extension FinancialGoalAddMoneyViewModel {
             goalTitleText: goal.title,
             deadlineText: "Hedef Tarihi: \(AppDateTextFormatter.string(from: goal.deadline, style: .financialGoalDayMonth))",
             badgeText: "%\(completionPercent)",
-            savedTitleText: "BIRIKEN",
+            savedTitleText: "BİRİKEN",
             savedAmountText: AppNumberTextFormatter.prefixedLira(goal.savedAmount, minimumFractionDigits: 0, maximumFractionDigits: 0),
             targetAmountText: "/ \(AppNumberTextFormatter.prefixedLira(goal.targetAmount, minimumFractionDigits: 0, maximumFractionDigits: 0))",
             remainingTitleText: "KALAN",
             remainingAmountText: "\(AppNumberTextFormatter.prefixedLira(remainingAmount, minimumFractionDigits: 0, maximumFractionDigits: 0)) kaldi",
-            progressText: "%\(completionPercent) tamamlandi",
+            progressText: "%\(completionPercent) tamamlandı",
             progress: progress,
             amountFieldTitleText: "Eklenecek Tutar",
             amountPlaceholderText: "₺5000",
@@ -48,8 +48,8 @@ extension FinancialGoalAddMoneyViewModel {
                 )
             },
             noteTitleText: "Not (Opsiyonel)",
-            notePlaceholderText: "Orn: Bu ay maastan ayirdim",
-            infoText: "Eklenen tutar hedef birikimine aninda yansitilir."
+            notePlaceholderText: "Orn: Bu ay maaştan ayırdım",
+            infoText: "Eklenen tutar hedef birikimine anında yansıtılır."
         )
     }
 
@@ -80,7 +80,7 @@ extension FinancialGoalAddMoneyViewModel {
 
     func submit() async -> (context: FinancialGoalAddMoneySuccessContext?, errorMessage: String?) {
         guard let amount = confirmAmount() else {
-            return (nil, "Lutfen gecerli bir tutar girin.")
+            return (nil, "Lütfen geçerli bir tutar girin.")
         }
 
         do {
@@ -102,7 +102,7 @@ extension FinancialGoalAddMoneyViewModel {
 
             let refreshedGoals = try await walletService.fetchFinancialGoals()
             guard let refreshedGoal = refreshedGoals.first(where: { $0.id == goal.id }) else {
-                return (nil, "Guncel hedef bilgisi alinamadi. Lutfen tekrar deneyin.")
+                return (nil, "Güncel hedef bilgisi alınamadı. Lütfen tekrar deneyin.")
             }
 
             let updatedGoal = FinancialGoalRecord(
@@ -127,7 +127,7 @@ extension FinancialGoalAddMoneyViewModel {
                 nil
             )
         } catch let error as NetworkError {
-            return (nil, error.errorDescription ?? "Hedefe para eklenemedi. Lutfen tekrar deneyin.")
+            return (nil, error.errorDescription ?? "Hedefe para eklenemedi. Lütfen tekrar deneyin.")
         } catch {
             return (nil, error.localizedDescription)
         }
@@ -151,8 +151,8 @@ extension FinancialGoalAddMoneyViewModel {
             FinancialGoalAddMoneyFormState(
                 amountText: amountText,
                 selectedQuickAmount: selectedQuickAmount,
-                projectedSavingsText: "Bu islem sonrasi birikim: \(AppNumberTextFormatter.prefixedLira(projectedSavings, minimumFractionDigits: 0, maximumFractionDigits: 0))",
-                remainingAfterAddText: "Onayladiktan sonra hedefe kalan: \(AppNumberTextFormatter.prefixedLira(remainingAfterAdd, minimumFractionDigits: 0, maximumFractionDigits: 0))",
+                projectedSavingsText: "Bu işlem sonrası birikim: \(AppNumberTextFormatter.prefixedLira(projectedSavings, minimumFractionDigits: 0, maximumFractionDigits: 0))",
+                remainingAfterAddText: "Onayladıktan sonra hedefe kalan: \(AppNumberTextFormatter.prefixedLira(remainingAfterAdd, minimumFractionDigits: 0, maximumFractionDigits: 0))",
                 confirmButtonTitleText: "Onayla ve \(AppNumberTextFormatter.prefixedLira(amount, minimumFractionDigits: 0, maximumFractionDigits: 0)) Ekle",
                 isConfirmEnabled: !isSubmitting && amount > .zero,
                 isSubmitting: isSubmitting

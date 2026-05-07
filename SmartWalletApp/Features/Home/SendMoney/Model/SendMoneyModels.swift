@@ -104,11 +104,14 @@ struct SendMoneyLookupRecipient: Equatable {
 struct SendMoneyViewData {
     let balanceText: String
     let amountText: String
+    let shouldClearPrefilledAmountOnFocus: Bool
     let selectedAmount: Decimal
     let quickAmounts: [Decimal]
     let recipients: [SendMoneyRecipient]
     let selectedRecipientID: String?
     let enteredIBAN: String
+    let formattedIBAN: String
+    let ibanErrorMessage: String?
     let lookupRecipient: SendMoneyLookupRecipient?
     let selectedCategoryTitle: String
     let selectedCategory: SendMoneyTransferCategory?

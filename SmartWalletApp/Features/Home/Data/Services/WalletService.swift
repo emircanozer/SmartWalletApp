@@ -165,7 +165,7 @@ final class WalletService {
         case .transactions(let walletId):
             return "/api/Wallets/\(walletId)/transactions"
         case .receipt(let transactionId):
-            return "/api/Wallets/\(transactionId)/receipt"
+            return "/api/Wallets/transactions/\(transactionId)/receipt"
         case .contactsList:
             return "/api/Wallets/contacts"
         case .favorite:
@@ -173,7 +173,7 @@ final class WalletService {
         case .ownerName(let iban):
             return "/api/Wallets/iban/\(iban)/owner-name"
         case .analysis:
-            return "/api/Wallets/analysis"
+            return "/api/Wallets/mywallet/analysis"
         case .aiAdvice:
             return "/api/Wallets/ai-advice"
         case .financialGoals:
@@ -207,7 +207,7 @@ final class WalletService {
         case .removeContact(let iban):
             return "/api/Wallets/remove-contact/\(iban)"
         case .transfer:
-            return "/api/Wallets/transfer"
+            return "/api/Wallets/transfers"
         }
     }
 

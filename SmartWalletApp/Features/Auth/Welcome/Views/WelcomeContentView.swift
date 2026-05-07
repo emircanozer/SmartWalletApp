@@ -35,13 +35,13 @@ class WelcomeContentView: UIView {
 
     
     private let welcomeTitleText = "Hoş Geldiniz"
-    private let welcomeSubtitleText = "Finansal asistanınız her an yanınızda."
+    private let welcomeSubtitleText = "Finansal asistanınız her an yanınızda "
     private let primaryButtonTitleText = "Giriş Yap"
     private let secondaryButtonTitleText = "Kayıt Ol"
     private let shortcuts: [Shortcut] = [
         .init(title: "AI Analiz", iconName: "brain.head.profile"),
         .init(title: "Smart Limit", iconName: "gauge"),
-        .init(title: "Hızlı Trf.", iconName: "arrow.left.arrow.right"),
+        .init(title: "Transfer.", iconName: "arrow.left.arrow.right"),
         .init(title: "Birikim", iconName: "dollarsign.circle"),
         .init(title: "Piyasalar", iconName: "chart.line.uptrend.xyaxis")
     ]

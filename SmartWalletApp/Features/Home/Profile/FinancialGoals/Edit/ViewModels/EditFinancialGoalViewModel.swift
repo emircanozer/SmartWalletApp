@@ -128,12 +128,12 @@ extension EditFinancialGoalViewModel {
                 }
 
                 guard response else {
-                    return (nil, "Hedef guncellenemedi. Lutfen tekrar deneyin.")
+                    return (nil, "Hedef güncellenemedi. Lutfen tekrar deneyin.")
                 }
 
                 let refreshedGoals = try await walletService.fetchFinancialGoals()
                 guard let refreshedGoal = refreshedGoals.first(where: { $0.id == originalGoal.id }) else {
-                    return (nil, "Guncel hedef bilgisi alinamadi. Lutfen tekrar deneyin.")
+                    return (nil, "Güncel hedef bilgisi alınamadı. Lütfen tekrar deneyin.")
                 }
 
                 return (
@@ -151,7 +151,7 @@ extension EditFinancialGoalViewModel {
                     nil
                 )
             } catch let error as NetworkError {
-                return (nil, error.errorDescription ?? "Hedef guncellenemedi. Lutfen tekrar deneyin.")
+                return (nil, error.errorDescription ?? "Hedef güncellenemedi. Lütfen tekrar deneyin.")
             } catch {
                 return (nil, error.localizedDescription)
             }
@@ -168,7 +168,7 @@ extension EditFinancialGoalViewModel {
             }
             return response.success ? nil : response.message
         } catch let error as NetworkError {
-            return error.errorDescription ?? "Hedef kapatilamadi. Lutfen tekrar deneyin."
+            return error.errorDescription ?? "Hedef kapatılamadı. Lütfen tekrar deneyin."
         } catch {
             return error.localizedDescription
         }

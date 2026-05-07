@@ -5,7 +5,8 @@ final class InvestmentHistoryViewModel {
 
     private let walletService: WalletService
     private var response: PortfolioInvestmentHistoryResponse?
-    private var selectedFilter: InvestmentHistoryFilter = .all
+    private var selectedDateFilter: InvestmentHistoryDateFilter = .all
+    private var selectedTypeFilter: InvestmentHistoryTypeFilter = .all
 
     init(walletService: WalletService) {
         self.walletService = walletService
@@ -18,7 +19,11 @@ final class InvestmentHistoryViewModel {
         do {
             let response = try await walletService.fetchInvestmentHistory()
             self.response = response
-            let viewData = InvestmentHistoryViewDataFactory.makeViewData(from: response, filter: selectedFilter)
+            let viewData = InvestmentHistoryViewDataFactory.makeViewData(
+                from: response,
+                dateFilter: selectedDateFilter,
+                typeFilter: selectedTypeFilter
+            )
             onStateChange?(.loaded(viewData))
 
             onStateChange?(.aiSummaryLoading)
@@ -34,9 +39,23 @@ final class InvestmentHistoryViewModel {
         }
     }
 
-    func applyFilter(_ filter: InvestmentHistoryFilter) {
-        selectedFilter = filter
+    func applyDateFilter(_ filter: InvestmentHistoryDateFilter) {
+        selectedDateFilter = filter
         guard let response else { return }
-        onStateChange?(.loaded(InvestmentHistoryViewDataFactory.makeViewData(from: response, filter: selectedFilter)))
+        onStateChange?(.loaded(InvestmentHistoryViewDataFactory.makeViewData(
+            from: response,
+            dateFilter: selectedDateFilter,
+            typeFilter: selectedTypeFilter
+        )))
+    }
+
+    func applyTypeFilter(_ filter: InvestmentHistoryTypeFilter) {
+        selectedTypeFilter = filter
+        guard let response else { return }
+        onStateChange?(.loaded(InvestmentHistoryViewDataFactory.makeViewData(
+            from: response,
+            dateFilter: selectedDateFilter,
+            typeFilter: selectedTypeFilter
+        )))
     }
 }

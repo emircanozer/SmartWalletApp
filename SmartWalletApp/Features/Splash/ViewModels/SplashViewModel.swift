@@ -18,8 +18,8 @@ extension SplashViewModel {
             .loaded(
                 SplashViewData(
                     titleText: "SmartWallet",
-                    subtitleText: "Cebinizdeki Akilli Cuzdan",
-                    footerText: "GUVENLI FINANS DENEYIMI",
+                    subtitleText: "Cebinizdeki Akıllı Cuzdan",
+                    footerText: "GÜVENLİ FİNANS DENEYİMİ",
                     logoImageName: "logo"
                 )
             )

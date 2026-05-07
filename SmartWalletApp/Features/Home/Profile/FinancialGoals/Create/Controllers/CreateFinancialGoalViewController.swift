@@ -81,6 +81,7 @@ extension CreateFinancialGoalViewController {
 
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
+        datePicker.locale = Locale(identifier: "tr_TR")
         datePicker.minimumDate = Date()
         hiddenDateTextField.inputView = datePicker
 

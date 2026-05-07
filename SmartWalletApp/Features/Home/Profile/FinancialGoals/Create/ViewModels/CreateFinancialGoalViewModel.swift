@@ -27,9 +27,9 @@ extension CreateFinancialGoalViewModel {
             targetTitleText: "Hedef Tutar",
             targetPlaceholderText: "₺0",
             deadlineTitleText: "Son Tarih",
-            deadlinePlaceholderText: "Tarih sec",
+            deadlinePlaceholderText: "Tarih seç",
             aiHintTitleText: "SWAY'E SORUN",
-            aiHintBodyText: "Ilgili sorularinizi SWAY'e sorarak hedefinize daha hizli ulasin.",
+            aiHintBodyText: "İlgili sorularınızı SWAY'e sorarak hedefinize daha hizli ulaşın.",
             approveButtonTitleText: "Hedefi Onayla"
         )
     }
@@ -55,11 +55,11 @@ extension CreateFinancialGoalViewModel {
         }
 
         guard let amount = parsedAmount, amount > .zero else {
-            return "Lutfen gecerli bir hedef tutar girin."
+            return "Lütfen geçerli bir hedef tutar girin."
         }
 
         guard let selectedDate else {
-            return "Lutfen son tarihi secin."
+            return "Lütfen son tarihi seçin."
         }
 
         do {
@@ -96,7 +96,7 @@ extension CreateFinancialGoalViewModel {
             )
             return nil
         } catch {
-            return "Hedef olusturulamadi. Lutfen tekrar deneyin."
+            return "Hedef oluşturulamadı. Lütfen tekrar deneyin."
         }
     }
 }

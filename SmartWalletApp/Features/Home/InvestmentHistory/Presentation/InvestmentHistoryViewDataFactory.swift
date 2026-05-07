@@ -4,12 +4,14 @@ import UIKit
 enum InvestmentHistoryViewDataFactory {
     static func makeViewData(
         from response: PortfolioInvestmentHistoryResponse,
-        filter: InvestmentHistoryFilter
+        dateFilter: InvestmentHistoryDateFilter,
+        typeFilter: InvestmentHistoryTypeFilter
     ) -> InvestmentHistoryViewData {
         let items = response.transactions.compactMap { transaction -> InvestmentHistoryTransactionItem? in
             let isBuy = transaction.transactionType.lowercased().contains("al")
+            let transactionDate = AppDateTextFormatter.parseServerDate(transaction.date)
 
-            switch filter {
+            switch typeFilter {
             case .all:
                 break
             case .buy where !isBuy:
@@ -20,11 +22,15 @@ enum InvestmentHistoryViewDataFactory {
                 break
             }
 
+            guard matchesDateFilter(transactionDate, filter: dateFilter) else {
+                return nil
+            }
+
             return InvestmentHistoryTransactionItem(
                 assetName: transaction.assetName,
                 amountText: quantity(transaction.amount, assetName: transaction.assetName),
                 totalPriceText: AppNumberTextFormatter.currencyTRY(transaction.totalPrice),
-                dateText: AppDateTextFormatter.string(from: transaction.date, style: .investmentHistoryDateTime),
+                dateText: AppDateTextFormatter.string(from: transactionDate, style: .investmentHistoryDateTime),
                 transactionTypeText: transaction.transactionType,
                 transactionTypeColor: isBuy ? AppColor.successStrong : AppColor.dangerStrong,
                 isBuy: isBuy
@@ -33,7 +39,8 @@ enum InvestmentHistoryViewDataFactory {
 
         return InvestmentHistoryViewData(
             titleText: "İşlem Geçmişi",
-            selectedFilter: filter,
+            selectedDateFilterTitleText: dateFilter.title,
+            selectedTypeFilterTitleText: typeFilter.title,
             items: items,
             emptyMessageText: items.isEmpty ? "Henüz yatırım işlemi bulunmuyor." : nil
         )
@@ -51,5 +58,30 @@ enum InvestmentHistoryViewDataFactory {
         let lowercasedAssetName = assetName.lowercased()
         let unit = (lowercasedAssetName.contains("altın") || lowercasedAssetName.contains("gümüş")) ? "gr" : "birim"
         return "\(amountText) \(unit)"
+    }
+
+    private static func matchesDateFilter(_ date: Date, filter: InvestmentHistoryDateFilter) -> Bool {
+        let calendar = Calendar.current
+        let now = Date()
+
+        switch filter {
+        case .all:
+            return true
+        case .last7Days:
+            guard let start = calendar.date(byAdding: .day, value: -7, to: now) else { return true }
+            return date >= start
+        case .last15Days:
+            guard let start = calendar.date(byAdding: .day, value: -15, to: now) else { return true }
+            return date >= start
+        case .last30Days:
+            guard let start = calendar.date(byAdding: .day, value: -30, to: now) else { return true }
+            return date >= start
+        case .last3Months:
+            guard let start = calendar.date(byAdding: .month, value: -3, to: now) else { return true }
+            return date >= start
+        case .last6Months:
+            guard let start = calendar.date(byAdding: .month, value: -6, to: now) else { return true }
+            return date >= start
+        }
     }
 }

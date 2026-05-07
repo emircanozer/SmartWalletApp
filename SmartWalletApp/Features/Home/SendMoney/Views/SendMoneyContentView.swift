@@ -25,6 +25,7 @@ final class SendMoneyContentView: UIView {
     private let recipientsContainerView = UIView()
     private let ibanSectionLabel = UILabel()
     private let ibanFieldContainer = UIView()
+    private let ibanErrorLabel = UILabel()
     private let categorySectionLabel = UILabel()
     private let categoryFieldContainer = UIView()
     private let categoryChevronView = UIImageView()
@@ -144,11 +145,17 @@ extension SendMoneyContentView {
         ibanFieldContainer.layer.borderWidth = 1
         ibanFieldContainer.layer.borderColor = AppColor.resolvedCGColor(AppColor.borderSoft, for: traitCollection)
 
-        ibanTextField.font = .systemFont(ofSize: 15, weight: .semibold)
+        ibanTextField.font = .monospacedDigitSystemFont(ofSize: 15, weight: .semibold)
         ibanTextField.textColor = AppColor.inputText
         ibanTextField.autocapitalizationType = .allCharacters
         ibanTextField.autocorrectionType = .no
         ibanTextField.keyboardAppearance = .default
+        ibanTextField.textContentType = .none
+
+        ibanErrorLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        ibanErrorLabel.textColor = AppColor.dangerStrong
+        ibanErrorLabel.numberOfLines = 0
+        ibanErrorLabel.isHidden = true
 
         categorySectionLabel.font = .systemFont(ofSize: 18, weight: .bold)
         categorySectionLabel.textColor = AppColor.primaryText
@@ -200,6 +207,7 @@ extension SendMoneyContentView {
             recipientsContainerView,
             ibanSectionLabel,
             ibanFieldContainer,
+            ibanErrorLabel,
             lookupView,
             categorySectionLabel,
             categoryFieldContainer,
@@ -248,6 +256,7 @@ extension SendMoneyContentView {
             ibanSectionLabel,
             ibanFieldContainer,
             ibanTextField,
+            ibanErrorLabel,
             lookupView,
             categorySectionLabel,
             categoryFieldContainer,
@@ -340,7 +349,11 @@ extension SendMoneyContentView {
             ibanTextField.trailingAnchor.constraint(equalTo: ibanFieldContainer.trailingAnchor, constant: -14),
             ibanTextField.centerYAnchor.constraint(equalTo: ibanFieldContainer.centerYAnchor),
 
-            lookupView.topAnchor.constraint(equalTo: ibanFieldContainer.bottomAnchor, constant: 10),
+            ibanErrorLabel.topAnchor.constraint(equalTo: ibanFieldContainer.bottomAnchor, constant: 8),
+            ibanErrorLabel.leadingAnchor.constraint(equalTo: ibanFieldContainer.leadingAnchor, constant: 2),
+            ibanErrorLabel.trailingAnchor.constraint(equalTo: ibanFieldContainer.trailingAnchor, constant: -2),
+
+            lookupView.topAnchor.constraint(equalTo: ibanErrorLabel.bottomAnchor, constant: 10),
             lookupView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             lookupView.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
@@ -416,7 +429,9 @@ extension SendMoneyContentView {
     func applyData(_ data: SendMoneyViewData) {
         balanceInfoLabel.text = "Kullanılabilir bakiye: \(data.balanceText)"
         amountTextField.text = data.amountText
-        ibanTextField.text = data.enteredIBAN
+        ibanTextField.text = data.formattedIBAN
+        ibanErrorLabel.text = data.ibanErrorMessage
+        ibanErrorLabel.isHidden = data.ibanErrorMessage == nil
         categoryButton.setTitle(data.selectedCategoryTitle, for: .normal)
         noteTextView.text = data.noteText
         notePlaceholderLabel.isHidden = !data.noteText.isEmpty
