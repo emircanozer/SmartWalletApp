@@ -4,6 +4,14 @@ struct ExpenseAnalysisSummaryItem {
     let title: String
     let value: String
     let iconName: String
+    let trailingValue: String?
+
+    init(title: String, value: String, iconName: String, trailingValue: String? = nil) {
+        self.title = title
+        self.value = value
+        self.iconName = iconName
+        self.trailingValue = trailingValue
+    }
 }
 
 struct ExpenseAnalysisCategoryItem {

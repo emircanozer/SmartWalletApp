@@ -4,7 +4,7 @@ final class ThemePreferenceStore {
     static let shared = ThemePreferenceStore()
 
     private let isDarkModeEnabledKey = "isDarkModeEnabled"
-    private let defaults: UserDefaults
+    private let defaults: UserDefaults //ud ile açık mı kapalı mı onu saklıyoruz
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults

@@ -109,7 +109,7 @@ final class AuthService {
         case .resendVerificationCode:
             return "/api/Auth/email-verification-resend"
         case .forgotPassword:
-            return "/api/Auth/password-reset-request"
+            return "/api/Auth/password-reset"
         case .verifyPasswordResetCode:
             return "/api/Auth/password-reset-verification"
         case .resetPassword:
@@ -125,7 +125,7 @@ final class AuthService {
         case .changePassword:
             return "/api/Auth/profile/password"
         case .updateEmail:
-            return "/api/Auth/profile/email-update-request"
+            return "/api/Auth/profile/email-update"
         case .confirmEmailUpdate:
             return "/api/Auth/profile/email"
         }

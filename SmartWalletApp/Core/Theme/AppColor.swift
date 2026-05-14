@@ -67,19 +67,21 @@ enum AppColor {
     static let warmHighlight = dynamic(light: UIColor(red: 1.0, green: 0.97, blue: 0.88, alpha: 1.0), dark: UIColor(red: 0.27, green: 0.23, blue: 0.14, alpha: 1.0))
     static let quickActionHighlight = UIColor(red: 1.0, green: 0.92, blue: 0.53, alpha: 1.0)
 
+    // rengi  cgcolora çevirdik 
     static func resolvedCGColor(_ color: UIColor, for traitCollection: UITraitCollection) -> CGColor {
         color.resolvedColor(with: traitCollection).cgColor
     }
 
-    private static func named(_ name: String, fallback: UIColor) -> UIColor {
+     static func named(_ name: String, fallback: UIColor) -> UIColor {
         UIColor(named: name) ?? fallback
     }
 
-    private static func themedNamed(_ name: String, light: UIColor, dark: UIColor) -> UIColor {
+     static func themedNamed(_ name: String, light: UIColor, dark: UIColor) -> UIColor {
         dynamic(light: UIColor(named: name) ?? light, dark: dark)
     }
 
-    private static func dynamic(light: UIColor, dark: UIColor) -> UIColor {
+    // cihaz moduna göre
+    static func dynamic(light: UIColor, dark: UIColor) -> UIColor {
         UIColor { traitCollection in
             traitCollection.userInterfaceStyle == .dark ? dark : light
         }

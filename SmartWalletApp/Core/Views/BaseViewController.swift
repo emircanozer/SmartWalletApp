@@ -83,6 +83,7 @@ class BaseViewController: UIViewController {
     dynamic func keyboardDidUpdate(height: CGFloat, duration: TimeInterval, options: UIView.AnimationOptions) {}
 
     @objc
+    // dynamic burada şart değil ama bu metod override edilebilir bir hook diyoruz @objc/dynamic birlikte UIKit runtime'da daha uyumlu yapıyor.
     dynamic func keyboardDidHide(duration: TimeInterval, options: UIView.AnimationOptions) {}
 
     @objc
@@ -125,6 +126,7 @@ class BaseViewController: UIViewController {
         return UIView.AnimationOptions(rawValue: curveRawValue << 16)
     }
 
+    // Ben yok olurken üzerimde kalan tüm notification aboneliklerini kaldır
     deinit {
         NotificationCenter.default.removeObserver(self)
     }

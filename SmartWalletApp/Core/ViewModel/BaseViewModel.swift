@@ -24,6 +24,7 @@ class BaseViewModel {
         onError?(message)
     }
 
+    // rethrows kullanımı : Bu fonksiyon sadece içine verilen throwing closure hata fırlatırsa hata fırlatır.
     func performSubmission<T>(
         setSubmitting: (Bool) -> Void,
         emitState: () -> Void,
@@ -32,7 +33,7 @@ class BaseViewModel {
         setSubmitting(true)
         emitState()
 
-        defer {
+        defer { // bu scope bitmeden hemen önce mutlaka bunu çalıştır(defer içindeki değer en sona saklanır Bu fonksiyon bitmeden önce loading'i kapat ve state gönder.)
             setSubmitting(false)
             emitState()
         }

@@ -24,6 +24,7 @@ final class SendMoneyViewModel {
     private var recipients: [SendMoneyRecipient] = []
     private var lookupRecipient: SendMoneyLookupRecipient?
     private var selectedCategory: SendMoneyTransferCategory?
+    private var shouldShowRequiredFieldsError = false
     private var ibanLookupTask: Task<Void, Never>?
     private var locallyAddedRecipientsByIBAN: [String: SendMoneyRecipient] = [:]
     private var locallyRemovedRecipientIBANs: Set<String> = []
@@ -69,6 +70,7 @@ final class SendMoneyViewModel {
 
     func updateIBAN(_ iban: String) {
         enteredIBAN = sanitizeIBANInput(iban)
+        shouldShowRequiredFieldsError = false
         let matchedRecipient = recipients.first(where: { $0.iban == enteredIBAN })
         selectedRecipientID = matchedRecipient?.id
         lookupRecipient = nil
@@ -94,6 +96,7 @@ final class SendMoneyViewModel {
 
     func selectCategory(_ category: SendMoneyTransferCategory) {
         selectedCategory = category
+        shouldShowRequiredFieldsError = false
         emitLoadedState()
     }
 
@@ -104,6 +107,7 @@ final class SendMoneyViewModel {
     func selectRecipient(id: String) {
         guard let recipient = recipients.first(where: { $0.id == id }) else { return }
         selectedRecipientID = id
+        shouldShowRequiredFieldsError = false
         enteredIBAN = recipient.iban
         lookupRecipient = nil
         ibanLookupTask?.cancel()
@@ -173,14 +177,17 @@ final class SendMoneyViewModel {
     func confirmTransfer() async {
         let iban = enteredIBAN.trimmingCharacters(in: .whitespacesAndNewlines)
         let amount = currentAmount()
+        let hasValidRecipient = isValidIBAN(iban) || selectedRecipientID != nil
 
-        guard !iban.isEmpty else {
-            onStateChange?(.failure("Lutfen gecerli bir alici IBAN'i girin."))
+        guard hasValidRecipient, selectedCategory != nil else {
+            shouldShowRequiredFieldsError = true
+            emitLoadedState()
             return
         }
 
         guard let selectedCategory else {
-            onStateChange?(.failure("Lutfen bir kategori secin."))
+            shouldShowRequiredFieldsError = true
+            emitLoadedState()
             return
         }
 
@@ -316,6 +323,7 @@ final class SendMoneyViewModel {
             selectedCategory: selectedCategory,
             noteText: noteText,
             amountErrorMessage: amountError,
+            formErrorMessage: shouldShowRequiredFieldsError ? "Zorunlu alanları doldurunuz." : nil,
             canConfirm: canConfirmTransfer(amount: amount, amountError: amountError, ibanError: ibanError)
         )
     }
@@ -323,7 +331,7 @@ final class SendMoneyViewModel {
     func canConfirmTransfer(amount: Decimal, amountError: String?, ibanError: String?) -> Bool {
         let hasTypedIBAN = isValidIBAN(enteredIBAN)
         let hasSelectedRecipient = selectedRecipientID != nil
-        return (hasTypedIBAN || hasSelectedRecipient) && amount > 0 && amountError == nil && ibanError == nil && selectedCategory != nil
+        return (hasTypedIBAN || hasSelectedRecipient) && amount > 0 && amountError == nil && ibanError == nil
     }
 
     func currentAmount() -> Decimal {
@@ -356,6 +364,7 @@ final class SendMoneyViewModel {
         selectedRecipientID = nil
         lookupRecipient = nil
         selectedCategory = nil
+        shouldShowRequiredFieldsError = false
         ibanLookupTask?.cancel()
     }
 

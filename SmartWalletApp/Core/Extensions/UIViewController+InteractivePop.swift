@@ -15,11 +15,14 @@ extension UIViewController {
     }
 }
 
+// runtime tarafında saklanan objelerin anahtarları UINT adres
 private var loadingOverlayKey: UInt8 = 0
 private var loadingIndicatorKey: UInt8 = 1
 
 extension UIViewController {
     private var loadingOverlayView: UIView {
+        // extension içinde normalde stored property ekleyemezsin
+        // Bu yüzden alternatif olarak Objective-C runtime kullandık
         if let overlay = objc_getAssociatedObject(self, &loadingOverlayKey) as? UIView {
             return overlay
         }

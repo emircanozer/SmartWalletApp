@@ -1,6 +1,7 @@
 import Foundation
 import Network
 
+// ilk açılışta internet var mı
 final class NetworkReachabilityService {
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "com.smartwallet.network.reachability")

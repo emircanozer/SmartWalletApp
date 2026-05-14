@@ -7,8 +7,7 @@ enum NetworkError: LocalizedError {
     case server(statusCode: Int, message: String?)
     case decodingFailed
     case encodingFailed
-    // backend 200 döndü ama body boş geldi emptyResponse 
-    case emptyResponse
+    case emptyResponse // backend 200 döndü ama body boş geldi emptyResponse
     case underlying(Error)
 
     
@@ -19,7 +18,7 @@ enum NetworkError: LocalizedError {
         case .invalidResponse:
             return "Sunucudan geçerli bir yanıt alınamadı."
         case .unauthorized(let message):
-            return message ?? "Oturum doğrulanamadı."
+            return message ?? "Oturum doğrulanamadı." //**backend hata mesajı döndürürse onunki gözüküyor yoksa bu gözüküyor
         case .server(_, let message):
             return message ?? "Sunucu tarafında bir hata oluştu."
         case .decodingFailed:

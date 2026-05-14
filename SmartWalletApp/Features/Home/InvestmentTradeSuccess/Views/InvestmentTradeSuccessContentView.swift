@@ -26,6 +26,7 @@ final class InvestmentTradeSuccessContentView: UIView {
     private let statusPillView = UIView()
     private let statusDotView = UIView()
     private let statusLabel = UILabel()
+    private let statusTapGesture = UITapGestureRecognizer()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -60,6 +61,10 @@ extension InvestmentTradeSuccessContentView {
         balanceValueLabel.text = data.resultingBalanceText
         statusLabel.text = data.statusPillText
         secondaryButton.setTitle(data.secondaryButtonTitle, for: .normal)
+    }
+
+    func setStatusTarget(_ target: Any?, action: Selector) {
+        statusTapGesture.addTarget(target, action: action)
     }
 }
 
@@ -123,6 +128,8 @@ extension InvestmentTradeSuccessContentView {
         statusPillView.backgroundColor = AppColor.whitePrimary
         statusPillView.layer.borderWidth = 1
         statusPillView.layer.borderColor = AppColor.borderSoft.cgColor
+        statusPillView.isUserInteractionEnabled = true
+        statusPillView.addGestureRecognizer(statusTapGesture)
 
         statusDotView.backgroundColor = AppColor.successStrong
 

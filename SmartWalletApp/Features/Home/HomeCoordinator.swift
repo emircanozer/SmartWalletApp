@@ -247,6 +247,10 @@ class HomeCoordinator: Coordinator {
         viewController.onShowHistory = { [weak self] in
             self?.showInvestmentHistory()
         }
+        viewController.onShowMarketPrices = { [weak self, weak navigationController] in
+            navigationController?.popToRootViewController(animated: false)
+            self?.rootViewController.selectedIndex = 1
+        }
         navigationController.pushViewController(viewController, animated: true)
     }
 

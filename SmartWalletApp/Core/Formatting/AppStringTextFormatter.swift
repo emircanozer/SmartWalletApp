@@ -1,6 +1,7 @@
 import Foundation
 
 enum AppStringTextFormatter {
+    // ilk harf büyüklüğü, trimleme
     static func displayName(_ fullName: String) -> String {
         let trimmed = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let firstCharacter = trimmed.first else { return trimmed }
@@ -16,6 +17,7 @@ enum AppStringTextFormatter {
         normalizedOptionalText(description, fallback: fallback)
     }
 
+    // ibanı 4lü 4lü sıralama
     static func formattedIBAN(_ iban: String, fallback: String = "-") -> String {
         let trimmed = iban.replacingOccurrences(of: " ", with: "")
         guard !trimmed.isEmpty else { return fallback }

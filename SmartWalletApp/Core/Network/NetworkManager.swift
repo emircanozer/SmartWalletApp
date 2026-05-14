@@ -24,9 +24,7 @@ final class APIClient {
      generic decodable olan her model bu fonku kullanabilir response self sayesinde bu parametre sayesinde fonksiyon “hangi tipe decode edeceğini” biliyor.
      Yani login çağrısıysa dönüş LoginResponse -> response sayesinde Yani tek fonksiyon, farklı response tipleri döndürebiliyor. Bu generic’in en büyük faydası
      
-     fonksiyonu çağırdığımız yerde decodable olan istediğimiz modeli tanımlıyabiliriz en güzel yanı her model için farklı fonk tanımlamamıza gerek yok generic yaptığımız için her farklı yerde fonku çağırdığımız yerde model tipini yazmamız yeterli örn loginresponse , registerresponse gibi
-
-     */
+     fonksiyonu çağırdığımız yerde decodable olan istediğimiz modeli tanımlıyabiliriz en güzel yanı her model için farklı fonk tanımlamamıza gerek yok generic yaptığımız için her farklı yerde fonku çağırdığımız yerde model tipini yazmamız yeterli örn loginresponse , registerresponse gibi */
     func send<Response: Decodable>(_ endpoint: Endpoint, as type: Response.Type = Response.self) async throws -> Response {
         let request = try makeRequest(from: endpoint)
         logRequest(request)
@@ -55,6 +53,7 @@ final class APIClient {
         }
     }
 
+    // 2.send fonksiyonu body beklemiyor sadece işlem tamamlandı mı hata var mı yok mu onun için kullanılır response'A gerek yok logout gibi
     func send(_ endpoint: Endpoint) async throws {
         let request = try makeRequest(from: endpoint)
         logRequest(request)
@@ -139,6 +138,7 @@ final class APIClient {
         print("DEBUG Network: response body=\(bodyPreview(from: data))")
     }
 
+     // debug çıktısı için ekstra bir görevi yok 
     func bodyPreview(from data: Data) -> String {
         guard !data.isEmpty else {
             return "<empty>"

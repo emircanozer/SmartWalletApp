@@ -30,6 +30,7 @@ enum AppNumberTextFormatter {
         return formatter.string(from: value as NSDecimalNumber) ?? "₺0,00"
     }
 
+    //  decimal(...) ile sayıyı formatlıyor, sonra başına manuel olarak ₺ koyuyor:
     static func prefixedLira(
         _ value: Decimal,
         prefix: String = "",
@@ -56,6 +57,7 @@ enum AppNumberTextFormatter {
             maximumFractionDigits: maximumFractionDigits
         )
         return value < .zero ? "-%\(formattedValue)" : "+%\(formattedValue)"
+        // önlerine % koyuyor 
     }
 
     static func signedCurrencyTRY(

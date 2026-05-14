@@ -117,5 +117,6 @@ struct SendMoneyViewData {
     let selectedCategory: SendMoneyTransferCategory?
     let noteText: String
     let amountErrorMessage: String?
+    let formErrorMessage: String?
     let canConfirm: Bool
 }

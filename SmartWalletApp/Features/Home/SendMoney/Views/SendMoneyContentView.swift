@@ -29,6 +29,7 @@ final class SendMoneyContentView: UIView {
     private let categorySectionLabel = UILabel()
     private let categoryFieldContainer = UIView()
     private let categoryChevronView = UIImageView()
+    private let formErrorLabel = UILabel()
     private let noteSectionLabel = UILabel()
     private let noteContainer = UIView()
     private let notePlaceholderLabel = UILabel()
@@ -172,6 +173,12 @@ extension SendMoneyContentView {
         categoryChevronView.tintColor = AppColor.iconMuted
         categoryChevronView.contentMode = .scaleAspectFit
 
+        formErrorLabel.font = .systemFont(ofSize: 12, weight: .semibold)
+        formErrorLabel.textColor = AppColor.dangerStrong
+        formErrorLabel.textAlignment = .center
+        formErrorLabel.numberOfLines = 0
+        formErrorLabel.isHidden = true
+
         noteSectionLabel.font = .systemFont(ofSize: 18, weight: .bold)
         noteSectionLabel.textColor = AppColor.primaryText
 
@@ -213,6 +220,7 @@ extension SendMoneyContentView {
             categoryFieldContainer,
             noteSectionLabel,
             noteContainer,
+            formErrorLabel,
             confirmButton
         ].forEach {
             containerView.addSubview($0)
@@ -267,6 +275,7 @@ extension SendMoneyContentView {
             noteTextView,
             notePlaceholderLabel,
             balanceInfoLabel,
+            formErrorLabel,
             confirmButton
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -390,7 +399,11 @@ extension SendMoneyContentView {
             notePlaceholderLabel.topAnchor.constraint(equalTo: noteTextView.topAnchor, constant: 2),
             notePlaceholderLabel.leadingAnchor.constraint(equalTo: noteTextView.leadingAnchor, constant: 4),
 
-            confirmButton.topAnchor.constraint(equalTo: noteContainer.bottomAnchor, constant: 20),
+            formErrorLabel.topAnchor.constraint(equalTo: noteContainer.bottomAnchor, constant: 12),
+            formErrorLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            formErrorLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+
+            confirmButton.topAnchor.constraint(equalTo: formErrorLabel.bottomAnchor, constant: 8),
             confirmButton.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             confirmButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
             confirmButton.heightAnchor.constraint(equalToConstant: 54),
@@ -433,13 +446,15 @@ extension SendMoneyContentView {
         ibanErrorLabel.text = data.ibanErrorMessage
         ibanErrorLabel.isHidden = data.ibanErrorMessage == nil
         categoryButton.setTitle(data.selectedCategoryTitle, for: .normal)
+        formErrorLabel.text = data.formErrorMessage
+        formErrorLabel.isHidden = data.formErrorMessage == nil
         noteTextView.text = data.noteText
         notePlaceholderLabel.isHidden = !data.noteText.isEmpty
         amountErrorLabel.text = data.amountErrorMessage
         amountErrorLabel.isHidden = data.amountErrorMessage == nil
         lookupView.applyRecipient(data.lookupRecipient)
         lookupHeightConstraint?.constant = data.lookupRecipient == nil ? 0 : 56
-        confirmButton.isEnabled = data.canConfirm
+        confirmButton.isEnabled = true
         confirmButton.alpha = data.canConfirm ? 1 : 0.55
         updateQuickAmounts(data.quickAmounts, selectedAmount: data.selectedAmount)
         updateRecipients(data.recipients, selectedRecipientID: data.selectedRecipientID)

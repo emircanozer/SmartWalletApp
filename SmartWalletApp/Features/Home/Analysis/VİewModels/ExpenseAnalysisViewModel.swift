@@ -87,12 +87,8 @@ final class ExpenseAnalysisViewModel {
             ExpenseAnalysisSummaryItem(
                 title: "En Çok Harcama",
                 value: response.topSendingCategory,
-                iconName: "basket"
-            ),
-            ExpenseAnalysisSummaryItem(
-                title: "Harcama Yüzdesi",
-                value: topPercentageText(from: response.categoryDetails),
-                iconName: "percent"
+                iconName: "basket",
+                trailingValue: topPercentageText(from: response.categoryDetails)
             )
         ]
 

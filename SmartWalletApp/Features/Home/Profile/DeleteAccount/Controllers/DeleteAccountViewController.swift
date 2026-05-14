@@ -25,6 +25,7 @@ final class DeleteAccountViewController: BaseViewController {
         super.viewDidLoad()
         bindActions()
         bindViewModel()
+        installKeyboardDismissTap()
         startObservingKeyboard()
         contentView.apply(viewModel.makeViewData())
         enableInteractivePopGesture()
@@ -38,6 +39,7 @@ extension DeleteAccountViewController {
         contentView.checkboxButton.addTarget(self, action: #selector(handleCheckboxTap), for: .touchUpInside)
         contentView.deleteButton.addTarget(self, action: #selector(handleDeleteTap), for: .touchUpInside)
         contentView.passwordField.setEditingChangedTarget(self, action: #selector(handleFormChanged))
+        contentView.passwordField.setTrailingTarget(self, action: #selector(handlePasswordVisibilityTap))
     }
 
     func bindViewModel() {
@@ -82,6 +84,10 @@ extension DeleteAccountViewController {
 
     @objc func handleFormChanged() {
         updateFormState()
+    }
+
+    @objc func handlePasswordVisibilityTap() {
+        contentView.passwordField.toggleSecureEntry()
     }
 
     @objc func handleDeleteTap() {

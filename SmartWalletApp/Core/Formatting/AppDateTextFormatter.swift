@@ -8,10 +8,12 @@ enum AppDateOutputStyle {
     case financialGoalDayMonthYear
 }
 
+// backenden gelen stringi date parse edip türkçe formata çeviriyorum
 enum AppDateTextFormatter {
     static func parseServerDate(_ rawValue: String) -> Date {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        // hepsi bazen aynı formatta gelmiyor backendden ondan toleranslı aldık
 
         let fallbackFormatter = ISO8601DateFormatter()
         fallbackFormatter.formatOptions = [.withInternetDateTime]
@@ -26,6 +28,10 @@ enum AppDateTextFormatter {
         shortFractionFormatter.timeZone = TimeZone.current
         shortFractionFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
 
+        /* en_US_POSIX
+         özel bir sabit localedir
+         teknik tarih stringlerini güvenli okumak için kullanılır
+         */
         let plainFormatter = DateFormatter()
         plainFormatter.locale = Locale(identifier: "en_US_POSIX")
         plainFormatter.timeZone = TimeZone.current
@@ -36,13 +42,15 @@ enum AppDateTextFormatter {
             ?? localFormatter.date(from: rawValue)
             ?? shortFractionFormatter.date(from: rawValue)
             ?? plainFormatter.date(from: rawValue)
-            ?? Date()
+            ?? Date() // problem yaratabiliyor
     }
 
+    // strine çevirip ekrana öyle gösteriyorum
     static func string(from rawValue: String, style: AppDateOutputStyle) -> String {
         string(from: parseServerDate(rawValue), style: style)
     }
 
+    // date alıp formatlıyorum
     static func string(from date: Date, style: AppDateOutputStyle) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "tr_TR")

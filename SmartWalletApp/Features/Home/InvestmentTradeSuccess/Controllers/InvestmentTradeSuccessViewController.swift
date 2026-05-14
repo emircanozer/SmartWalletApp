@@ -4,6 +4,7 @@ final class InvestmentTradeSuccessViewController: UIViewController {
     var onClose: (() -> Void)?
     var onReturnHome: (() -> Void)?
     var onShowHistory: (() -> Void)?
+    var onShowMarketPrices: (() -> Void)?
 
     private let viewModel: InvestmentTradeSuccessViewModel
     private let contentView = InvestmentTradeSuccessContentView()
@@ -38,6 +39,7 @@ final class InvestmentTradeSuccessViewController: UIViewController {
     func bindActions() {
         contentView.closeButton.addTarget(self, action: #selector(handleReturnHomeTap), for: .touchUpInside)
         contentView.secondaryButton.addTarget(self, action: #selector(handleHistoryTap), for: .touchUpInside)
+        contentView.setStatusTarget(self, action: #selector(handleMarketPricesTap))
     }
 
     func bindViewModel() {
@@ -72,5 +74,9 @@ final class InvestmentTradeSuccessViewController: UIViewController {
         )
         alert.addAction(UIAlertAction(title: "Tamam", style: .default))
         present(alert, animated: true)
+    }
+
+    @objc func handleMarketPricesTap() {
+        onShowMarketPrices?()
     }
 }

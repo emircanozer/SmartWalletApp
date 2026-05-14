@@ -196,16 +196,10 @@ extension ExpenseAnalysisContentView {
         topRow.spacing = 12
         topRow.distribution = .fillEqually
 
-        let bottomRow = UIStackView()
-        bottomRow.axis = .horizontal
-        bottomRow.spacing = 12
-        bottomRow.distribution = .fillEqually
-
         (0..<2).forEach { _ in topRow.addArrangedSubview(makeSummaryCard()) }
-        (0..<2).forEach { _ in bottomRow.addArrangedSubview(makeSummaryCard()) }
 
         summaryGrid.addArrangedSubview(topRow)
-        summaryGrid.addArrangedSubview(bottomRow)
+        summaryGrid.addArrangedSubview(makeSummaryCard())
     }
 
     func makeSummaryCard() -> UIView {
@@ -357,6 +351,7 @@ private final class SummaryCardView: UIView {
     private let iconView = UIImageView()
     private let titleLabel = UILabel()
     private let valueLabel = UILabel()
+    private let trailingValueLabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -378,6 +373,9 @@ private final class SummaryCardView: UIView {
         iconView.image = UIImage(systemName: item.iconName)
         titleLabel.text = item.title.uppercased()
         valueLabel.text = item.value
+        trailingValueLabel.text = item.trailingValue
+        trailingValueLabel.isHidden = item.trailingValue == nil
+        valueLabel.numberOfLines = item.trailingValue == nil ? 2 : 1
     }
 
     private func configureView() {
@@ -395,10 +393,17 @@ private final class SummaryCardView: UIView {
         valueLabel.font = .systemFont(ofSize: 22, weight: .bold)
         valueLabel.textColor = AppColor.primaryText
         valueLabel.numberOfLines = 2
+        valueLabel.lineBreakMode = .byTruncatingTail
+
+        trailingValueLabel.font = .systemFont(ofSize: 22, weight: .bold)
+        trailingValueLabel.textColor = AppColor.accentOlive
+        trailingValueLabel.textAlignment = .right
+        trailingValueLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        trailingValueLabel.setContentHuggingPriority(.required, for: .horizontal)
     }
 
     private func buildHierarchy() {
-        [iconView, titleLabel, valueLabel].forEach {
+        [iconView, titleLabel, valueLabel, trailingValueLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             addSubview($0)
         }
@@ -417,8 +422,12 @@ private final class SummaryCardView: UIView {
 
             valueLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 6),
             valueLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            valueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            valueLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -16)
+            valueLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingValueLabel.leadingAnchor, constant: -12),
+            valueLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -16),
+
+            trailingValueLabel.centerYAnchor.constraint(equalTo: valueLabel.centerYAnchor),
+            trailingValueLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            trailingValueLabel.leadingAnchor.constraint(greaterThanOrEqualTo: valueLabel.trailingAnchor, constant: 12)
         ])
     }
 }

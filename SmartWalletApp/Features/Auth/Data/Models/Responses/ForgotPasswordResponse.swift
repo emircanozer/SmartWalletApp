@@ -22,6 +22,6 @@ struct ForgotPasswordResponse: Decodable {
             (try? container.decode(Bool.self, forKey: .success)) ??
             (try? container.decode(Bool.self, forKey: .capitalizedSuccess)) ??
             (try? container.decode(Bool.self, forKey: .typoSuccess)) ??
-            false
+            true
     }
 }

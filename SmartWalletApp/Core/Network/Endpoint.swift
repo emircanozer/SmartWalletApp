@@ -9,7 +9,6 @@ import Foundation
  body = encoded login request
  requiresAuthorization = false
  Bu sayede APIClient endpoint’i çalıştırabiliyor.*/
-
 protocol Endpoint {
     var path: String { get }
     var method: HTTPMethod { get }
@@ -24,6 +23,7 @@ extension Endpoint {
         [:] // hiç header yok demek 
     }
 
+    // request atarken gönderdiğimiz veri 
     var body: Data? {
         nil
     }
