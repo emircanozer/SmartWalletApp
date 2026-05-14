@@ -31,7 +31,7 @@ class AppCoordinator: Coordinator {
         splashCoordinator.onFinished = { [weak self] in
             self?.continueAfterSplash()
         }
-        children = [splashCoordinator]
+        children.append(splashCoordinator)
         window.backgroundColor = AppColor.appBackground
         window.rootViewController = splashCoordinator.rootViewController
         window.makeKeyAndVisible()

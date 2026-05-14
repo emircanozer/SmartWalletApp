@@ -11,6 +11,5 @@ protocol Coordinator {
  Alt akışları takip etmeyi
  Memory yönetimini
  Gerekince child coordinator’ı kaldırmayı
- 
  */
 

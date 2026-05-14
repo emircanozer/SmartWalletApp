@@ -22,7 +22,6 @@ final class AIAssistantViewModel {
                 . Para Transferi
                 . Varlık Al/Sat
                 . Güncel Kurlar
-                . Sayfa Yönlendirmesi
                 """,
                 timestampText: welcomeTimestamp,
                 action: nil
